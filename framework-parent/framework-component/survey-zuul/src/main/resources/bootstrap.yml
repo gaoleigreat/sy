@@ -1,0 +1,24 @@
+server:
+  port: 50010
+  servlet:
+    context-path: /survey
+spring:
+  application:
+    name: survey-zuul
+  profiles:
+    active: dev
+
+session:
+  domain: survey-zuul
+
+jwt:
+  exclude:
+    urlPatterns:
+      - /api-user/user/login
+      - .*api-docs.*
+      - .*swagger.*
+      - /api-user/package/.*
+
+feign:
+  hystrix:
+    enabled: true

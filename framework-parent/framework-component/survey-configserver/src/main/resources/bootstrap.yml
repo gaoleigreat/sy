@@ -1,0 +1,10 @@
+server:
+  port: 48020
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: survey-config
+  profiles:
+    active: dev

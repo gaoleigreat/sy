@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lego.survey.auth.impl.mapper.RoleResourcesMapper">
+
+
+    <sql id="find_columns">
+		id as id, role as role, resources_id as resourcesId, creation_date as creationDate, created_by as createdBy, last_update_date as lastUpdateDate, last_updated_by as lastUpdatedBy
+	</sql>
+
+
+    <select id="findByRole" resultType="com.lego.survey.auth.model.entity.RoleResources">
+        select
+        <include refid="find_columns"/>
+        from survey_role_resources
+        where role=#{role}
+    </select>
+</mapper>

@@ -1,0 +1,9 @@
+server:
+  port: 48050
+  servlet:
+    context-path: /
+spring:
+  application:
+    name: project-service
+  profiles:
+    active: dev

@@ -1,0 +1,30 @@
+spring:
+  cloud:
+    config:
+      fail-fast: true
+      uri: http://114.116.44.104:48020
+      profile: dev
+      label: master
+      username: admin
+      password: admin123
+      retry:
+        max-attempts: 3
+  boot:
+    admin:
+      client:
+        instance:
+          service-base-url: /survey
+zuul:
+  routes:
+    auth-service: /api-auth/**
+    file-service: /api-file/**
+    project-service: /api-project/**
+    report-service: /api-report/**
+    settlement-service: /api-settlement/**
+    user-service: /api-user/**
+  ignored-services: '*'
+
+
+
+
+

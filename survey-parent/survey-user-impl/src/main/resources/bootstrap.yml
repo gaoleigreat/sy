@@ -1,0 +1,9 @@
+server:
+  port: 48040
+  servlet:
+    context-path: /
+spring:
+  application:
+    name: user-service
+  profiles:
+    active: dev

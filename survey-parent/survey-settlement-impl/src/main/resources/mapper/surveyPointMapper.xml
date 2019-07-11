@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lego.survey.settlement.impl.mapper.SurveyPointMapper">
+
+    <resultMap id="BaseResultMap" type="com.lego.survey.settlement.model.entity.SurveyPoint">
+        <result column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="grid_x" property="gridX"/>
+        <result column="grid_y" property="gridY"/>
+        <result column="elevation" property="elevation"/>
+        <result column="limits" property="limits"/>
+        <result column="status" property="status"/>
+        <result column="workspace_code" property="workspaceCode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="comment" property="comment"/>
+    </resultMap>
+
+
+    <sql id="survey_point_column">
+        id,code,`name`,`type`,grid_x,grid_y,elevation,limits,status,workspace_code,create_time,update_time,comment
+    </sql>
+
+    <insert id="save">
+        INSERT INTO
+        ${tableName}
+        (
+        <include refid="survey_point_column"/>
+        )
+        VALUES (
+        #{surveyPoint.id},
+        #{surveyPoint.code},
+        #{surveyPoint.name},
+        #{surveyPoint.type},
+        #{surveyPoint.gridX},
+        #{surveyPoint.gridY},
+        #{surveyPoint.elevation},
+        #{surveyPoint.limits},
+        #{surveyPoint.status},
+        #{surveyPoint.workspaceCode},
+        #{surveyPoint.createTime},
+        #{surveyPoint.updateTime},
+        #{surveyPoint.comment})
+    </insert>
+
+    <insert id="saveBatch" parameterType="java.util.List">
+        INSERT INTO
+        ${tableName}
+        (
+        <include refid="survey_point_column"/>
+        )
+        VALUES
+        <foreach collection="surveyPoints" separator="," item="surveyPoint">
+            (
+            #{surveyPoint.id},
+            #{surveyPoint.code},
+            #{surveyPoint.name},
+            #{surveyPoint.type},
+            #{surveyPoint.gridX},
+            #{surveyPoint.gridY},
+            #{surveyPoint.elevation},
+            #{surveyPoint.limits},
+            #{surveyPoint.status},
+            #{surveyPoint.workspaceCode},
+            #{surveyPoint.createTime},
+            #{surveyPoint.updateTime},
+            #{surveyPoint.comment}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="modify">
+        update ${tableName}
+        <trim prefix="set" suffixOverrides=",">
+            <if test="surveyPoint.elevation!=null">
+                elevation=#{surveyPoint.elevation},
+            </if>
+            <if test="surveyPoint.name!=null">
+                name=#{surveyPoint.name},
+            </if>
+            <if test="surveyPoint.status!=null">
+                status=#{surveyPoint.status},
+            </if>
+            <if test="surveyPoint.updateTime!=null">
+                update_time=#{surveyPoint.updateTime},
+            </if>
+        </trim>
+        where id=#{surveyPoint.id}
+    </update>
+
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete from ${tableName}
+        where
+        id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deletePoint">
+        delete
+        from ${tableName}
+        where id = #{id}
+    </delete>
+
+
+    <select id="queryList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="survey_point_column"/>
+        from
+        ${tableName}
+        <where>
+            ${ew.sqlSegment}
+        </where>
+        order by create_time desc
+    </select>
+
+
+    <select id="queryByNameOrCode" resultType="com.lego.survey.settlement.model.entity.SurveyPoint">
+        SELECT
+        <include refid="survey_point_column"/>
+        from
+        ${tableName}
+        <where>
+            ${ew.sqlSegment}
+        </where>
+        order by create_time desc
+    </select>
+    <select id="queryByName" resultType="com.lego.survey.settlement.model.entity.SurveyPoint">
+        SELECT
+        <include refid="survey_point_column"/>
+        from
+        ${tableName}
+        <where>
+            ${ew.sqlSegment}
+        </where>
+        order by create_time desc
+    </select>
+    <select id="queryInitPoint" resultType="com.lego.survey.settlement.model.vo.SurveyPointVo">
+        SELECT
+        <include refid="survey_point_column"/>
+        from
+        ${tableName}
+        order by create_time asc
+        limit 1
+    </select>
+
+
+</mapper>

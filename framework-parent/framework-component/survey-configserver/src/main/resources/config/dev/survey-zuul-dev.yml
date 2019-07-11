@@ -1,0 +1,58 @@
+zuul:
+  routes:
+    auth-service: /api-auth/**
+    file-service: /api-file/**
+    project-service: /api-project/**
+    report-service: /api-report/**
+    settlement-service: /api-settlement/**
+    user-service: /api-user/**
+  ignored-services: '*'
+
+
+session:
+  domain: survey-zuul
+
+
+#hystrix超时熔断
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+ribbon:
+  ConnectTimeout: 30000
+  ReadTimeout: 30000
+
+feign:
+  hystrix:
+    enabled: true
+
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    #instance-id: ${spring.cloud.client.ip-address}:${random.value}
+    metadata-map:
+      user.name: ${define.user.name}
+      user.password: ${define.user.password}
+      management.context-path: ${server.servlet.context-path}/actuator
+
+    lease-renewal-interval-in-seconds: 1
+    lease-expiration-duration-in-seconds: 2
+
+    ## 监控地址 拼接  context-path
+    home-page-url-path: ${server.servlet.context-path}
+    status-page-url-path: ${server.servlet.context-path}/actuator/info
+    health-check-url-path: ${server.servlet.context-path}/actuator/health
+
+
+
+jwt:
+  exclude:
+    urlPatterns:
+      - /api-user/user/login
+      - .*api-docs.*
+      - .*swagger.*

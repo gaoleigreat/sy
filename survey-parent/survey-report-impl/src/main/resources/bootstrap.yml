@@ -1,0 +1,9 @@
+server:
+  port: 48080
+  servlet:
+    context-path: /
+spring:
+  application:
+    name: report-service
+  profiles:
+    active: dev

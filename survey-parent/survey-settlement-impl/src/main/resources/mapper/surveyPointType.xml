@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lego.survey.settlement.impl.mapper.SurveyPointTypeMapper">
+    
+    <resultMap id="SurveyPointTypeResultMap" type="com.lego.survey.settlement.model.entity.SurveyPointType">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="limits" property="limits"/>
+        <result column="section_code" property="sectionCode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="comment" property="comment"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id,name,code,limits,section_code,create_time,update_time,comment
+    </sql>
+
+    <select id="querySurveyPointTypeBySectionCode"
+            parameterType="java.lang.String"
+            resultType="com.lego.survey.settlement.model.entity.SurveyPointType">
+        select * from survey_point_type where section_code = #{sectioncode}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,33 @@
+spring:
+  cloud:
+    config:
+      uri: http://114.116.6.53:48020
+      profile: sit
+      label: master
+     # fail-fast: true
+      username: admin
+      password: admin123
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"       # 允许访问的域名
+            allowedMethods:           # 允许请求的方法
+            - GET
+            - PUT
+            - POST
+            - DELETE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+define:
+  route:
+   prod: false
+
+
+
+

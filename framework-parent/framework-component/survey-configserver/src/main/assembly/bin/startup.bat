@@ -1,0 +1,1 @@
+java  -jar  ../boot/survey-config-0.0.1-SNAPSHOT.jar  --spring.config.location=../conf/bootstrap.yml

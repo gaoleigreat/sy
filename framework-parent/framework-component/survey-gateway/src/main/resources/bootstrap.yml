@@ -1,0 +1,10 @@
+server:
+  port: 48000
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: survey-gateway
+  profiles:
+    active: dev

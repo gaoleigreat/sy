@@ -1,0 +1,23 @@
+spring:
+  cloud:
+    config:
+      fail-fast: true
+      uri: http://114.116.44.104:48020
+      profile: dev
+      label: master
+      username: admin
+      password: admin123
+      retry:
+        max-attempts: 3
+    stream:
+      bindings:
+        output_log:
+          destination: printLog
+          content-type: application/json
+define:
+  report:
+    excel:
+      storePath: D:\JavaWeb\report\
+
+swagger:
+  enabled: true

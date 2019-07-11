@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lego.survey.settlement.impl.mapper.SurveyResultMapper">
+
+    <resultMap id="BaseResultMap" type="com.lego.survey.settlement.model.entity.SurveyResult">
+        <result column="id" property="id"/>
+        <result column="point_code" property="pointCode"/>
+        <result column="point_name" property="pointName"/>
+        <result column="survey_id" property="surveyId"/>
+        <result column="grid_x" property="gridX"/>
+        <result column="grid_y" property="gridY"/>
+        <result column="elevation" property="elevation"/>
+        <result column="surveyer" property="surveyer"/>
+        <result column="status" property="status"/>
+        <result column="workspace_code" property="workspaceCode"/>
+        <result column="survey_time" property="surveyTime"/>
+        <result column="upload_time" property="uploadTime"/>
+        <result column="original_id" property="originalId"/>
+        <result column="single_settlement" property="singleSettlement"/>
+        <result column="cumulative_settlement" property="cumulativeSettlement"/>
+        <result column="settling_rate" property="settlingRate"/>
+    </resultMap>
+
+
+    <sql id="survey_result_column">
+        id,
+        point_code,
+        point_name,
+        survey_id,
+        grid_x,
+        grid_y,
+        elevation,
+        surveyer,
+        status,
+        workspace_code,
+        survey_time,
+        upload_time,
+        original_id,
+        single_settlement,
+        cumulative_settlement,
+        settling_rate
+    </sql>
+
+
+
+    <sql id="survey_save_column">
+        id,
+        point_code,
+        point_name,
+        survey_id,
+        grid_x,
+        grid_y,
+        elevation,
+        surveyer,
+        status,
+        workspace_code,
+        survey_time,
+        upload_time,
+        original_id
+    </sql>
+
+
+    <insert id="save">
+        INSERT INTO
+        ${tableName}
+        (
+        <include refid="survey_save_column"/>
+        )
+        VALUES (
+        #{surveyResult.id},
+        #{surveyResult.pointCode},
+        #{surveyResult.pointName},
+        #{surveyResult.surveyId},
+        #{surveyResult.gridX},
+        #{surveyResult.gridY},
+        #{surveyResult.elevation},
+        #{surveyResult.surveyer},
+        #{surveyResult.status},
+        #{surveyResult.workspaceCode},
+        #{surveyResult.surveyTime},
+        #{surveyResult.uploadTime},
+        #{surveyResult.originalId})
+    </insert>
+
+
+    <insert id="saveBatch" parameterType="java.util.List">
+        INSERT INTO
+        ${tableName}
+        (
+        <include refid="survey_save_column"/>
+        )
+        VALUES
+        <foreach collection="surveyResults" item="surveyResult" separator=",">
+            (
+            #{surveyResult.id},
+            #{surveyResult.pointCode},
+            #{surveyResult.pointName},
+            #{surveyResult.surveyId},
+            #{surveyResult.gridX},
+            #{surveyResult.gridY},
+            #{surveyResult.elevation},
+            #{surveyResult.surveyer},
+            #{surveyResult.status},
+            #{surveyResult.workspaceCode},
+            #{surveyResult.surveyTime},
+            #{surveyResult.uploadTime},
+            #{surveyResult.originalId}
+            )
+        </foreach>
+    </insert>
+
+
+    <update id="modify">
+        update ${tableName}
+        <trim prefix="set" suffixOverrides=",">
+            <if test="surveyResult.elevation!=null">
+                elevation=#{surveyResult.elevation},
+            </if>
+            <if test="surveyResult.status!=null">
+                status=#{surveyResult.status},
+            </if>
+            <if test="surveyResult.uploadTime!=null">
+                upload_time=#{surveyResult.uploadTime},
+            </if>
+            <if test="surveyResult.singleSettlement!=null">
+                single_settlement=#{surveyResult.singleSettlement},
+            </if>
+            <if test="surveyResult.cumulativeSettlement!=null">
+                cumulative_settlement=#{surveyResult.cumulativeSettlement},
+            </if>
+            <if test="surveyResult.settlingRate!=null">
+                settling_rate=#{surveyResult.settlingRate},
+            </if>
+        </trim>
+        where id=#{surveyResult.id}
+    </update>
+
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete from ${tableName}
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteResult">
+        delete
+        from ${tableName}
+        where id = #{id}
+    </delete>
+
+
+    <select id="queryList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="survey_result_column"/>
+        from
+        ${tableName}
+        <where>
+            ${ew.sqlSegment}
+        </where>
+        order by upload_time desc
+    </select>
+
+    <select id="queryPreResult" resultType="com.lego.survey.settlement.model.entity.SurveyResult">
+        SELECT
+        <include refid="survey_result_column"/>
+        from
+        ${tableName}
+        <where>
+            ${ew.sqlSegment}
+        </where>
+        order by survey_time desc
+        limit #{count}
+    </select>
+
+    <select id="queryInitResult" resultType="com.lego.survey.settlement.model.entity.SurveyResult">
+        SELECT
+        <include refid="survey_result_column"/>
+        from
+        ${tableName}
+        <where>
+            ${ew.sqlSegment}
+        </where>
+        order by survey_time asc
+        limit 1
+    </select>
+
+
+</mapper>

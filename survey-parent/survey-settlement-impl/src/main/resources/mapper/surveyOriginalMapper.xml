@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lego.survey.settlement.impl.mapper.SurveyOriginalMapper">
+
+    <resultMap id="BaseResultMap" type="com.lego.survey.settlement.model.entity.SurveyOriginal">
+        <result column="id" property="id"/>
+        <result column="bp_code" property="bpCode"/>
+        <result column="bp_type" property="bpType"/>
+        <result column="fp_code" property="fpCode"/>
+        <result column="fp_type" property="fpType"/>
+        <result column="datas" property="datas"/>
+        <result column="index" property="index"/>
+        <result column="task_id" property="taskId"/>
+        <result column="upload_time" property="uploadTime"/>
+    </resultMap>
+
+
+    <sql id="survey_original_column">
+        id,bp_code,bp_type,fp_code,fp_type,datas,`index`,task_id,upload_time
+    </sql>
+
+    <insert id="save">
+        INSERT INTO
+        ${tableName}
+        (
+        <include refid="survey_original_column"/>
+        )
+        VALUES (
+        #{surveyOriginal.id},
+        #{surveyOriginal.bpCode},
+        #{surveyOriginal.bpType},
+        #{surveyOriginal.fpCode},
+        #{surveyOriginal.fpType},
+        #{surveyOriginal.datas},
+        #{surveyOriginal.index},
+        #{surveyOriginal.taskId},
+        #{surveyOriginal.uploadTime}
+        )
+    </insert>
+
+
+    <insert id="saveBatch" parameterType="java.util.List">
+        INSERT INTO
+        ${tableName}
+        (
+        <include refid="survey_original_column"/>
+        )
+        VALUES
+        <foreach collection="surveyOriginals" item="surveyOriginal" separator=",">
+            (
+            #{surveyOriginal.id},
+            #{surveyOriginal.bpCode},
+            #{surveyOriginal.bpType},
+            #{surveyOriginal.fpCode},
+            #{surveyOriginal.fpType},
+            #{surveyOriginal.datas},
+            #{surveyOriginal.index},
+            #{surveyOriginal.taskId},
+            #{surveyOriginal.uploadTime}
+            )
+        </foreach>
+
+    </insert>
+
+
+    <update id="modify">
+        update ${tableName}
+        <trim prefix="set" suffixOverrides=",">
+            <if test="surveyOriginal.bpCode!=null">
+                bp_code=#{surveyOriginal.bpCode},
+            </if>
+            <if test="surveyOriginal.bpType!=null">
+                bp_type=#{surveyOriginal.bpType},
+            </if>
+            <if test="surveyOriginal.fpCode!=null">
+                fp_code=#{surveyOriginal.fpCode},
+            </if>
+            <if test="surveyOriginal.fpType!=null">
+                fp_type=#{surveyOriginal.fpType},
+            </if>
+            <if test="surveyOriginal.uploadTime!=null">
+                upload_time=#{surveyOriginal.uploadTime},
+            </if>
+        </trim>
+        where id=#{surveyOriginal.id}
+    </update>
+
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete from ${tableName}
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteOriginal">
+        delete
+        from ${tableName}
+        where id = #{id}
+    </delete>
+
+
+    <select id="queryList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="survey_original_column"/>
+        from
+        ${tableName}
+        <where>
+            ${ew.sqlSegment}
+        </where>
+        order by upload_time desc
+    </select>
+
+
+</mapper>

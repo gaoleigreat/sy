@@ -1,0 +1,69 @@
+package com.lego.survey.user.impl.service.impl;
+import com.lego.survey.user.impl.repository.ConfigRepository;
+import com.lego.survey.user.impl.service.IConfigService;
+import com.lego.survey.user.model.entity.Config;
+import com.survey.lib.common.page.PagedResult;
+import com.survey.lib.common.vo.RespVO;
+import com.survey.lib.common.vo.RespVOBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+
+/**
+ * @author yanglf
+ * @description
+ * @since 2019/1/3
+ **/
+@Service
+public class ConfigServiceImpl implements IConfigService {
+
+    @Autowired
+    private ConfigRepository configRepository;
+
+    @Override
+    public RespVO addConfig(Config config) {
+        config.setValid(0);
+        config.setUpdateTime(new Date());
+        configRepository.save(config);
+        return RespVOBuilder.success();
+    }
+
+    @Override
+    public RespVO delConfig(String id) {
+        Config config = configRepository.findConfigByIdAndValid(id,0);
+        config.setValid(1);
+        configRepository.save(config);
+        return RespVOBuilder.success();
+
+    }
+
+    @Override
+    public Config queryById(String id) {
+        return configRepository.findConfigByIdAndValid(id,0);
+    }
+
+    @Override
+    public PagedResult<Config> queryList(int pageIndex, int pageSize) {
+        PagedResult<Config> pagedResult=new PagedResult<>();
+        Pageable pageable= PageRequest.of(pageIndex-1,pageSize, Sort.Direction.DESC,"updateTime");
+        Page<Config> configPage = configRepository.findAll(pageable);
+        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex,pageSize,0,configPage.getTotalElements(),configPage.getTotalPages()));
+        pagedResult.setResultList(configPage.getContent());
+        return pagedResult;
+    }
+
+    @Override
+    public Config queryByName(String name) {
+        return configRepository.findConfigByNameAndValidOrderByUpdateTimeDesc(name,0);
+    }
+
+    @Override
+    public RespVO modify(Config config) {
+        config.setValid(0);
+        config.setUpdateTime(new Date());
+         configRepository.save(config);
+         return RespVOBuilder.success();
+    }
+}

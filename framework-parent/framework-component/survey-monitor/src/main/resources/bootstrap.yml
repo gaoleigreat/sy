@@ -1,0 +1,10 @@
+server:
+  port: 48030
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: survey-monitor
+  profiles:
+    active: dev

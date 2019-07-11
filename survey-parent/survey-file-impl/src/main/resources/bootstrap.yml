@@ -1,0 +1,9 @@
+server:
+  port: 48090
+  servlet:
+    context-path: /
+spring:
+  application:
+    name: file-service
+  profiles:
+    active: dev

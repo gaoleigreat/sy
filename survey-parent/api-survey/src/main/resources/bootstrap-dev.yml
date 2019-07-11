@@ -1,0 +1,32 @@
+spring:
+  cloud:
+    config:
+      fail-fast: true
+      uri: http://114.116.44.104:48020
+      profile: dev
+      label: master
+      username: admin
+      password: admin123
+      retry:
+        max-attempts: 3
+  jackson:
+    default-property-inclusion: non_null   # json 中的 null 不进行对象映射
+  #mvc:
+  #  throw-exception-if-no-handler-found: true   # 出现 404 异常，直接抛出异常，禁用spring boot 内部处理
+  #resources:
+  #  add-mappings: false   # 不需要为资源文件建立映射
+  security:
+    user:
+      name: ${define.user.name}
+      password: ${define.user.password}
+
+feign:
+  okhttp:
+    enabled: true
+  httpclient:
+    max-connections: 200
+    max-connections-per-route: 50
+    enabled: false
+
+swagger:
+  enabled: true

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lego.survey.settlement.impl.mapper.BasePointMapper">
+
+    <resultMap id="BaseResultMap" type="com.lego.survey.settlement.model.entity.BasePoint">
+        <result column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="version" property="version"/>
+        <result column="grid_x" property="gridX"/>
+        <result column="grid_y" property="gridY"/>
+        <result column="elevation" property="elevation"/>
+        <result column="valid" property="valid"/>
+        <result column="section_code" property="sectionCode"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="comment" property="comment"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,code,name,`type`,version,grid_x,grid_y,elevation,create_user,create_time,update_time,comment
+    </sql>
+
+    <select id="queryLastVersionBySectionCode" resultType="java.lang.Integer">
+        select version
+        from base_point
+        where section_code = #{sectionCode}
+          and valid = 0
+        order by create_time desc
+        limit 1
+    </select>
+
+
+</mapper>

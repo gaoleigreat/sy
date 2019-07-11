@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lego.survey.settlement.impl.mapper.DynamicCreateTableMapper">
+
+
+    <update id="createSurveyPointTable">
+        CREATE TABLE IF NOT EXISTS ${tableName}
+        (
+            id             BIGINT       NOT NULL PRIMARY KEY UNIQUE COMMENT 'recoderId',
+            code           VARCHAR(50)  NOT NULL unique COMMENT 'surveyPointCode',
+            name           VARCHAR(50)  NOT NULL COMMENT 'pointName',
+            type           VARCHAR(10)  NOT NULL COMMENT 'pointType',
+            grid_x         DOUBLE(255, 5) COMMENT 'initialPlaneX',
+            grid_y         DOUBLE(255, 5) COMMENT 'initialPlaneY',
+            elevation      DOUBLE(255, 5) COMMENT 'initialElevation',
+            limits         VARCHAR(500) NOT NULL COMMENT 'data type singleSettlementLowerLimit,singleSettlementLimit,lowerLimitOfCumulativeSettlement,cumulativeSettlementLimit,lowerSedimentationRate,settlingRateUpperLimit',
+            status         TINYINT      NOT NULL DEFAULT 1 COMMENT 'Status: 1: Normal 2: New 3: Stop Test 4: Destruction',
+            workspace_code VARCHAR(20)  NOT NULL COMMENT 'workAreaCode',
+            create_time    TIMESTAMP COMMENT 'creationTime',
+            update_time    TIMESTAMP COMMENT 'updateTime',
+            comment        VARCHAR(20) COMMENT 'remark'
+        ) ENGINE = InnoDB
+          DEFAULT CHARSET = utf8
+    </update>
+
+    <update id="createSurveyResultTable">
+        CREATE TABLE IF NOT EXISTS ${tableName}
+        (
+            id                    VARCHAR(50) NOT NULL PRIMARY KEY UNIQUE COMMENT 'recordId',
+            point_name            VARCHAR(50) NOT NULL COMMENT 'pointName',
+            point_code            VARCHAR(50) NOT NULL unique COMMENT 'measuringPointNumber',
+            survey_time           TIMESTAMP   NOT NULL COMMENT 'measureTime',
+            workspace_code        VARCHAR(20) NOT NULL COMMENT 'workAreaCode',
+            survey_id             VARCHAR(50) NOT NULL COMMENT 'surveyorId',
+            surveyer              VARCHAR(50) NOT NULL COMMENT 'surveyorName',
+            grid_x                DOUBLE(255, 5) COMMENT 'initialPlaneX',
+            grid_y                DOUBLE(255, 5) COMMENT 'initialPlaneY',
+            elevation             DOUBLE(255, 5) COMMENT 'initialElevation',
+            status                TINYINT     NOT NULL DEFAULT 1 COMMENT 'Status: 1: Normal 2: New 3: Stop Test 4: Destruction',
+            upload_time           TIMESTAMP COMMENT 'uploadTime',
+            original_id           BIGINT COMMENT 'rawDataID',
+            single_ettlement      DOUBLE(255, 5) COMMENT '单次沉降量',
+            cumulative_settlement DOUBLE(255, 5) COMMENT '累积沉降量',
+            settling_rate         DOUBLE(255, 5) COMMENT '沉降速率'
+        ) ENGINE = InnoDB
+          DEFAULT CHARSET = utf8
+    </update>
+
+    <update id="createSurveyOriginalTable">
+        CREATE TABLE IF NOT EXISTS ${tableName}
+        (
+            id          BIGINT       NOT NULL PRIMARY KEY UNIQUE COMMENT 'recordId',
+            bp_code     VARCHAR(50)  NOT NULL COMMENT 'backsightPointCoding',
+            bp_type     TINYINT      NOT NULL DEFAULT 1 COMMENT 'Backsight type 0 Reference point 1 Observation point 2 Turn point',
+            fp_code     VARCHAR(20)  NOT NULL COMMENT 'frontViewCoding',
+            fp_type     TINYINT      NOT NULL DEFAULT 1 COMMENT 'Front view type 0 Reference point 1 Observation point 2 Turn point',
+            datas       VARCHAR(255) NOT NULL COMMENT 'rawMeasurementDataJSONArray',
+            `index`     TINYINT      NOT NULL COMMENT 'indexValueInTheTask',
+            task_id     BIGINT       NOT NULL COMMENT 'taskID',
+            upload_time TIMESTAMP COMMENT 'uploadTime'
+        ) ENGINE = InnoDB
+          DEFAULT CHARSET = utf8
+    </update>
+
+    <update id="createSurveyTaskTable">
+        CREATE TABLE IF NOT EXISTS ${tableName}
+        (
+            id           BIGINT       NOT NULL PRIMARY KEY UNIQUE COMMENT 'recordId',
+            name         VARCHAR(50)  NOT NULL COMMENT 'missionName',
+            property     VARCHAR(255) NOT NULL COMMENT 'taskAttributeJSONString',
+            measure_type TINYINT      NOT NULL DEFAULT 0 COMMENT 'Measurement type 0 Single measurement 1 Back front and back 2 Front to back 3 Interchange',
+            line_way     TINYINT               DEFAULT 0 COMMENT 'Way of travel 0 Free line 1 Closed line 2 Attached line 3 Round trip',
+            adjustment   TINYINT               DEFAULT 0 COMMENT 'Whether the adjustment is 1 - adjustment, 0 - no adjustment',
+            create_time  TIMESTAMP    NOT NULL COMMENT 'taskCreationTime',
+            end_time     TIMESTAMP    NOT NULL COMMENT 'missionEndTime',
+            upload_time  TIMESTAMP COMMENT 'uploadTime'
+        ) ENGINE = innodb
+          DEFAULT CHARSET = utf8
+    </update>
+</mapper>

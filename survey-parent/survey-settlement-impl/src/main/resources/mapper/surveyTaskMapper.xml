@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lego.survey.settlement.impl.mapper.SurveyTaskMapper">
+
+    <resultMap id="BaseResultMap" type="com.lego.survey.settlement.model.entity.SurveyTask">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="property" property="property"/>
+        <result column="measure_type" property="measureType"/>
+        <result column="line_way" property="lineWay"/>
+        <result column="adjustment" property="adjustment"/>
+        <result column="create_time" property="createTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="upload_time" property="uploadTime"/>
+    </resultMap>
+
+
+    <sql id="survey_task_column">
+        id,name,property,measure_type,line_way,adjustment,create_time,end_time,upload_time
+    </sql>
+
+    <insert id="save">
+        INSERT INTO
+        ${tableName}
+        (
+        <include refid="survey_task_column"/>
+        )
+        VALUES (
+        #{surveyTask.id},
+        #{surveyTask.name},
+        #{surveyTask.property},
+        #{surveyTask.measureType},
+        #{surveyTask.lineWay},
+        #{surveyTask.adjustment},
+        #{surveyTask.createTime},
+        #{surveyTask.endTime},
+        #{surveyTask.uploadTime}
+        )
+    </insert>
+
+
+    <update id="modify">
+        update ${tableName}
+        <trim prefix="set" suffixOverrides=",">
+            <if test="surveyTask.name!=null">
+                name=#{surveyTask.name},
+            </if>
+            <if test="surveyTask.property!=null">
+                properity=#{surveyTask.property},
+            </if>
+            <if test="surveyTask.measureType!=null">
+                measure_type=#{surveyTask.measureType},
+            </if>
+            <if test="surveyTask.lineWay!=null">
+                line_way=#{surveyTask.lineWay},
+            </if>
+            <if test="surveyTask.uploadTime!=null">
+                upload_time=#{surveyTask.uploadTime},
+            </if>
+        </trim>
+        where id=#{surveyTask.id}
+    </update>
+
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete from ${tableName}
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteTask">
+        delete
+        from ${tableName}
+        where id = #{id}
+    </delete>
+
+
+    <select id="queryList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="survey_task_column"/>
+        from
+        ${tableName}
+        <where>
+            ${ew.sqlSegment}
+        </where>
+    </select>
+
+
+    <select id="queryById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="survey_task_column"/>
+        from
+        ${tableName}
+        <where>
+            id = #{id}
+        </where>
+    </select>
+
+
+</mapper>

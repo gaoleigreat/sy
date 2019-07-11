@@ -1,0 +1,64 @@
+spring:
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:/home/work/config
+        #search-locations: classpath:/config/dev
+
+          # git:
+          #   uri: http://192.168.105.11:8888/SMP/config-repo.git
+          #  username: yanglf
+          # password: wz5899117
+          # search-paths: dev
+          # basedir: config/repositpry/
+          # force-pull: true
+          # delete-untracked-branches: true
+        # jdbc:
+        #   sql: SELECT `key`, `value` from properties where application=? and profile=? and label=?
+      #label: master
+      #fail-fast: true
+
+    #数据源
+  # datasource:
+  #  url: jdbc:mysql://114.116.6.53:3306/survey_config
+  #  username: root
+  #  password: mysql
+  #  driver-class-name: com.mysql.jdbc.Driver
+
+
+  security:
+    user:
+      name: admin
+      password: '{cipher}a1d30c1325f1b0cd2e4619bff2be57bc32ae0413c0ce1fee07153b60bfa3a782'
+
+encrypt:
+  key: PL8iU@vt&0tFWijuoi%zASgsLP1rKwks
+
+
+
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@114.116.44.104:48010/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+
+
+  #logging:
+  #  level:
+  #   org.springframework.cloud: DEBUG
+  #  org.springframework.boot: DEBUG
+
+
+  #scca:
+  #  rest:
+  #   context-path: /survey
+  # ui:
+  #  use-embed-scca-rest-server: true

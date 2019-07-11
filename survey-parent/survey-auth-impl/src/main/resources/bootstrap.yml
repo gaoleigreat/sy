@@ -1,0 +1,10 @@
+server:
+  port: 48060
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: auth-service
+  profiles:
+    active: dev

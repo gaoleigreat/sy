@@ -1,0 +1,1 @@
+java  -jar  ../boot/report-service-impl-0.0.1-SNAPSHOT.jar  --spring.config.location=../conf/bootstrap.yml

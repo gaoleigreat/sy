@@ -1,0 +1,32 @@
+spring:
+  cloud:
+    config:
+      #fail-fast: true
+      uri: http://114.116.6.53:48020
+      profile: sit
+      label: master
+      username: admin
+      password: admin123
+  application:
+    name: survey-monitor
+  security:
+    user:
+      name: ${define.user.name}
+      password: ${define.user.password}
+  boot:
+    admin:
+      notify:
+        dingtalk:
+          enabled: true
+          webhook-token: https://oapi.dingtalk.com/robot/send?access_token=a6b85d2191ab46483554ed551d774378e9ab2b9118e1efdd71f02d0f4ea372a2
+
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

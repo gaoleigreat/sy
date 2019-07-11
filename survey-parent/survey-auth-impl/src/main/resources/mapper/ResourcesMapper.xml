@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lego.survey.auth.impl.mapper.ResourcesMapper">
+
+    <sql id="find_columns">
+		id as id, r_id as rId, r_name as rName, pr_id as prId, pr_name as prName, scope as scope, creation_date as creationDate
+	</sql>
+
+    <select id="findList" parameterType="com.lego.survey.auth.model.entity.Resources"
+            resultType="com.lego.survey.auth.model.entity.Resources">
+        select
+        <include refid="find_columns"></include>
+        from survey_resources
+        where 1 = 1
+        <if test='scope != null and scope != ""'>
+            and scope = #{scope, jdbcType=VARCHAR}
+        </if>
+        <if test='rName != null and rName != ""'>
+            and instr(r_name, #{rName, jdbcType=VARCHAR}) > 0
+        </if>
+    </select>
+    <select id="queryById" resultType="com.lego.survey.auth.model.entity.Resources">
+        select
+        <include refid="find_columns"></include>
+        from survey_resources
+        where id=#{id}
+    </select>
+
+    <insert id="insertList">
+        insert into survey_resources
+        (r_id, r_name, pr_id, pr_name,scope, creation_date)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.rId, jdbcType=VARCHAR},
+            #{item.rName, jdbcType=VARCHAR},
+            #{item.prId, jdbcType=VARCHAR},
+            #{item.prName, jdbcType=VARCHAR},
+            #{item.scope, jdbcType=VARCHAR},
+            sysdate()
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteList">
+        delete from survey_resources
+        where id in
+        <foreach collection="list" item="item" separator="," open="(" close=")" index="index">
+            #{list[${index}], jdbcType=BIGINT}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,25 @@
+spring:
+  cloud:
+    config:
+      fail-fast: true
+      uri: http://114.116.6.53:48020
+      profile: sit
+      label: master
+      username: admin
+      password: admin123
+      retry:
+        max-attempts: 3
+    stream:
+      bindings:
+        input_log:
+          destination: printLog
+          content-type: application/json
+          group: ${spring.application.name}
+        output_log:
+          destination: printLog
+          content-type: application/json
+
+
+package:
+  packageDir: /home/work/config/package/survey.apk
+  versionPath: /home/work/config/version/version.properties

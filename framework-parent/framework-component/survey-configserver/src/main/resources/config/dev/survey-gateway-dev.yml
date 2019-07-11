@@ -1,0 +1,33 @@
+#配置熔断的超时时间
+hystrix.command.fallbackcmd.execution.isolation.thread.timeoutInMilliseconds: 5000
+#配置路由策略
+define:
+  route:
+    prod: false
+spring:
+  cloud:
+   # gateway:
+    #  routes:
+    #  - id: auth1_prod
+     #   uri: lb://auth-service
+      #  predicates:
+       # - Path=/api-auth/**
+       # - Weight=auth1, 90
+       # filters:
+        #- SwaggerHeaderFilter
+       # - StripPrefix=1
+       # - name: Hystrix   #对应熔断的 filter  HystrixGatewayFilterFactory
+        #  args:
+         #   name: fallbackcmd
+          #  fallbackUri: forward:/fallback
+
+      discovery:
+        locator:
+          enabled: false    # 开启基于服务名访问的路由策略
+
+
+#配置匿名访问url
+jwt:
+  exclude:
+    urlPatterns:
+      - /user/login

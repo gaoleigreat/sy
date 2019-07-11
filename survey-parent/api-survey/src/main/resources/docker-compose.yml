@@ -1,0 +1,50 @@
+version: "2.2"
+services:
+  survey-eureka1:
+    restart: on-failure
+    image: survey-eureka
+    ports:
+      - 48011:48011
+    networks:
+      - eureka-net
+    environment:
+      SERVER_PORT: 48011
+
+  survey-config1:
+    image: survey-config
+    networks:
+      - eureka-net
+    ports:
+      - 48021:48021
+    environment:
+      REGISTER_URL: "http://192.168.101.197:48011/eureka/"
+      SERVER_PORT: "48021"
+      SERVER_GIT_URL:  "http://192.168.105.11:8888/SMP/config-repo.git"
+      SERVER_GIT_USERNAME: "yanglf"
+      SERVER_GIT_PASSWORD: "wz5899117"
+      RABBITMQ_HOST: "192.168.101.197"
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USERNAME: "admin"
+      RABBITMQ_PASSWORD: "admin123"
+
+  survey-gateway:
+    restart: on-failure
+    image: survey-gateway
+    ports:
+      - "48000:48000"
+    environment:
+      REGISTER_URL: "http://192.168.101.197:48011/eureka/"
+      SERVER_PORT: "48000"
+      SERVER_ADDR: "192.168.101.197"
+    networks:
+      - eureka-net
+networks:
+  eureka-net:
+    driver: bridge
+
+
+# docker-compose -f docker-compose.yml up -d
+# docker-compose -f docker-compose.yml down
+
+
+

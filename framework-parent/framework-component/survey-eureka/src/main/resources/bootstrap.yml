@@ -1,0 +1,9 @@
+server:
+  port: 48010
+  servlet:
+    context-path: /
+spring:
+  application:
+    name: survey-eureka
+  profiles:
+    active: dev

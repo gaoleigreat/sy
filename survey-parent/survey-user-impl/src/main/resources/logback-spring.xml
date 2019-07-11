@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--configuration节点，scan为true是配置文件发生改变时重新加载，scanPeriod为扫描的周期，debug表示是否打印logback内部的日志信息，查看logback状态 -->
+<configuration scan="true" scanPeriod="120 seconds" debug="false">
+    <!-- 定义变量name：变量名，value：变量值，可以通过${}使用值 -->
+    <property name="appName" value="user-service"/>
+    <property name="logDir" value="user-service"/>
+
+    <!-- 日志上下文名称 -->
+    <contextName>${appName}</contextName>
+
+    <!-- 定义timestamp变量 key变量名称，datePattern时间格式 -->
+    <timestamp key="timestamp" datePattern="yyyy-MM-dd HH:mm:ss"/>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss}\t[%thread]\t[%-5level]\t[%logger{50}]%msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/home/work/logs/${logDir}/error_log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/home/work/logs/${logDir}/error_log_%d{yyyyMMdd.HH}</fileNamePattern>
+            <maxHistory>2400</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss}\t[%thread]\t[%-5level]\t[%logger{50}]%msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <appender name="access" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/home/work/logs/${logDir}/access_log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/home/work/logs/${logDir}/access_log_%d{yyyyMMdd.HH}</fileNamePattern>
+            <maxHistory>2400</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%msg%n</pattern>
+        </encoder>
+        <filter class="com.lego.survey.lib.log.filter.AccessLogFilter" />
+    </appender>
+
+    <appender name="service" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/home/work/logs/${logDir}/service_log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/home/work/logs/${logDir}/service_log_%d{yyyyMMdd.HH}</fileNamePattern>
+            <maxHistory>2400</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%msg%n</pattern>
+        </encoder>
+        <filter class="com.lego.survey.lib.log.filter.ServiceLogFilter" />
+    </appender>
+
+    <!--<logger name="org.springframework" level="DEBUG" />-->
+   <!-- <logger name="com.lego.survey" level="DEBUG" />-->
+
+    <logger name="access">
+        <appender-ref ref="access"/>
+    </logger>
+    <logger name="service">
+        <appender-ref ref="service"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="console"/>
+        <appender-ref ref="error"/>
+    </root>
+
+    <jmxConfigurator/>
+</configuration>

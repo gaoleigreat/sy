@@ -1,0 +1,10 @@
+server:
+  port: 48070
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: settlement-service
+  profiles:
+    active: dev
