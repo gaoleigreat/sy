@@ -111,6 +111,14 @@ public class SectionServiceImpl implements ISectionService {
                     .name(section.getName())
                     .property(section.getProperty())
                     .services(section.getService()).build();
+            OwnerProject ownerProject = section.getOwnerProject();
+            if(ownerProject!=null){
+                addVo.setProjectId(ownerProject.getId());
+            }
+            UpperGroup ownerGroup = section.getOwnerGroup();
+            if(ownerGroup!=null){
+                addVo.setGroupId(ownerGroup.getId());
+            }
             return RespVOBuilder.success(addVo);
         }
         return RespVOBuilder.success();
