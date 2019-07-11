@@ -39,6 +39,10 @@ spring:
     bus:
       trace:
         enabled: true
+    config:   #  优先读取本地配置
+      allow-override: true
+      override-none: true
+      override-system-properties: false
   data:
     mongodb:
       host: 114.116.6.53

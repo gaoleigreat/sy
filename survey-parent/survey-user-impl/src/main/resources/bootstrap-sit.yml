@@ -18,8 +18,3 @@ spring:
         output_log:
           destination: printLog
           content-type: application/json
-
-
-package:
-  packageDir: /home/work/config/package/survey.apk
-  versionPath: /home/work/config/version/version.properties

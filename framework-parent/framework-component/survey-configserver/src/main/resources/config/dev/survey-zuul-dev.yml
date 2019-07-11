@@ -56,3 +56,4 @@ jwt:
       - /api-user/user/login
       - .*api-docs.*
       - .*swagger.*
+      - /api-user/package/.*

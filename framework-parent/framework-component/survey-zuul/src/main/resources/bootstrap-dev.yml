@@ -9,11 +9,6 @@ spring:
       password: admin123
       retry:
         max-attempts: 3
-  boot:
-    admin:
-      client:
-        instance:
-          service-base-url: /survey
 zuul:
   routes:
     auth-service: /api-auth/**
