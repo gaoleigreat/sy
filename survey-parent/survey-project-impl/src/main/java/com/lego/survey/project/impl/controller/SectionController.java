@@ -116,7 +116,7 @@ public class SectionController {
         String groupId = sectionAddVo.getGroupId();
         if (groupId != null) {
             GroupVo groupVo = iGroupService.queryById(groupId);
-            if(groupVo!=null){
+            if (groupVo != null) {
                 section.setOwnerGroup(UpperGroup.builder()
                         .id(groupVo.getId())
                         .name(groupVo.getName())
@@ -137,13 +137,11 @@ public class SectionController {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         //TODO 权限校验
-        RespVO<SectionAddVo> sectionVoRespVO = iSectionService.queryById(sectionAddVo.getId());
-        if (sectionVoRespVO.getRetCode() != RespConsts.SUCCESS_RESULT_CODE) {
+        Section sectionById = iSectionService.findSectionById(sectionAddVo.getId());
+        if (sectionById == null) {
             return RespVOBuilder.failure(RespConsts.FAIL_RESULT_CODE, "标段信息不存在");
         }
-        List<String> services = sectionVoRespVO.getInfo().getServices();
-        List<String> service = sectionAddVo.getServices();
-        Section section = getSection(sectionAddVo);
+        Section section = sectionAddVo.modifySection(sectionById);
         RespVO respVO = iSectionService.modify(section);
         logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "修改标段信息:[" + section.getId() + "]");
        /* List<String> list = ListUtils.getDiffrentList(services, service);

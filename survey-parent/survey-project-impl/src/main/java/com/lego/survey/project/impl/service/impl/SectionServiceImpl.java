@@ -22,6 +22,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -86,7 +87,6 @@ public class SectionServiceImpl implements ISectionService {
     public RespVO modify(Section section) {
         //修改标段信息
         section.setValid(0);
-        section.setUpdateTime(new Date());
         sectionRepository.save(section);
         return RespVOBuilder.success();
     }
@@ -103,7 +103,7 @@ public class SectionServiceImpl implements ISectionService {
     @Override
     public RespVO<SectionAddVo> queryById(String id) {
         Section section = sectionRepository.findSectionByIdAndValid(id, 0);
-        if(section!=null){
+        if (section != null) {
             SectionAddVo addVo = SectionAddVo.builder().address(section.getAddress())
                     .code(section.getCode())
                     .desc(section.getDesc())
@@ -112,16 +112,21 @@ public class SectionServiceImpl implements ISectionService {
                     .property(section.getProperty())
                     .services(section.getService()).build();
             OwnerProject ownerProject = section.getOwnerProject();
-            if(ownerProject!=null){
+            if (ownerProject != null) {
                 addVo.setProjectId(ownerProject.getId());
             }
             UpperGroup ownerGroup = section.getOwnerGroup();
-            if(ownerGroup!=null){
+            if (ownerGroup != null) {
                 addVo.setGroupId(ownerGroup.getId());
             }
             return RespVOBuilder.success(addVo);
         }
         return RespVOBuilder.success();
+    }
+
+    @Override
+    public Section findSectionById(String id) {
+        return sectionRepository.findSectionByIdAndValid(id,0);
     }
 
     @Override
@@ -224,26 +229,31 @@ public class SectionServiceImpl implements ISectionService {
         Query query = new Query();
         query.with(PageRequest.of(pageIndex - 1, pageSize, Sort.Direction.DESC, "createTime"));
         Criteria c = new Criteria();
+        c.and("valid").is(0);
         if (!StringUtils.isEmpty(projectId)) {
             c.and("ownerProject._id").is(projectId);
         }
         query.addCriteria(c);
         List<Section> sectionList = mongoTemplate.find(query, Section.class, "section");
-        for (Section section : sectionList) {
-            UpperGroup ownerGroup = section.getOwnerGroup();
-            List<ColleaguesVo> colleaguesVos = getColleaguesVos(section);
-            Group group = groupRepository.findGroupByIdAndValid(ownerGroup.getId(), 0);
-            SectionVo sectionVo = SectionVo.builder().id(section.getId())
-                    .code(section.getCode())
-                    .name(section.getName())
-                    .address(section.getAddress())
-                    .desc(section.getDesc())
-                    .colleagues(colleaguesVos).build();
-            if (group != null) {
-                sectionVo.setGroup(GroupVo.builder().id(group.getId()).desc(group.getDesc()).upperGroup(group.getUpperGroup())
-                        .name(group.getName()).build());
+        if (!CollectionUtils.isEmpty(sectionList)) {
+            for (Section section : sectionList) {
+                UpperGroup ownerGroup = section.getOwnerGroup();
+                List<ColleaguesVo> colleaguesVos = getColleaguesVos(section);
+                SectionVo sectionVo = SectionVo.builder().id(section.getId())
+                        .code(section.getCode())
+                        .name(section.getName())
+                        .address(section.getAddress())
+                        .desc(section.getDesc())
+                        .colleagues(colleaguesVos).build();
+                if (ownerGroup != null) {
+                    Group group = groupRepository.findGroupByIdAndValid(ownerGroup.getId(), 0);
+                    if (group != null) {
+                        sectionVo.setGroup(GroupVo.builder().id(group.getId()).desc(group.getDesc()).upperGroup(group.getUpperGroup())
+                                .name(group.getName()).build());
+                    }
+                }
+                sectionVos.add(sectionVo);
             }
-            sectionVos.add(sectionVo);
         }
         pagedResult.setResultList(sectionVos);
 

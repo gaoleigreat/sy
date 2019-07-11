@@ -52,6 +52,9 @@ public interface ISectionService {
     RespVO<SectionAddVo>   queryById(String id);
 
 
+    Section   findSectionById(String id);
+
+
     /**
      * 根据master获取标段信息
      * @param masterId

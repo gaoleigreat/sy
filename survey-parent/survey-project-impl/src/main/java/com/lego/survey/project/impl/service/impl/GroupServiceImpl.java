@@ -57,6 +57,9 @@ public class GroupServiceImpl implements IGroupService {
     @Override
     public GroupVo queryById(String id) {
         Group group = groupRepository.findGroupByIdAndValid(id, 0);
+        if(group==null){
+            return null;
+        }
         return GroupVo.builder().name(group.getName())
                 .id(group.getId())
                 .desc(group.getDesc())

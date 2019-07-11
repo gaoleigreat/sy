@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -57,12 +58,23 @@ public class SectionAddVo {
     }
 
 
-
-
-
-
-
-
-
-
+    public Section modifySection(Section section) {
+        if(this.name!=null){
+            section.setName(this.name);
+        }
+        if(this.address!=null){
+            section.setAddress(this.address);
+        }
+        if(this.desc!=null){
+            section.setDesc(this.desc);
+        }
+        if(!CollectionUtils.isEmpty(this.services)){
+            section.setService(this.services);
+        }
+        if(!CollectionUtils.isEmpty(this.property)){
+            section.setProperty(this.property);
+        }
+        section.setUpdateTime(new Date());
+        return section;
+    }
 }

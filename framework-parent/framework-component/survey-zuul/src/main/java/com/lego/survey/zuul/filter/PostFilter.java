@@ -1,5 +1,6 @@
 package com.lego.survey.zuul.filter;
 
+import com.netflix.util.Pair;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.List;
 
 import static org.springframework.cloud.netflix.zuul.filters.support.FilterConstants.POST_TYPE;
 
@@ -45,7 +47,10 @@ public class PostFilter extends ZuulFilter {
         HttpServletRequest req = ctx.getRequest();
         HttpServletResponse res = ctx.getResponse();
         String pvId = (String) ctx.get("pvId");
+        List<Pair<String, String>> zuulResponseHeaders = ctx.getZuulResponseHeaders();
+
         String body = null;
+
         try {
             InputStream stream = ctx.getResponseDataStream();
             body = StreamUtils.copyToString(stream, Charset.forName("UTF-8"));
