@@ -14,3 +14,7 @@ session:
 feign:
   hystrix:
     enabled: true
+
+define:
+  zuul:
+    gray: false

@@ -6,6 +6,8 @@ import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.netflix.ribbon.RibbonHttpResponse;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 
@@ -44,17 +46,20 @@ public class PostFilter extends ZuulFilter {
     public Object run() throws ZuulException {
         RequestContext ctx = RequestContext.getCurrentContext();
         StringBuilder sb = new StringBuilder();
-        HttpServletRequest req = ctx.getRequest();
         HttpServletResponse res = ctx.getResponse();
         String pvId = (String) ctx.get("pvId");
-        List<Pair<String, String>> zuulResponseHeaders = ctx.getZuulResponseHeaders();
-
         String body = null;
-
         try {
-            InputStream stream = ctx.getResponseDataStream();
-            body = StreamUtils.copyToString(stream, Charset.forName("UTF-8"));
-            ctx.setResponseBody(body);
+            Object zuulResponse = ctx.get("zuulResponse");
+            if (zuulResponse != null) {
+                RibbonHttpResponse resp = (RibbonHttpResponse) zuulResponse;
+                MediaType contentType = resp.getHeaders().getContentType();
+                if (contentType != null && contentType.toString().equals(MediaType.APPLICATION_JSON_UTF8_VALUE)) {
+                    InputStream stream = ctx.getResponseDataStream();
+                    body = StreamUtils.copyToString(stream, Charset.forName("UTF-8"));
+                    ctx.setResponseBody(body);
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

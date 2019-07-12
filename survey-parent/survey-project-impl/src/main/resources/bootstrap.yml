@@ -7,3 +7,10 @@ spring:
     name: project-service
   profiles:
     active: dev
+
+
+
+eureka:
+  instance:
+    metadata-map:
+      version: 1.0

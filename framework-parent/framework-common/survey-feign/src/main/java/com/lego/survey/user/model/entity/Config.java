@@ -1,5 +1,6 @@
 package com.lego.survey.user.model.entity;
 
+import com.lego.survey.user.model.vo.ConfigOptionVo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author yanglf
@@ -33,7 +35,7 @@ public class Config {
     private String name;
 
     @ApiModelProperty("可选项")
-    private List<String> option;
+    private List<ConfigOptionVo> option;
     /**
      * 更新时间
      */

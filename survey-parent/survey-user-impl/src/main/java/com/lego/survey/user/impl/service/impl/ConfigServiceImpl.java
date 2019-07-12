@@ -2,14 +2,18 @@ package com.lego.survey.user.impl.service.impl;
 import com.lego.survey.user.impl.repository.ConfigRepository;
 import com.lego.survey.user.impl.service.IConfigService;
 import com.lego.survey.user.model.entity.Config;
+import com.lego.survey.user.model.vo.ConfigOptionVo;
 import com.survey.lib.common.page.PagedResult;
 import com.survey.lib.common.vo.RespVO;
 import com.survey.lib.common.vo.RespVOBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author yanglf
@@ -32,8 +36,22 @@ public class ConfigServiceImpl implements IConfigService {
 
     @Override
     public RespVO delConfig(String id) {
-        Config config = configRepository.findConfigByIdAndValid(id,0);
-        config.setValid(1);
+        Config config = findByOptionId(id);
+        if(config==null){
+            return RespVOBuilder.failure();
+        }
+        List<ConfigOptionVo> options = config.getOption();
+        if(CollectionUtils.isEmpty(options)){
+            return RespVOBuilder.failure();
+        }
+        List<ConfigOptionVo> newOptions=new ArrayList<>();
+        for (ConfigOptionVo option : options) {
+            String optionId = option.getId();
+            if(!id.equals(optionId)){
+                newOptions.add(option);
+            }
+        }
+        config.setOption(newOptions);
         configRepository.save(config);
         return RespVOBuilder.success();
 
@@ -65,5 +83,10 @@ public class ConfigServiceImpl implements IConfigService {
         config.setUpdateTime(new Date());
          configRepository.save(config);
          return RespVOBuilder.success();
+    }
+
+    @Override
+    public Config findByOptionId(String id) {
+        return configRepository.findConfigByOptionId(id);
     }
 }

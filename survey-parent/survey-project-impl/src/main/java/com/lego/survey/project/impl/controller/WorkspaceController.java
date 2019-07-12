@@ -58,8 +58,6 @@ public class WorkspaceController {
         workspace.setId(UuidUtils.generateShortUuid());
         RespVO respVO = iWorkspaceService.add(workspace);
         if(respVO.getRetCode()== RespConsts.SUCCESS_RESULT_CODE){
-            List<Surveyer> surveyer = workspace.getSurveyer();
-            // TODO 更新 用户表 工区信息
             logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "新增工区:[" + workspace.getId() + "]");
         }
         return respVO;
@@ -97,7 +95,7 @@ public class WorkspaceController {
 
     @ApiOperation(value = "根据标段id获取工区信息", notes = "根据标段id获取工区信息", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectId", value = "工程id", dataType = "String", required = true, paramType = "path"),
+            @ApiImplicitParam(name = "projectId", value = "工程id", dataType = "String", required = true, paramType = "query"),
             @ApiImplicitParam(name = "sectionId", value = "标段id", dataType = "String", required = true, paramType = "query"),
     })
     @Operation(value = "list",desc = "删除工区信息")

@@ -1,11 +1,13 @@
 package com.lego.survey.user.impl.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.lego.survey.auth.feign.AuthClient;
 import com.lego.survey.base.annotation.Operation;
 import com.lego.survey.base.annotation.Resource;
 import com.lego.survey.event.user.LogSender;
 import com.lego.survey.user.impl.service.IConfigService;
 import com.lego.survey.user.model.entity.Config;
+import com.lego.survey.user.model.vo.ConfigOptionVo;
 import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.page.PagedResult;
 import com.survey.lib.common.utils.HeaderUtils;
@@ -19,6 +21,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +38,7 @@ import java.util.List;
 @RestController
 @RequestMapping(DictConstant.Path.CONFIG)
 @Api(value = "ConfigController", description = "配置管理")
-@Resource(value = "config",desc = "配置管理")
+@Resource(value = "config", desc = "配置管理")
 public class ConfigController {
 
     @Autowired
@@ -53,7 +56,7 @@ public class ConfigController {
             @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", required = true, example = "1", paramType = "path"),
             @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int", defaultValue = "10", example = "10", paramType = "query"),
     })
-    @Operation(value = "list",desc = "查询配置信息")
+    @Operation(value = "list", desc = "查询配置信息")
     @RequestMapping(value = "/list/{pageIndex}", method = RequestMethod.GET)
     public RespVO<PagedResult<Config>> list(@PathVariable(value = "pageIndex") int pageIndex,
                                             @RequestParam(required = false, defaultValue = "10") int pageSize,
@@ -69,7 +72,7 @@ public class ConfigController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "name", value = "配置名称(场景配置，权限配置，角色配置)", dataType = "String", required = true, example = "1", paramType = "query"),
     })
-    @Operation(value = "queryByName",desc = "通过名称查询配置信息")
+    @Operation(value = "queryByName", desc = "通过名称查询配置信息")
     @RequestMapping(value = "/queryByName", method = RequestMethod.GET)
     public RespVO<Config> queryByName(@RequestParam String name,
                                       HttpServletRequest request) {
@@ -84,24 +87,32 @@ public class ConfigController {
     @ApiImplicitParams({
 
     })
-    @Operation(value = "create",desc = "新增配置信息")
+    @Operation(value = "create", desc = "新增配置信息")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public RespVO create(@Validated @RequestBody Config config, HttpServletRequest request) {
+    public RespVO create(@Validated @RequestBody List<ConfigOptionVo> configOptionVo, HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
-        Config queryByName = iConfigService.queryByName(config.getName());
+        if (CollectionUtils.isEmpty(configOptionVo)) {
+            return RespVOBuilder.failure();
+        }
+        configOptionVo.forEach(c -> c.setId(UuidUtils.generateShortUuid()));
+        String configName = configOptionVo.get(0).getConfigName();
+        Config queryByName = iConfigService.queryByName(configName);
         RespVO respVO;
         if (queryByName != null) {
             queryByName.setUpdateTime(new Date());
-            List<String> option = queryByName.getOption();
-            option.addAll(config.getOption());
+            List<ConfigOptionVo> option = queryByName.getOption();
+            option.addAll(configOptionVo);
             queryByName.setOption(option);
             respVO = iConfigService.modify(queryByName);
         } else {
-            config.setId(UuidUtils.generateShortUuid());
-            respVO = iConfigService.addConfig(config);
+            queryByName = new Config();
+            queryByName.setName(configName);
+            queryByName.setOption(configOptionVo);
+            queryByName.setId(UuidUtils.generateShortUuid());
+            respVO = iConfigService.addConfig(queryByName);
         }
-        logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "新增配置:[" + config.getId() + "]");
+        logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "新增配置:[" + JSONObject.toJSONString(configOptionVo) + "]");
         return respVO;
     }
 
@@ -110,7 +121,7 @@ public class ConfigController {
     @ApiImplicitParams({
 
     })
-    @Operation(value = "modify",desc = "修改配置信息")
+    @Operation(value = "modify", desc = "修改配置信息")
     @RequestMapping(value = "/modify", method = RequestMethod.PUT)
     public RespVO modify(@Validated @RequestBody Config config, HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
@@ -125,7 +136,7 @@ public class ConfigController {
     @ApiImplicitParams({
 
     })
-    @Operation(value = "delete",desc = "删除配置信息")
+    @Operation(value = "delete", desc = "删除配置信息")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public RespVO delete(String id, HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
@@ -140,7 +151,7 @@ public class ConfigController {
     @ApiImplicitParams({
 
     })
-    @Operation(value = "info",desc = "查询配置信息")
+    @Operation(value = "info", desc = "查询配置信息")
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public RespVO<Config> info(String id, HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
