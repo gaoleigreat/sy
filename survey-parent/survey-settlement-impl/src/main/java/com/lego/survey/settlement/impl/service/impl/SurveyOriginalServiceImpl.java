@@ -36,12 +36,27 @@ public class SurveyOriginalServiceImpl implements ISurveyOriginalService {
         List<SurveyOriginalVo> surveyOriginalVos = new ArrayList<>();
         QueryWrapper<SurveyOriginal> queryWrapper = new QueryWrapper<>();
         if (taskId != null) {
-            queryWrapper.eq("task_d", taskId);
+            queryWrapper.eq("task_id", taskId);
         }
         IPage<SurveyOriginal> surveyOriginals = surveyOriginalMapper.queryList(new Page(pageIndex, pageSize), tableName, queryWrapper);
         if (surveyOriginals != null) {
             List<SurveyOriginal> records = surveyOriginals.getRecords();
             records.forEach(surveyOriginal -> surveyOriginalVos.add(SurveyOriginalVo.builder().build().loadSurveyOriginalVo(surveyOriginal)));
+        }
+        return surveyOriginalVos;
+    }
+
+    @Override
+    public List<SurveyOriginalVo> list(Long taskId, String tableName) {
+        List<SurveyOriginalVo> surveyOriginalVos = new ArrayList<>();
+        QueryWrapper<SurveyOriginal> queryWrapper = new QueryWrapper<>();
+        if (taskId != null && tableName !=null) {
+            queryWrapper.eq("task_id", taskId);
+        }
+        List<SurveyOriginal> surveyOriginals = surveyOriginalMapper.queryAll(tableName,queryWrapper);
+
+        if (surveyOriginals != null) {
+            surveyOriginals.forEach(surveyOriginal -> surveyOriginalVos.add(SurveyOriginalVo.builder().build().loadSurveyOriginalVo(surveyOriginal)));
         }
         return surveyOriginalVos;
     }

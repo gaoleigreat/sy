@@ -20,6 +20,16 @@ public interface ISurveyOriginalService {
     List<SurveyOriginalVo>   list(int pageIndex, int pageSize, Long taskId, String tableName);
 
 
+
+    /**
+     * 通过taskid 和tableName查询测点列表
+     * @param taskId
+     * @param tableName
+     * @return  query result
+     */
+    List<SurveyOriginalVo>  list(Long taskId, String tableName);
+
+
     /**
      *  create survey original
      * @param surveyOriginal   survey original

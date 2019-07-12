@@ -144,4 +144,20 @@ public class SurveyOriginalController {
         return delete;
     }
 
+
+
+    @ApiOperation(value = "查询任务所有原始数据", httpMethod = "GET", notes = "查询任务所有原始数据列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", required = true, paramType = "path"),
+            @ApiImplicitParam(name = "taskId", value = "任务id", dataType = "Long", example = "1", paramType = "query"),
+    })
+    @RequestMapping(value = "/list/{sectionId}", method = RequestMethod.GET)
+    public RespVO<RespDataVO<SurveyOriginalVo>> queryAll(
+            @PathVariable(value = "sectionId") String sectionId,
+            @RequestParam Long taskId
+    ) {
+        List<SurveyOriginalVo> surveyOriginals = iSurveyOriginalService.list(taskId, DictConstant.TableNamePrefix.SURVEY_ORIGINAL + sectionId);
+        return RespVOBuilder.success(surveyOriginals);
+    }
+
 }

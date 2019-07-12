@@ -23,6 +23,14 @@ public interface SurveyOriginalMapper extends Mapper<SurveyOriginal> {
      */
     IPage<SurveyOriginal> queryList(Page iPage, @Param("tableName") String tableName, @Param("ew") QueryWrapper queryWrapper);
 
+
+    /**
+     * 查询原始数据列表
+     * @param tableName
+     * @return
+     */
+    List<SurveyOriginal> queryAll(@Param("tableName") String tableName, @Param("ew") QueryWrapper queryWrapper);
+
     /**
      * 保存原始数据
      * @param surveyOriginal

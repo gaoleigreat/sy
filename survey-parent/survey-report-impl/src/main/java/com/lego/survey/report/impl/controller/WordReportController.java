@@ -29,7 +29,8 @@ public class WordReportController {
     private SectionClient sectionClient;
 
 
-    @ApiOperation(value = "生成word测量成果报表", notes = "生成word测量成果报表", httpMethod = "POST")
+
+    @ApiOperation(value = "生成Excel测量成果报表", notes = "生成word测量成果报表", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", required = true,example = "1", paramType = "path"),
             @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int",defaultValue = "10",example = "10",paramType = "query"),
@@ -40,21 +41,29 @@ public class WordReportController {
                                            @RequestParam(required = false, defaultValue = "1") int pageIndex,
                                            @RequestParam(required = false, defaultValue = "10") int pageSize
     ) {
-     /*   RespVO<RespDataVO<SurveyResult>> list = surveyResultClient.list(sectionId, pageIndex, pageSize);
-        if (list.getRetCode() != RespConsts.SUCCESS_RESULT_CODE) {
-            return RespVOBuilder.failure("生成word报表失败");
-        }
-        List<SurveyResult> info = list.getInfo().getList();
-        RespVO<SectionVo> sectionVoRespVO = sectionClient.query(sectionId);
-        if(sectionVoRespVO.getRetCode()!=RespConsts.SUCCESS_RESULT_CODE){
-            return RespVOBuilder.failure("生成word报表失败");
-        }
-        String name = sectionVoRespVO.getInfo().getName();
-        if(info==null || info.size()<=0){
-            return RespVOBuilder.failure("获取不到word报表数据");
-        }
-*/
         return RespVOBuilder.success();
     }
+
+
+
+    @ApiOperation(value = "生成word测量成果报表", notes = "生成word测量成果报表", httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sectionId", value = "标段id", dataType = "String",required = true,paramType = "path"),
+            @ApiImplicitParam(name = "taskId", value = "任务id", dataType = "String",required = true,paramType = "path"),
+    })
+    @RequestMapping(value = "/generate/{sectionId}/{taskId}",method = RequestMethod.GET)
+    public RespVO generatePointResultWord(@PathVariable("sectionId") String sectionId,@PathVariable("taskId") String taskId) {
+        //1 通过sectionid 和taskid 查询原始测量数据
+
+
+        //2 通过原始测量数据查询测量结果
+
+        //3 通过测量结果查询上次的测量结果
+
+        //
+
+        return RespVOBuilder.success();
+    }
+
 
 }

@@ -112,4 +112,16 @@
     </select>
 
 
+    <select id="queryAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="survey_original_column"/>
+        from
+        ${tableName}
+        <where>
+            ${ew.sqlSegment}
+        </where>
+        order by upload_time desc
+    </select>
+
+
 </mapper>

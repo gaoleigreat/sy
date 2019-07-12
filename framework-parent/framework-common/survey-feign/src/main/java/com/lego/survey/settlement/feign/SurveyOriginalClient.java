@@ -82,6 +82,22 @@ public interface SurveyOriginalClient {
     RespVO createBatch(@RequestBody List<SurveyOriginalVo> surveyOriginalVos,
                        @PathVariable(value = "sectionId") String sectionId);
 
+
+
+
+    /**
+     * 查看熱無原始数据
+     * @param sectionId
+     * @param taskId
+     * @return
+     */
+    @RequestMapping(value = "/list/{sectionId}", method = RequestMethod.GET)
+    RespVO<RespDataVO<SurveyOriginalVo>> queryByTaskId(
+            @PathVariable(value = "sectionId") String sectionId,
+            @RequestParam("taskId") Long taskId
+    );
+
+
 }
 
 
@@ -110,6 +126,11 @@ class SurveyOriginalClientFallback implements SurveyOriginalClient{
 
     @Override
     public RespVO createBatch(List<SurveyOriginalVo> surveyOriginalVos, String sectionId) {
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+    }
+
+    @Override
+    public RespVO<RespDataVO<SurveyOriginalVo>> queryByTaskId(String sectionId, Long taskId) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 }

@@ -10,7 +10,6 @@ import com.survey.lib.common.vo.RespVO;
  **/
 public interface ITemplateReportService {
 
-
     /**
      * 创建报告模板
      *
