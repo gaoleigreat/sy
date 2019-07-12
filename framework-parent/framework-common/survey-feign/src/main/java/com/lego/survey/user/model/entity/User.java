@@ -1,5 +1,7 @@
 package com.lego.survey.user.model.entity;
 
+import com.lego.survey.project.model.entity.OwnWorkspace;
+import com.lego.survey.project.model.vo.WorkspaceVo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -90,7 +92,5 @@ public class User {
 
     @ApiModelProperty("所属标段")
     private List<OwnSection> ownSections;
-
-
 
 }
