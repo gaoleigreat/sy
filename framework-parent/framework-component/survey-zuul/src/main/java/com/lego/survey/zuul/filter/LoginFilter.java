@@ -2,6 +2,7 @@ package com.lego.survey.zuul.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.lego.survey.auth.feign.AuthClient;
+import com.lego.survey.zuul.predicate.RibbonVersionHolder;
 import com.lego.survey.zuul.utils.JwtPatternUrl;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
@@ -94,6 +95,10 @@ public class LoginFilter extends ZuulFilter {
             }
             String userToken = req.getHeader(HttpConsts.HEADER_TOKEN);
             String deviceType = req.getHeader(HttpConsts.DEVICE_TYPE);
+            String osType = req.getHeader(HttpConsts.OS_VERSION);
+            if(StringUtils.isEmpty(osType)){
+                RibbonVersionHolder.setContext(osType);
+            }
             if (!StringUtils.isEmpty(userToken) && !StringUtils.isEmpty(deviceType)) {
                 RespVO<CurrentVo> currentVoRespVO = authClient.parseUserToken(userToken, deviceType);
                 if (currentVoRespVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {

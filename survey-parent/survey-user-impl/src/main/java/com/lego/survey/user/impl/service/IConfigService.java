@@ -59,4 +59,5 @@ public interface IConfigService {
      */
     RespVO modify(Config config);
 
+    Config findByOptionId(String id);
 }

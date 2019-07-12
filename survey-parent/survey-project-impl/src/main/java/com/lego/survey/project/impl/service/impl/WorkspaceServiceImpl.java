@@ -36,6 +36,7 @@ public class WorkspaceServiceImpl implements IWorkspaceService {
                 .name(workSpace.getName())
                 .type(workSpace.getType())
                 .desc(workSpace.getDesc())
+                .valid(0)
                 .surveyer(workSpace.getSurveyer())
                 .build();
         workspaceList.add(workspace);
@@ -84,7 +85,11 @@ public class WorkspaceServiceImpl implements IWorkspaceService {
         if (section != null) {
             List<OwnWorkspace> workSpaces = section.getWorkSpace();
             if (workSpaces != null) {
-                workSpaces.forEach(workSpace -> {
+                for (OwnWorkspace workSpace : workSpaces) {
+                    Integer valid = workSpace.getValid();
+                    if(valid==null || valid!=0){
+                        continue;
+                    }
                     Workspace workspace = Workspace.builder()
                             .code(workSpace.getCode())
                             .desc(workSpace.getDesc())
@@ -95,7 +100,7 @@ public class WorkspaceServiceImpl implements IWorkspaceService {
                             .project(projectId)
                             .build();
                     workspaces.add(workspace);
-                });
+                }
             }
         }
         return RespVOBuilder.success(workspaces);
@@ -108,19 +113,25 @@ public class WorkspaceServiceImpl implements IWorkspaceService {
             OwnerProject ownerProject = section.getOwnerProject();
             List<OwnWorkspace> workSpaces = section.getWorkSpace();
             if(!CollectionUtils.isEmpty(workSpaces)){
-                OwnWorkspace ownWorkspace = workSpaces.get(0);
-                Workspace workspace=new Workspace();
-                workspace.setCode(ownWorkspace.getCode());
-                workspace.setId(ownWorkspace.getId());
-                workspace.setDesc(ownWorkspace.getDesc());
-                workspace.setName(ownWorkspace.getName());
-                workspace.setSurveyer(ownWorkspace.getSurveyer());
-                workspace.setType(ownWorkspace.getType());
-                if(ownerProject!=null){
-                    String projectId = ownerProject.getId();
-                    workspace.setProject(projectId);
+                for (OwnWorkspace workSpace : workSpaces) {
+                    Integer valid = workSpace.getValid();
+                    String wId = workSpace.getId();
+                    if(valid!=0 || !wId.equals(id)){
+                      continue;
+                    }
+                    Workspace workspace=new Workspace();
+                    workspace.setCode(workSpace.getCode());
+                    workspace.setId(workSpace.getId());
+                    workspace.setDesc(workSpace.getDesc());
+                    workspace.setName(workSpace.getName());
+                    workspace.setSurveyer(workSpace.getSurveyer());
+                    workspace.setType(workSpace.getType());
+                    if(ownerProject!=null){
+                        String projectId = ownerProject.getId();
+                        workspace.setProject(projectId);
+                    }
+                    return workspace;
                 }
-                return workspace;
             }
         }
         return null;

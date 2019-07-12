@@ -30,4 +30,8 @@ public interface ConfigRepository extends MongoRepository<Config,String> {
     Config   findConfigByNameAndValidOrderByUpdateTimeDesc(String name, int valid);
 
 
+
+    Config   findConfigByOptionId(String id);
+
+
 }

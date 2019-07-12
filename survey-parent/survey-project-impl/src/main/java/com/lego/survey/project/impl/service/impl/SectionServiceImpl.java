@@ -126,7 +126,7 @@ public class SectionServiceImpl implements ISectionService {
 
     @Override
     public Section findSectionById(String id) {
-        return sectionRepository.findSectionByIdAndValid(id,0);
+        return sectionRepository.findSectionByIdAndValid(id, 0);
     }
 
     @Override
@@ -252,6 +252,17 @@ public class SectionServiceImpl implements ISectionService {
                                 .name(group.getName()).build());
                     }
                 }
+                List<OwnWorkspace> workSpaces = section.getWorkSpace();
+                List<WorkspaceVo> workspaceVos = new ArrayList<>();
+                if (!CollectionUtils.isEmpty(workSpaces)) {
+                    workSpaces.forEach(workSpace -> workspaceVos.add(WorkspaceVo.builder()
+                            .id(workSpace.getId())
+                            .type(workSpace.getType())
+                            .name(workSpace.getName())
+                            .code(workSpace.getCode()).build()));
+                    sectionVo.setWorkspace(workspaceVos);
+                }
+
                 sectionVos.add(sectionVo);
             }
         }
