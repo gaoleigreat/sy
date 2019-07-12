@@ -9,15 +9,6 @@ spring:
       password: admin123
       retry:
         max-attempts: 3
-zuul:
-  routes:
-    auth-service: /api-auth/**
-    file-service: /api-file/**
-    project-service: /api-project/**
-    report-service: /api-report/**
-    settlement-service: /api-settlement/**
-    user-service: /api-user/**
-  ignored-services: '*'
 
 
 

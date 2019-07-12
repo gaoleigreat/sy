@@ -86,6 +86,7 @@ public class LoginFilter extends ZuulFilter {
 
             // url 是否需要 token 认证
             Boolean isIgnore = isIgnore(uri);
+            logger.info("url:[{}]--------isIgnore:[{}]",uri,isIgnore);
             if (isIgnore) {
                 setRequest(ctx,null);
                 ctx.set("pvId", pvId);
@@ -97,6 +98,7 @@ public class LoginFilter extends ZuulFilter {
                 RespVO<CurrentVo> currentVoRespVO = authClient.parseUserToken(userToken, deviceType);
                 if (currentVoRespVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
                     CurrentVo currentVo = currentVoRespVO.getInfo();
+                    logger.info("url:[{}]--------------currentVo:[{}]",uri,currentVo);
                     if(currentVo!=null){
                         setRequest(ctx,currentVo);
                         ctx.set("pvId", pvId);
@@ -110,6 +112,7 @@ public class LoginFilter extends ZuulFilter {
             ctx.setSendZuulResponse(false);
             ctx.setResponseStatusCode(200);
             ctx.setResponseBody(JSON.toJSONString(failure));
+
             return null;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
