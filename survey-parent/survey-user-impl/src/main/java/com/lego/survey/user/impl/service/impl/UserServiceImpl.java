@@ -1,14 +1,19 @@
 package com.lego.survey.user.impl.service.impl;
 
+import com.lego.survey.project.feign.GroupClient;
+import com.lego.survey.project.feign.ProjectClient;
 import com.lego.survey.project.feign.SectionClient;
-import com.lego.survey.project.model.entity.OwnWorkspace;
-import com.lego.survey.project.model.entity.OwnerProject;
-import com.lego.survey.project.model.entity.Section;
-import com.lego.survey.project.model.entity.Surveyer;
+import com.lego.survey.project.model.entity.*;
+import com.lego.survey.project.model.vo.GroupVo;
+import com.lego.survey.project.model.vo.ProjectVo;
+import com.lego.survey.project.model.vo.SectionVo;
 import com.lego.survey.user.impl.repository.UserRepository;
 import com.lego.survey.user.impl.service.IUserService;
 import com.lego.survey.user.model.entity.OwnGroup;
+import com.lego.survey.user.model.entity.OwnProject;
+import com.lego.survey.user.model.entity.OwnSection;
 import com.lego.survey.user.model.entity.User;
+import com.lego.survey.user.model.vo.UserAddVo;
 import com.lego.survey.user.model.vo.UserVo;
 import com.survey.lib.common.consts.RespConsts;
 import com.survey.lib.common.page.PagedResult;
@@ -28,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author yanglf
@@ -42,6 +48,12 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private SectionClient sectionClient;
+
+    @Autowired
+    private GroupClient groupClient;
+
+    @Autowired
+    private ProjectClient projectClient;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -110,12 +122,49 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public RespVO create(User user) {
+    public RespVO create(UserAddVo userAddVo) {
         // 创建用户
-        user.setValid(0);
-        Date currentDate = new Date();
-        user.setCreateTime(currentDate);
-        user.setUpdateTime(currentDate);
+        User user = userAddVo.loadUser();
+        String group = userAddVo.getGroup();
+        if (group != null) {
+            RespVO<GroupVo> respVO = groupClient.query(group);
+            if (respVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
+                GroupVo info = respVO.getInfo();
+                if (info != null) {
+                    user.setGroup(OwnGroup.builder().id(info.getId())
+                            .name(info.getName()).build());
+                }
+            }
+        }
+        List<String> projects = userAddVo.getProject();
+        if (projects != null) {
+            List<OwnProject> ownProjects = new ArrayList<>();
+            for (String project : projects) {
+                RespVO<ProjectVo> respVO = projectClient.query(project);
+                if (respVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
+                    ProjectVo info = respVO.getInfo();
+                    if (info != null) {
+                        ownProjects.add(OwnProject.builder().id(info.getId()).name(info.getName()).build());
+                    }
+                }
+                user.setOwnProjects(ownProjects);
+            }
+        }
+        List<String> sections = userAddVo.getSection();
+        if (sections != null) {
+            List<OwnSection> ownSections = new ArrayList<>();
+            for (String section : sections) {
+                RespVO<SectionVo> respVO = sectionClient.query(section);
+                if (respVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
+                    SectionVo info = respVO.getInfo();
+                    if (info != null) {
+                        ownSections.add(OwnSection.builder().id(info.getId()).name(info.getName()).build());
+                    }
+                }
+                user.setOwnSections(ownSections);
+            }
+        }
+
         //user.setPassWord(SecurityUtils.encryptionWithMd5(user.getPassWord()));
         userRepository.save(user);
         // 注册用户
@@ -129,7 +178,7 @@ public class UserServiceImpl implements IUserService {
         UserVo userVo = UserVo.builder()
                 .userName(user.getUserName())
                 .cardId(user.getCardId())
-                .groupName(ownGroup != null ? ownGroup.getGroupName() : "")
+                .groupName(ownGroup != null ? ownGroup.getName() : "")
                 .id(user.getId())
                 .name(user.getName())
                 .role(user.getRole())
@@ -155,17 +204,18 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public PagedResult<UserVo> queryList(int pageIndex,
+    public PagedResult<UserAddVo> queryList(int pageIndex,
                                          int pageSize,
                                          String projectId,
                                          String sectionId,
                                          String role,
                                          String groupId) {
-        List<UserVo> userVos = new ArrayList<>();
+        List<UserAddVo> userAddVos = new ArrayList<>();
         Query query = new Query();
         query.with(PageRequest.of(pageIndex - 1, pageSize));
         Criteria criteria = new Criteria();
-        if (!StringUtils.isEmpty(projectId)) {
+        criteria.and("valid").is(0);
+        if (!StringUtils.isEmpty(groupId)) {
             criteria.and("group._id").is(groupId);
         }
         if (!StringUtils.isEmpty(role)) {
@@ -180,26 +230,29 @@ public class UserServiceImpl implements IUserService {
         query.addCriteria(criteria);
         List<User> userList = mongoTemplate.find(query, User.class, "user");
         for (User user : userList) {
-            UserVo userVo = UserVo.builder().role(user.getRole())
+            UserAddVo userAddVo = UserAddVo.builder().role(user.getRole())
                     .userName(user.getUserName())
                     .phone(user.getPhone())
                     .name(user.getName())
-                    .cardId(user.getCardId())
                     .id(user.getId())
-                    .permissions(user.getPermission())
+                    .permission(user.getPermission())
                     .build();
             if (user.getGroup() != null) {
-                userVo.setGroupName(user.getGroup().getGroupName());
+                userAddVo.setGroup(user.getGroup().getId());
             }
-            RespVO<RespDataVO<Section>> dataVORespVO = sectionClient.queryByMasterId(user.getId());
-            if (dataVORespVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
-                setProjectInfo(user, userVo, dataVORespVO);
+            List<OwnProject> ownProjects = user.getOwnProjects();
+            if(!CollectionUtils.isEmpty(ownProjects)){
+                List<String> collect = ownProjects.stream().map(OwnProject::getId).collect(Collectors.toList());
+                userAddVo.setProject(collect);
             }
-            List<String> userService = getUserService(user.getId());
-            userVo.setServices(userService);
-            userVos.add(userVo);
+            List<OwnSection> ownSections = user.getOwnSections();
+            if(!CollectionUtils.isEmpty(ownSections)){
+                List<String> sections = ownSections.stream().map(OwnSection::getId).collect(Collectors.toList());
+                userAddVo.setSection(sections);
+            }
+            userAddVos.add(userAddVo);
         }
-        return getJsonObjectPagedResult(pageIndex,pageSize,query,userVos,mongoTemplate,"user");
+        return getJsonObjectPagedResult(pageIndex, pageSize, query, userAddVos, mongoTemplate, "user");
     }
 
     @Override
@@ -208,44 +261,16 @@ public class UserServiceImpl implements IUserService {
         return optional.orElse(null);
     }
 
-    private void setProjectInfo(User user, UserVo userVo, RespVO<RespDataVO<Section>> dataVORespVO) {
-        List<Section> sectionList = dataVORespVO.getInfo().getList();
-        if (sectionList != null && sectionList.size() > 0) {
-            Section section = sectionList.get(0);
-            OwnerProject ownerProject = section.getOwnerProject();
-            List<OwnWorkspace> workSpaces = section.getWorkSpace();
-            if(!CollectionUtils.isEmpty(workSpaces)){
-                workSpaces.forEach(workSpace ->{
-                    List<Surveyer> surveyers = workSpace.getSurveyer();
-                    if(!CollectionUtils.isEmpty(surveyers)){
-                        for (Surveyer surveyer : surveyers) {
-                            if (surveyer.getId().equals(user.getId())) {
-                                userVo.setWorkSpace(workSpace.getName());
-                                break;
-                            }
-                        }
-                    }
-                });
-            }
 
-            if (ownerProject != null) {
-                userVo.setProjectName(ownerProject.getName());
-            }
-            userVo.setSectionName(section.getName());
-        }
-    }
-
-
-    private PagedResult<UserVo> getJsonObjectPagedResult(int pageIndex, int pageSize, Query query, List<UserVo> objectList, MongoTemplate mongoTemplate, String tableName) {
-        PagedResult<UserVo> pagedResult =new PagedResult<>();
-        Long count = mongoTemplate.count(query, Long.class,tableName);
+    private PagedResult<UserAddVo> getJsonObjectPagedResult(int pageIndex, int pageSize, Query
+            query, List<UserAddVo> objectList, MongoTemplate mongoTemplate, String tableName) {
+        PagedResult<UserAddVo> pagedResult = new PagedResult<>();
+        Long count = mongoTemplate.count(query, Long.class, tableName);
         pagedResult.setResultList(objectList);
         int totalPage = count.intValue() % pageSize == 0 ? count.intValue() / pageSize : count.intValue() / pageSize + 1;
-        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex,pageSize,0,count,totalPage));
+        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, count, totalPage));
         return pagedResult;
     }
-
-
 
 
     private List<String> getUserService(String userId) {

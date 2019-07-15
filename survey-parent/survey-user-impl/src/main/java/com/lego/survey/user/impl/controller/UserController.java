@@ -7,6 +7,7 @@ import com.lego.survey.user.impl.service.IUserService;
 import com.lego.survey.user.model.entity.OwnProject;
 import com.lego.survey.user.model.entity.OwnSection;
 import com.lego.survey.user.model.entity.User;
+import com.lego.survey.user.model.vo.UserAddVo;
 import com.lego.survey.user.model.vo.UserVo;
 import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.consts.RespConsts;
@@ -124,7 +125,7 @@ public class UserController {
     }
 
 
-    @ApiOperation(value = "删除用户", httpMethod = "POST", notes = "删除用户")
+    @ApiOperation(value = "删除用户", httpMethod = "DELETE", notes = "删除用户")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "删除用户的id", dataType = "String", required = true, paramType = "query"),
     })
@@ -193,12 +194,12 @@ public class UserController {
     })
     @Operation(value = "create",desc = "新增用户")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public RespVO create(@Validated @RequestBody User user, HttpServletRequest request) {
+    public RespVO create(@Validated @RequestBody UserAddVo userAddVo, HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         CurrentVo currentVo = authClient.getAuthVo(headerVo);
         String userId = currentVo.getUserId();
         String userRole = currentVo.getRole();
-        String role = user.getRole();
+        String role = userAddVo.getRole();
         if(!userRole.equals("admin") && !userRole.equals("master")){
             return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE,RespConsts.FAIL_NOPRESSION_MSG);
         }
@@ -211,26 +212,27 @@ public class UserController {
                 return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE,RespConsts.FAIL_NOPRESSION_MSG);
             }
         }
-        String phone = user.getPhone();
+        String phone = userAddVo.getPhone();
         User phoneUser = iUserService.queryByPhone(phone);
         if (phoneUser != null) {
             return RespVOBuilder.failure(RespConsts.FAIL_RESULT_CODE, "手机号已被添加");
         }
-        String userName = user.getUserName();
+        String userName = userAddVo.getUserName();
         User queryByUserName = iUserService.queryByUserName(userName);
         if (queryByUserName != null) {
             return RespVOBuilder.failure(RespConsts.FAIL_RESULT_CODE, "用户名已被添加");
         }
         //根据用户信息生成用户 token
-        user.setId(UuidUtils.generateShortUuid());
-        RespVO respVO = iUserService.create(user);
-        if(respVO.getRetCode()==RespConsts.SUCCESS_RESULT_CODE){
-            List<OwnProject> ownProjects = user.getOwnProjects();
-            List<OwnSection> ownSections = user.getOwnSections();
-            //TODO 更新 工程  标段  人员信息
-            String userRole1 = user.getRole();
+        userAddVo.setId(UuidUtils.generateShortUuid());
 
-            logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "新增用户:[" + user.getId() + "]");
+        RespVO respVO = iUserService.create(userAddVo);
+        if(respVO.getRetCode()==RespConsts.SUCCESS_RESULT_CODE){
+            String group = userAddVo.getGroup();
+            List<String> projects = userAddVo.getProject();
+            //TODO 更新 工程  标段  人员信息
+            String userRole1 = userAddVo.getRole();
+
+            logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "新增用户:[" + userAddVo.getId() + "]");
         }
         return respVO;
     }
@@ -269,7 +271,7 @@ public class UserController {
             @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int", defaultValue = "10", example = "10", paramType = "query"),
     })
     @RequestMapping(value = "/list/{pageIndex}", method = RequestMethod.GET)
-    public RespVO<PagedResult<UserVo>> list(@PathVariable(value = "pageIndex") int pageIndex,
+    public RespVO<PagedResult<UserAddVo>> list(@PathVariable(value = "pageIndex") int pageIndex,
                                     @RequestParam(required = false, defaultValue = "10") int pageSize,
                                     @RequestParam(required = false) String  projectId,
                                     @RequestParam(required = false) String sectionId,
@@ -278,14 +280,14 @@ public class UserController {
                                     HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         CurrentVo currentVo = authClient.getAuthVo(headerVo);
-        PagedResult<UserVo> pagedResult = iUserService.queryList(pageIndex, pageSize,projectId,sectionId,role,groupId);
+        PagedResult<UserAddVo> pagedResult = iUserService.queryList(pageIndex, pageSize,projectId,sectionId,role,groupId);
         return RespVOBuilder.success(pagedResult);
     }
 
 
     @RequestMapping(value = "/findByUserId", method = RequestMethod.GET)
     public  User findByUserId(@RequestParam String userId){
-          return iUserService.findByUserId(userId);
+        return iUserService.findByUserId(userId);
     }
 
 

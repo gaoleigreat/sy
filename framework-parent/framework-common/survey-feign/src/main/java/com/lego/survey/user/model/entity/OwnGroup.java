@@ -19,5 +19,5 @@ public class OwnGroup {
     @ApiModelProperty("所属单位id")
     private String id;
     @ApiModelProperty("所属单位名称")
-    private String groupName;
+    private String name;
 }

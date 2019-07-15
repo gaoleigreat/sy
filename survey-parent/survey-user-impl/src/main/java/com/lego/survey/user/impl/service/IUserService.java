@@ -1,6 +1,7 @@
 package com.lego.survey.user.impl.service;
 
 import com.lego.survey.user.model.entity.User;
+import com.lego.survey.user.model.vo.UserAddVo;
 import com.lego.survey.user.model.vo.UserVo;
 import com.survey.lib.common.page.PagedResult;
 import com.survey.lib.common.vo.RespVO;
@@ -98,10 +99,10 @@ public interface IUserService {
     /**
      * 创建用户
      *
-     * @param user
+     * @param userAddVo
      * @return
      */
-    RespVO create(User user);
+    RespVO create(UserAddVo userAddVo);
 
 
     /**
@@ -120,7 +121,7 @@ public interface IUserService {
      * @param pageSize
      * @return
      */
-    PagedResult<UserVo> queryList(int pageIndex,
+    PagedResult<UserAddVo> queryList(int pageIndex,
                                   int pageSize,
                                   String projectId,
                                   String sectionId,
