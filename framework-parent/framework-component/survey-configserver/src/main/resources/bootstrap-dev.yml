@@ -32,7 +32,7 @@ spring:
   security:
     user:
       name: admin
-      password: '{cipher}a1d30c1325f1b0cd2e4619bff2be57bc32ae0413c0ce1fee07153b60bfa3a782'
+      password: admin123456
 
 encrypt:
   key: PL8iU@vt&0tFWijuoi%zASgsLP1rKwks

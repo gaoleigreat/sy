@@ -6,7 +6,7 @@ spring:
       profile: dev
       label: master
       username: admin
-      password: admin123
+      password: admin123456
       retry:
         max-attempts: 3
     stream:

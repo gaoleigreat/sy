@@ -50,7 +50,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
     @Bean("grayAwareRule")
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    @ConditionalOnExpression("${define.zuul.gray} ")
+   /* @ConditionalOnExpression("${define.zuul.gray} ")*/
     public IRule grayAwareRule(StringRedisTemplate stringRedisTemplate){
         return new GrayAwareRule(new GrayAwarePredicate(stringRedisTemplate));
     }

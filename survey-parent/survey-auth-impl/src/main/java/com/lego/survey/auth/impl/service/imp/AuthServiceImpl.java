@@ -109,14 +109,14 @@ public class AuthServiceImpl implements IAuthService {
     private CurrentVo generateCurrentVo(User user) {
         CurrentVo currentVo = new CurrentVo();
         currentVo.setGroupId(user.getGroup().getId());
-        currentVo.setGroupName(user.getGroup().getGroupName());
+        currentVo.setGroupName(user.getGroup().getName());
         currentVo.setName(user.getName());
         currentVo.setPermissions(user.getPermission());
         currentVo.setPhone(user.getPhone());
         List<OwnProject> ownProjects = user.getOwnProjects();
         List<String> projectIds = new ArrayList<>();
         if (!CollectionUtils.isEmpty(ownProjects)) {
-            ownProjects.forEach(ownProject -> projectIds.add(ownProject.getProjectId()));
+            ownProjects.forEach(ownProject -> projectIds.add(ownProject.getId()));
         }
         currentVo.setProjectIds(projectIds);
         currentVo.setRole(user.getRole());
@@ -127,8 +127,8 @@ public class AuthServiceImpl implements IAuthService {
         if (!CollectionUtils.isEmpty(ownSections)) {
             ownSections.forEach(ownSection -> {
                 UserSectionVo userSectionVo = new UserSectionVo();
-                userSectionVo.setId(ownSection.getSectionId());
-                userSectionVo.setRole(ownSection.getSectionName());
+                userSectionVo.setId(ownSection.getId());
+                userSectionVo.setRole(ownSection.getName());
                 userSectionVos.add(userSectionVo);
             });
         }
