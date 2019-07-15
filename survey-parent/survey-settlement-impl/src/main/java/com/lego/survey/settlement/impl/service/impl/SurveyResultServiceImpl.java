@@ -21,6 +21,7 @@ import com.survey.lib.common.page.PagedResult;
 import com.survey.lib.common.vo.RespVO;
 import com.survey.lib.common.vo.RespVOBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -134,9 +135,15 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
     }
 
     @Override
-    public List<SurveyResult> queryPreResult(Date surveyTime, String tableName, int count) {
+    public List<SurveyResult> queryPreResult(Date surveyTime, String tableName, int count, String pointCodes) {
         QueryWrapper<SurveyResult> wrapper = new QueryWrapper<>();
-        wrapper.le("survey_time", surveyTime);
+        if (surveyTime != null) {
+            wrapper.lt("survey_time", surveyTime);
+        }
+        if (StringUtils.isNotBlank(pointCodes)) {
+            wrapper.eq("point_code", pointCodes);
+        }
+
         return surveyResultMapper.queryPreResult(wrapper, tableName, count);
     }
 
@@ -155,7 +162,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
         Page<SurveyResult> surveyResultPage = surveyResultMapper.queryList(iPage, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, wrapper);
         List<SurveyResult> records = surveyResultPage.getRecords();
         Map<String, SurveyPoint> pointMap = new HashMap<>();
-        List<SurveyPoint> surveyPoints = surveyPointMapper.queryByName(new QueryWrapper<>(),DictConstant.TableNamePrefix.SURVEY_POINT+sectionId);
+        List<SurveyPoint> surveyPoints = surveyPointMapper.queryByName(new QueryWrapper<>(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
         if (!CollectionUtils.isEmpty(surveyPoints)) {
             surveyPoints.forEach(surveyPoint -> pointMap.put(surveyPoint.getCode(), surveyPoint));
         }
@@ -191,9 +198,9 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                 overrun.setSurveyTime(record.getSurveyTime());
                 String sp = surveyPoint.getType();
                 overrun.setType(typeMap.get(sp) != null ? sp : sp);
-                if(!CollectionUtils.isEmpty(exceptionList)){
+                if (!CollectionUtils.isEmpty(exceptionList)) {
                     overrun.setIsException(true);
-                }else {
+                } else {
                     overrun.setIsException(false);
                 }
 
@@ -206,11 +213,11 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
     }
 
     @Override
-    public List<SurveyResultVo> queryResult(String sectionId, List<Long> originalIds) {
+    public List<SurveyResult> queryResult(String sectionId, List<Long> originalIds) {
         List<SurveyResultVo> surveyResultVos = new ArrayList<>();
-        List<SurveyResult> surveyResults = surveyResultMapper.queryResult(DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId,originalIds);
-        surveyResults.forEach(surveyResult -> surveyResultVos.add(SurveyResultVo.builder().build().loadSurveyResultVo(surveyResult)));
-        return surveyResultVos;
+        List<SurveyResult> surveyResults = surveyResultMapper.queryResult(DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, originalIds);
+        // surveyResults.forEach(surveyResult -> surveyResultVos.add(SurveyResultVo.builder().build().loadSurveyResultVo(surveyResult)));
+        return surveyResults;
     }
 
 }

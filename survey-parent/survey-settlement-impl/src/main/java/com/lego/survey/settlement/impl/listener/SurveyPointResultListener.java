@@ -93,7 +93,7 @@ public class SurveyPointResultListener {
         double settlementRate = 0;
         double preSettlementRate = 0;
         boolean settlementRateIsOver = false;
-        List<SurveyResult> preResults = iSurveyResultService.queryPreResult(surveyTime, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, 2);
+        List<SurveyResult> preResults = iSurveyResultService.queryPreResult(surveyTime,DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, 2,null);
         if (preResults != null && preResults.size() > 0) {
             SurveyResult preResult = preResults.get(0);
             preElevation = preResult.getElevation();

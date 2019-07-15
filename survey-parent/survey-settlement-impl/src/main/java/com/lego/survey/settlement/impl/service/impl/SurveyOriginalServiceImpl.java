@@ -8,6 +8,7 @@ import com.lego.survey.settlement.impl.mapper.SurveyOriginalMapper;
 import com.lego.survey.settlement.impl.service.ISurveyOriginalService;
 import com.lego.survey.settlement.model.entity.SurveyOriginal;
 import com.lego.survey.settlement.model.vo.SurveyOriginalVo;
+import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.vo.RespVO;
 import com.survey.lib.common.vo.RespVOBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class SurveyOriginalServiceImpl implements ISurveyOriginalService {
         if (taskId != null && tableName !=null) {
             queryWrapper.eq("task_id", taskId);
         }
-        List<SurveyOriginal> surveyOriginals = surveyOriginalMapper.queryAll(tableName,queryWrapper);
+        List<SurveyOriginal> surveyOriginals = surveyOriginalMapper.queryAll(DictConstant.TableNamePrefix.SURVEY_ORIGINAL + tableName,queryWrapper);
 
         if (surveyOriginals != null) {
             surveyOriginals.forEach(surveyOriginal -> surveyOriginalVos.add(SurveyOriginalVo.builder().build().loadSurveyOriginalVo(surveyOriginal)));

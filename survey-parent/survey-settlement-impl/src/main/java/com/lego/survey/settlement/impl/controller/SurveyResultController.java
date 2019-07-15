@@ -262,9 +262,9 @@ public class SurveyResultController {
             @ApiImplicitParam(name = "originalIds", value = "原始数据id", dataType = "List", paramType = "query"),
     })
     @RequestMapping(value = "/query/list", method = RequestMethod.GET)
-    public RespVO<RespDataVO<SurveyResultVo>> query(@RequestParam String sectionId,
+    public RespVO<RespDataVO<SurveyResult>> query(@RequestParam String sectionId,
                                                     @RequestParam List<Long> originalIds){
-        List<SurveyResultVo>  surveyResultVos= iSurveyResultService.queryResult(sectionId, originalIds);
-        return RespVOBuilder.success(surveyResultVos);
+        List<SurveyResult>  surveyResults= iSurveyResultService.queryResult(sectionId, originalIds);
+        return RespVOBuilder.success(surveyResults);
     }
 }

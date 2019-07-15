@@ -66,7 +66,7 @@ public interface ISurveyResultService {
      * @param tableName
      * @return
      */
-    List<SurveyResult> queryPreResult(Date surveyTime, String tableName, int count);
+    List<SurveyResult> queryPreResult(Date surveyTime, String tableName, int count,String pointCode);
 
     /**
      * 查询  初始成果数据
@@ -92,5 +92,5 @@ public interface ISurveyResultService {
      * @param originalIds
      * @return
      */
-    List<SurveyResultVo> queryResult(String sectionId,List<Long> originalIds);
+    List<SurveyResult> queryResult(String sectionId,List<Long> originalIds);
 }

@@ -24,9 +24,9 @@ public class SurveyPointException {
     private String pointCode;
     @ApiModelProperty("测量结果id")
     private Long resultId;
-    @ApiModelProperty("DATA格式 高程，单次沉降量, 累积沉降量, 沉降速率")
+    @ApiModelProperty("上次测量数据")
     private String preData;
-    @ApiModelProperty("DATA格式 高程，单词沉降量, 累积沉降量, 沉降速率")
+    @ApiModelProperty("本次测量数据")
     private String currentData;
     @ApiModelProperty("标段编号")
     private String sectionCode;
