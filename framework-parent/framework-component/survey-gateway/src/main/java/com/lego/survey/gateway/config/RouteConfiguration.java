@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 public class RouteConfiguration {
 
 
-    @Bean
+   /* @Bean
     @ConditionalOnExpression("${define.route.prod}")
     public RouteLocator prodRouteLocator(RouteLocatorBuilder builder) {
         StripPrefixGatewayFilterFactory.Config config = new StripPrefixGatewayFilterFactory.Config();
@@ -24,18 +24,17 @@ public class RouteConfiguration {
                 .route("auth", r -> r.path("/survey/api-auth/**").uri("lb://auth-service"))
                 .route("project",r -> r.path("/survey/api-project/**").uri("lb://project-service"))
                 .build();
-    }
+    }*/
 
 
 
-
-    @Bean
+   /* @Bean
     @ConditionalOnExpression("!${define.route.prod}")
     public RouteLocator devRouteLocator(RouteLocatorBuilder builder) {
         StripPrefixGatewayFilterFactory.Config config = new StripPrefixGatewayFilterFactory.Config();
         config.setParts(1);
         return builder.routes()
-                .route("api", r -> r.path("/survey/**")/*.filters(f -> f.stripPrefix(1))*/.uri("lb://api-survey"))
+                .route("api", r -> r.path("/survey/**")*//*.filters(f -> f.stripPrefix(1))*//*.uri("lb://api-survey"))
                 .build();
-    }
+    }*/
 }

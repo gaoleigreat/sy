@@ -13,6 +13,7 @@ import com.survey.lib.common.page.PagedResult;
 import com.survey.lib.common.utils.HeaderUtils;
 import com.survey.lib.common.utils.HttpUtils;
 import com.survey.lib.common.utils.UuidUtils;
+import com.survey.lib.common.vo.CurrentVo;
 import com.survey.lib.common.vo.HeaderVo;
 import com.survey.lib.common.vo.RespVO;
 import com.survey.lib.common.vo.RespVOBuilder;
@@ -77,8 +78,8 @@ public class ConfigController {
     public RespVO<Config> queryByName(@RequestParam String name,
                                       HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
-        String userId = authClient.getAuthVo(headerVo).getUserId();
-        Config configList = iConfigService.queryByName(name);
+        CurrentVo authVo = authClient.getAuthVo(headerVo);
+        Config configList = iConfigService.queryByName(name,authVo);
         return RespVOBuilder.success(configList);
     }
 
@@ -97,7 +98,7 @@ public class ConfigController {
         }
         configOptionVo.forEach(c -> c.setId(UuidUtils.generateShortUuid()));
         String configName = configOptionVo.get(0).getConfigName();
-        Config queryByName = iConfigService.queryByName(configName);
+        Config queryByName = iConfigService.queryByName(configName,null);
         RespVO respVO;
         if (queryByName != null) {
             queryByName.setUpdateTime(new Date());

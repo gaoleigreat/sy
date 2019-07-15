@@ -4,6 +4,7 @@ import com.lego.survey.user.impl.service.IConfigService;
 import com.lego.survey.user.model.entity.Config;
 import com.lego.survey.user.model.vo.ConfigOptionVo;
 import com.survey.lib.common.page.PagedResult;
+import com.survey.lib.common.vo.CurrentVo;
 import com.survey.lib.common.vo.RespVO;
 import com.survey.lib.common.vo.RespVOBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author yanglf
@@ -73,8 +75,26 @@ public class ConfigServiceImpl implements IConfigService {
     }
 
     @Override
+    public Config queryByName(String name, CurrentVo authVo) {
+        Config config = configRepository.findConfigByNameAndValidOrderByUpdateTimeDesc(name, 0);
+        String role = authVo.getRole();
+        List<ConfigOptionVo> optionVos;
+        if(role.equalsIgnoreCase("admin")){
+            optionVos = config.getOption().stream().filter(opt -> opt.getName().equalsIgnoreCase("companyAdmin")
+                    || opt.getName().equalsIgnoreCase("master")).collect(Collectors.toList());
+        }else if(role.equalsIgnoreCase("master")){
+             optionVos = config.getOption().stream().filter(opt -> opt.getName().equalsIgnoreCase("surveyer")
+                  ).collect(Collectors.toList());
+        }else {
+            return null;
+        }
+        config.setOption(optionVos);
+        return config;
+    }
+
+    @Override
     public Config queryByName(String name) {
-        return configRepository.findConfigByNameAndValidOrderByUpdateTimeDesc(name,0);
+        return configRepository.findConfigByNameAndValidOrderByUpdateTimeDesc(name, 0);
     }
 
     @Override

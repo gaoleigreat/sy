@@ -1,7 +1,9 @@
 package com.lego.survey.user.impl.service;
 
 import com.lego.survey.user.model.entity.Config;
+import com.lego.survey.user.model.vo.ConfigOptionVo;
 import com.survey.lib.common.page.PagedResult;
+import com.survey.lib.common.vo.CurrentVo;
 import com.survey.lib.common.vo.RespVO;
 
 /**
@@ -49,6 +51,9 @@ public interface IConfigService {
      * @param name
      * @return
      */
+    Config  queryByName(String name, CurrentVo authVo);
+
+
     Config  queryByName(String name);
 
 
@@ -60,4 +65,6 @@ public interface IConfigService {
     RespVO modify(Config config);
 
     Config findByOptionId(String id);
+
+
 }

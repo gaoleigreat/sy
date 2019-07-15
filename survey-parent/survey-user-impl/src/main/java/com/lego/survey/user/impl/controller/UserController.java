@@ -243,8 +243,9 @@ public class UserController {
             @ApiImplicitParam(name = "id", value = "用户id", dataType = "String", required = true, paramType = "query"),
     })
     @RequestMapping(value = "/queryById", method = RequestMethod.GET)
-    public RespVO<UserVo> queryUserById(@RequestParam("id") String id, HttpServletRequest request) {
-        return iUserService.queryUserById(id);
+    public RespVO<UserAddVo> queryUserById(@RequestParam("id") String id, HttpServletRequest request) {
+        UserAddVo addVo = iUserService.findByUserId(id);
+        return RespVOBuilder.success(addVo);
     }
 
 
@@ -286,7 +287,7 @@ public class UserController {
 
 
     @RequestMapping(value = "/findByUserId", method = RequestMethod.GET)
-    public  User findByUserId(@RequestParam String userId){
+    public  UserAddVo findByUserId(@RequestParam String userId){
         return iUserService.findByUserId(userId);
     }
 

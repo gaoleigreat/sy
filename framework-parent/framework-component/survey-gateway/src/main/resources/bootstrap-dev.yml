@@ -6,7 +6,7 @@ spring:
       label: master
      # fail-fast: true
       username: admin
-      password: admin123
+      password: admin123456
     gateway:
       globalcors:
         cors-configurations:

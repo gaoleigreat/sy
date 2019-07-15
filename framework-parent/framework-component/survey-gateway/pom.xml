@@ -54,25 +54,17 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--swagger-->
-        <!-- <dependency>
-             <groupId>io.springfox</groupId>
-             <artifactId>springfox-swagger2</artifactId>
-             <version>${spring.swagger.version}</version>
-         </dependency>
-         <dependency>
-             <groupId>io.springfox</groupId>
-             <artifactId>springfox-swagger-ui</artifactId>
-             <version>${spring.swagger.version}</version>
-         </dependency>
 
-         &lt;!&ndash; 兼容 高版本的 swagger &ndash;&gt;
-         <dependency>
-             <groupId>com.google.guava</groupId>
-             <artifactId>guava</artifactId>
-             <version>26.0-jre</version>
-         </dependency>
- -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -123,8 +115,13 @@
             <groupId>com.lego.feign</groupId>
             <artifactId>survey-feign</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
-
 
 
         <dependency>
@@ -149,6 +146,12 @@
             <groupId>com.lego.survey</groupId>
             <version>0.0.1-SNAPSHOT</version>
             <artifactId>lib-log</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 
@@ -179,63 +182,63 @@
                     </execution>
                 </executions>
             </plugin>
-           <!-- <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>1.0.0</version>
-                <configuration>
-                    <imageName>${project.artifactId}</imageName>
-                    <imageTags>
-                        <imageTag>latest</imageTag>
-                    </imageTags>
-                    <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
-                </configuration>
-            </plugin>
+            <!-- <plugin>
+                 <groupId>com.spotify</groupId>
+                 <artifactId>docker-maven-plugin</artifactId>
+                 <version>1.0.0</version>
+                 <configuration>
+                     <imageName>${project.artifactId}</imageName>
+                     <imageTags>
+                         <imageTag>latest</imageTag>
+                     </imageTags>
+                     <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
+                     <resources>
+                         <resource>
+                             <targetPath>/</targetPath>
+                             <directory>${project.build.directory}</directory>
+                             <include>${project.build.finalName}.jar</include>
+                         </resource>
+                     </resources>
+                 </configuration>
+             </plugin>
 
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            &lt;!&ndash;运行jar包时运行的主类，要求类全名&ndash;&gt;
-                            <mainClass>com.lego.survey.gateway.SurveyGatewayApplication</mainClass>
-                            &lt;!&ndash; 是否指定项目classpath下的依赖 &ndash;&gt;
-                            <addClasspath>true</addClasspath>
-                            &lt;!&ndash; 指定依赖的时候声明前缀 &ndash;&gt;
-                            <classpathPrefix>./</classpathPrefix>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <finalName>${project.artifactId}-${project.version}</finalName>
-                    <descriptor>${project.basedir}/src/main/assembly/assembly.xml</descriptor>
-                    <appendAssemblyId>false</appendAssemblyId>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>-->
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-jar-plugin</artifactId>
+                 <version>2.3.1</version>
+                 <configuration>
+                     <archive>
+                         <manifest>
+                             &lt;!&ndash;运行jar包时运行的主类，要求类全名&ndash;&gt;
+                             <mainClass>com.lego.survey.gateway.SurveyGatewayApplication</mainClass>
+                             &lt;!&ndash; 是否指定项目classpath下的依赖 &ndash;&gt;
+                             <addClasspath>true</addClasspath>
+                             &lt;!&ndash; 指定依赖的时候声明前缀 &ndash;&gt;
+                             <classpathPrefix>./</classpathPrefix>
+                         </manifest>
+                     </archive>
+                 </configuration>
+             </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-assembly-plugin</artifactId>
+                 <version>2.6</version>
+                 <configuration>
+                     <finalName>${project.artifactId}-${project.version}</finalName>
+                     <descriptor>${project.basedir}/src/main/assembly/assembly.xml</descriptor>
+                     <appendAssemblyId>false</appendAssemblyId>
+                 </configuration>
+                 <executions>
+                     <execution>
+                         <id>make-assembly</id>
+                         <phase>package</phase>
+                         <goals>
+                             <goal>single</goal>
+                         </goals>
+                     </execution>
+                 </executions>
+             </plugin>-->
         </plugins>
     </build>
 

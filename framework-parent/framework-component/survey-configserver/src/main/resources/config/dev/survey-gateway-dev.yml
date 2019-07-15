@@ -6,20 +6,25 @@ define:
     prod: false
 spring:
   cloud:
-   # gateway:
-    #  routes:
-    #  - id: auth1_prod
-     #   uri: lb://auth-service
-      #  predicates:
-       # - Path=/api-auth/**
+    gateway:
+      routes:
+        - id: api-auth
+          uri: lb://auth-service
+          predicates:
+          - Path=/api-auth/**
        # - Weight=auth1, 90
-       # filters:
-        #- SwaggerHeaderFilter
-       # - StripPrefix=1
-       # - name: Hystrix   #对应熔断的 filter  HystrixGatewayFilterFactory
-        #  args:
-         #   name: fallbackcmd
-          #  fallbackUri: forward:/fallback
+          filters:
+          - SwaggerHeaderFilter
+          - StripPrefix=1
+
+        - id: api-project
+          uri: lb://project-service
+          predicates:
+            - Path=/api-project/**
+          # - Weight=auth1, 90
+          filters:
+            - SwaggerHeaderFilter
+            - StripPrefix=1
 
       discovery:
         locator:

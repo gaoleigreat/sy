@@ -3,16 +3,16 @@ package com.lego.survey.user.impl.service.impl;
 import com.lego.survey.project.feign.GroupClient;
 import com.lego.survey.project.feign.ProjectClient;
 import com.lego.survey.project.feign.SectionClient;
+import com.lego.survey.project.feign.WorkspaceClient;
 import com.lego.survey.project.model.entity.*;
 import com.lego.survey.project.model.vo.GroupVo;
 import com.lego.survey.project.model.vo.ProjectVo;
 import com.lego.survey.project.model.vo.SectionVo;
 import com.lego.survey.user.impl.repository.UserRepository;
+import com.lego.survey.user.impl.service.IConfigService;
 import com.lego.survey.user.impl.service.IUserService;
-import com.lego.survey.user.model.entity.OwnGroup;
-import com.lego.survey.user.model.entity.OwnProject;
-import com.lego.survey.user.model.entity.OwnSection;
-import com.lego.survey.user.model.entity.User;
+import com.lego.survey.user.model.entity.*;
+import com.lego.survey.user.model.vo.ConfigOptionVo;
 import com.lego.survey.user.model.vo.UserAddVo;
 import com.lego.survey.user.model.vo.UserVo;
 import com.survey.lib.common.consts.RespConsts;
@@ -20,6 +20,7 @@ import com.survey.lib.common.page.PagedResult;
 import com.survey.lib.common.vo.RespDataVO;
 import com.survey.lib.common.vo.RespVO;
 import com.survey.lib.common.vo.RespVOBuilder;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -57,6 +58,12 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private IConfigService iConfigService;
+
+    @Autowired
+    private WorkspaceClient workspaceClient;
 
     @Override
     public User queryByUserNameOrPhone(String loginName) {
@@ -205,11 +212,11 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public PagedResult<UserAddVo> queryList(int pageIndex,
-                                         int pageSize,
-                                         String projectId,
-                                         String sectionId,
-                                         String role,
-                                         String groupId) {
+                                            int pageSize,
+                                            String projectId,
+                                            String sectionId,
+                                            String role,
+                                            String groupId) {
         List<UserAddVo> userAddVos = new ArrayList<>();
         Query query = new Query();
         query.with(PageRequest.of(pageIndex - 1, pageSize));
@@ -238,17 +245,30 @@ public class UserServiceImpl implements IUserService {
                     .permission(user.getPermission())
                     .build();
             if (user.getGroup() != null) {
-                userAddVo.setGroup(user.getGroup().getId());
+                userAddVo.setGroup(user.getGroup().getName());
             }
             List<OwnProject> ownProjects = user.getOwnProjects();
-            if(!CollectionUtils.isEmpty(ownProjects)){
-                List<String> collect = ownProjects.stream().map(OwnProject::getId).collect(Collectors.toList());
+            if (!CollectionUtils.isEmpty(ownProjects)) {
+                List<String> collect = ownProjects.stream().map(OwnProject::getName).collect(Collectors.toList());
                 userAddVo.setProject(collect);
             }
             List<OwnSection> ownSections = user.getOwnSections();
-            if(!CollectionUtils.isEmpty(ownSections)){
-                List<String> sections = ownSections.stream().map(OwnSection::getId).collect(Collectors.toList());
+            if (!CollectionUtils.isEmpty(ownSections)) {
+                List<String> sections = ownSections.stream().map(OwnSection::getName).collect(Collectors.toList());
                 userAddVo.setSection(sections);
+            }
+            String role1 = user.getRole();
+            if (role1 != null) {
+                Config config = iConfigService.queryByName("角色配置");
+                if (config != null) {
+                    List<ConfigOptionVo> option = config.getOption();
+                    for (ConfigOptionVo opt : option) {
+                        if (opt.getName().equals(role1)) {
+                            userAddVo.setRole(opt.getDesc());
+                            break;
+                        }
+                    }
+                }
             }
             userAddVos.add(userAddVo);
         }
@@ -256,9 +276,12 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User findByUserId(String userId) {
-        Optional<User> optional = userRepository.findById(userId);
-        return optional.orElse(null);
+    public UserAddVo findByUserId(String userId) {
+        User user = userRepository.findUserByIdAndValid(userId, 0);
+        if(user!=null){
+            return user.loadUserVo();
+        }
+        return null;
     }
 
 

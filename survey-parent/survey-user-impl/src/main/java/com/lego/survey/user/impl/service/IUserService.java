@@ -132,5 +132,5 @@ public interface IUserService {
      * @param userId
      * @return
      */
-    User findByUserId(String userId);
+    UserAddVo findByUserId(String userId);
 }

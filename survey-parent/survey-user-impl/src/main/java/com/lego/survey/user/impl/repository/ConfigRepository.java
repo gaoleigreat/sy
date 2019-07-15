@@ -1,5 +1,6 @@
 package com.lego.survey.user.impl.repository;
 import com.lego.survey.user.model.entity.Config;
+import com.lego.survey.user.model.vo.ConfigOptionVo;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -30,8 +31,12 @@ public interface ConfigRepository extends MongoRepository<Config,String> {
     Config   findConfigByNameAndValidOrderByUpdateTimeDesc(String name, int valid);
 
 
-
+    /**
+     * @param id
+     * @return
+     */
     Config   findConfigByOptionId(String id);
+
 
 
 }

@@ -2,16 +2,19 @@ package com.lego.survey.user.model.entity;
 
 import com.lego.survey.project.model.entity.OwnWorkspace;
 import com.lego.survey.project.model.vo.WorkspaceVo;
+import com.lego.survey.user.model.vo.UserAddVo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author yanglf
@@ -93,4 +96,27 @@ public class User {
     @ApiModelProperty("所属标段")
     private List<OwnSection> ownSections;
 
+
+
+    public UserAddVo loadUserVo() {
+        UserAddVo userAddVo = UserAddVo.builder().group(this.group.getId())
+                .permission(this.permission)
+                .id(this.id)
+                .name(this.name)
+                .phone(this.phone)
+                .role(this.role)
+                .userName(this.userName)
+                .build();
+        List<OwnProject> ownProjects = this.getOwnProjects();
+        if(!CollectionUtils.isEmpty(ownProjects)){
+            List<String> collect = ownProjects.stream().map(OwnProject::getId).collect(Collectors.toList());
+            userAddVo.setProject(collect);
+        }
+        List<OwnSection> ownSections = this.getOwnSections();
+        if(!CollectionUtils.isEmpty(ownSections)){
+            List<String> collect = ownSections.stream().map(OwnSection::getId).collect(Collectors.toList());
+            userAddVo.setSection(collect);
+        }
+        return userAddVo;
+    }
 }
