@@ -204,4 +204,13 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
         voPagedResult.setResultList(overrunListVos);
         return voPagedResult;
     }
+
+    @Override
+    public List<SurveyResultVo> queryResult(String sectionId, List<Long> originalIds) {
+        List<SurveyResultVo> surveyResultVos = new ArrayList<>();
+        List<SurveyResult> surveyResults = surveyResultMapper.queryResult(DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId,originalIds);
+        surveyResults.forEach(surveyResult -> surveyResultVos.add(SurveyResultVo.builder().build().loadSurveyResultVo(surveyResult)));
+        return surveyResultVos;
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.lego.survey.settlement.impl.service;
 import com.lego.survey.settlement.model.entity.SurveyResult;
 import com.lego.survey.settlement.model.vo.OverrunListVo;
+import com.lego.survey.settlement.model.vo.SurveyResultVo;
 import com.survey.lib.common.page.PagedResult;
 import com.survey.lib.common.vo.RespVO;
 
@@ -83,4 +84,13 @@ public interface ISurveyResultService {
      * @return
      */
     PagedResult<OverrunListVo> queryOverrunList(int pageIndex, Integer pageSize, String sectionId, Integer type);
+
+
+    /**
+     * 根据原始数据Id查询成果数据
+     * @param sectionId
+     * @param originalIds
+     * @return
+     */
+    List<SurveyResultVo> queryResult(String sectionId,List<Long> originalIds);
 }

@@ -186,4 +186,18 @@
     </select>
 
 
+
+    <select id="queryResult" resultMap="BaseResultMap">
+        SELECT
+        <include refid="survey_result_column"/>
+        from
+        ${tableName}
+        <where>
+            original_id in
+            <foreach collection="originalIds" index="index" item="id" open="(" separator="," close=")">
+                #{originalIds[${index}]}
+            </foreach>
+        </where>
+        order by upload_time desc
+    </select>
 </mapper>

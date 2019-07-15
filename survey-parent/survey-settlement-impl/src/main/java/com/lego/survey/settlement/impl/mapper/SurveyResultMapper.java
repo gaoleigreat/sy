@@ -87,4 +87,15 @@ public interface SurveyResultMapper extends Mapper<SurveyResult> {
      * @return
      */
     SurveyResult queryInitResult(@Param("ew") QueryWrapper<SurveyResult> wrapper, @Param("tableName") String tableName);
+
+
+
+    /**
+     * 根据原始数据id查询成果数据
+     * @param originalIds
+     * @param tableName
+     * @return
+     */
+    List<SurveyResult> queryResult(@Param("tableName") String tableName, @Param("originalIds") List originalIds);
+
 }

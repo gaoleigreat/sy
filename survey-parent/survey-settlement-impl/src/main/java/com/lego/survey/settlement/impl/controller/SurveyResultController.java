@@ -18,6 +18,7 @@ import com.survey.lib.common.utils.HeaderUtils;
 import com.survey.lib.common.utils.HttpUtils;
 import com.survey.lib.common.utils.SnowflakeIdUtils;
 import com.survey.lib.common.vo.HeaderVo;
+import com.survey.lib.common.vo.RespDataVO;
 import com.survey.lib.common.vo.RespVO;
 import com.survey.lib.common.vo.RespVOBuilder;
 import io.swagger.annotations.Api;
@@ -253,4 +254,17 @@ public class SurveyResultController {
     }
 
 
+
+
+    @ApiOperation(value = "通过原始数据查询成果数据", httpMethod = "GET", notes = "通过原始数据查询成果数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", paramType = "query",required = true),
+            @ApiImplicitParam(name = "originalIds", value = "原始数据id", dataType = "List", paramType = "query"),
+    })
+    @RequestMapping(value = "/query/list", method = RequestMethod.GET)
+    public RespVO<RespDataVO<SurveyResultVo>> query(@RequestParam String sectionId,
+                                                    @RequestParam List<Long> originalIds){
+        List<SurveyResultVo>  surveyResultVos= iSurveyResultService.queryResult(sectionId, originalIds);
+        return RespVOBuilder.success(surveyResultVos);
+    }
 }
