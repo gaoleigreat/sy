@@ -3,6 +3,7 @@ package com.lego.survey.settlement.model.vo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class SurveyReportVo {
     @ApiModelProperty("文件名称")
     private String docname;

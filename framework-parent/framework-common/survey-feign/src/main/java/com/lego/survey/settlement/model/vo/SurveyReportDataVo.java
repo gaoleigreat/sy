@@ -10,12 +10,13 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import com.lego.word.element.WObject;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SurveyReportDataVo {
+public class SurveyReportDataVo extends WObject{
 
     @ApiModelProperty("ID")
     private long id;
@@ -67,6 +68,11 @@ public class SurveyReportDataVo {
     @ApiModelProperty("测量员")
     private String surveyer;
 
+    @ApiModelProperty("工区编号")
+    private String workspaceCode;
+
+
+
 
     @JsonIgnore
     public SurveyReportDataVo loadSurveyReportDataVo(SurveyResult surveyResult) {
@@ -80,9 +86,31 @@ public class SurveyReportDataVo {
                 .curSpeed(surveyResult.getSettlingRate())
                 .surveyer(surveyResult.getSurveyer())
                 .surveyTime(surveyResult.getSurveyTime())
+                .workspaceCode(surveyResult.getWorkspaceCode())
                 .build();
 
     }
 
 
+    @Override
+    public Object getValByKey(String s) {
+        if ("id".equals(s)){
+            return  this.id;
+        }else if ("pointCode".equals(s)){
+            return this.pointCode;
+        }else if ("initValue".equals(s)){
+            return this.initElevation;
+        }else if ("preValue".equals(s)){
+            return this.preElevation;
+        }else if ("curValue".equals(s)){
+            return this.curElevation;
+        }else if ("curOffsetValue".equals(s)){
+            return this.curOffsetValue;
+        }else if ("curTotalOffsetValue".equals(s)){
+            return this.curTotalOffsetValue;
+        }else if ("curSpeed".equals(s)){
+            return this.curSpeed;
+        }
+        return null;
+    }
 }
