@@ -7,3 +7,7 @@ spring:
     name: file-service
   profiles:
     active: dev
+
+
+application:
+  description: 文件服务

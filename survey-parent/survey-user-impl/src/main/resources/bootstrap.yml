@@ -7,3 +7,7 @@ spring:
     name: user-service
   profiles:
     active: dev
+
+
+application:
+  description: 用户服务

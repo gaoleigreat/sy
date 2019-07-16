@@ -1,0 +1,120 @@
+define:
+  user:
+    name: admin
+    password: '{cipher}a1d30c1325f1b0cd2e4619bff2be57bc32ae0413c0ce1fee07153b60bfa3a782'
+  auth:
+    securityKey: 121231313131313
+  druid:
+    username: admin
+    password: '{cipher}a1d30c1325f1b0cd2e4619bff2be57bc32ae0413c0ce1fee07153b60bfa3a782'
+  mysql:
+    write:
+      url: jdbc:mysql://114.116.6.53:3306/survey_dev?useUnicode=true&characterEncoding=utf8&useSSL=false
+      username: root
+      password: mysql
+    read1:
+      url: jdbc:mysql://114.116.6.53:3306/survey_dev?useUnicode=true&characterEncoding=utf8&useSSL=false
+      username: root
+      password: mysql
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    registry-fetch-interval-seconds: 5
+    serviceUrl:
+      defaultZone: http://${define.user.name}:${define.user.password}@localhost:48010/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    #instance-id: ${spring.cloud.client.ip-address}:${random.value}
+    metadata-map:
+      user.name: ${define.user.name}
+      user.password: ${define.user.password}
+    health-check-url-path: /actuator/health
+    lease-renewal-interval-in-seconds: 1
+    lease-expiration-duration-in-seconds: 2
+spring:
+  cloud:
+    bus:
+      trace:
+        enabled: true
+    config:   #  优先读取本地配置
+      allow-override: true
+      override-none: true
+      override-system-properties: false    # 是否覆盖Java运行时参数
+  data:
+    mongodb:
+      host: 114.116.6.53
+      port: 27017
+      database: survey_dev
+      #username: admin
+      #password: '{cipher}a1d30c1325f1b0cd2e4619bff2be57bc32ae0413c0ce1fee07153b60bfa3a782'
+  redis:
+    host: 114.116.6.53
+    port: 6379
+    password: Legaoyun@2018
+    database: 0
+    jedis:
+      pool:
+        max-active: 20
+        max-idle: 10
+        max-wait: 10000
+        min-idle: 0
+    timeout: 10000
+  rabbitmq:
+    host: 114.116.44.104
+    port: 5672
+    username: admin
+    password: legaoyun@2018
+  zipkin:
+    base-url: http://114.116.44.104:9411
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  boot:
+    admin:
+      client:
+        #url: http://192.168.101.65:10000   springboot 项目配置项
+        username: ${define.user.name}
+        password: ${define.user.password}
+        instance:
+          metadata:
+            user.name: ${define.user.name}
+            user.password: ${define.user.password}
+  servlet:
+    multipart:
+      max-file-size: 5
+      max-request-size: 10
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+logging:
+  level:
+    com.lego.**: debug
+  file: /home/work/logs/${spring.application.name}/error_log
+
+#feign:
+#  hystrix:
+#    enabled: true
+# ribbon 的超时时间（<）hystrix的超时时间
+#MaxAutoRetries+MaxAutoRetriesNextServer+(MaxAutoRetries *MaxAutoRetriesNextServer) =重试次数
+#重试期间，时间超过了hystrix的超时时间，便会立即执行熔断，fallback
+# (1 + MaxAutoRetries + MaxAutoRetriesNextServer) * ReadTimeout=hystrix 超时时间
+#当ribbon超时后且hystrix没有超时，便会采取重试机制。当OkToRetryOnAllOperations设置为false时，只会对get请求进行重试
+ribbon:
+  ConnectTimeout: 30000     #ribbon 负载均衡连接超时时间
+  ReadTimeout: 60000       #ribbon 负载均衡读取超时时间
+  #MaxAutoRetries: 1   #同一台实例最大重试次数,不包括首次调用
+  #MaxAutoRetriesNextServer: 1  #重试负载均衡其他的实例最大重试次数,不包括首次调用
+  #OkToRetryOnAllOperations: false #否所有操作都重试
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+

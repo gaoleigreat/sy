@@ -96,7 +96,7 @@ public class LoginFilter extends ZuulFilter {
             String userToken = req.getHeader(HttpConsts.HEADER_TOKEN);
             String deviceType = req.getHeader(HttpConsts.DEVICE_TYPE);
             String osType = req.getHeader(HttpConsts.OS_VERSION);
-            if(StringUtils.isEmpty(osType)){
+            if(!StringUtils.isEmpty(osType)){
                 RibbonVersionHolder.setContext(osType);
             }
             if (!StringUtils.isEmpty(userToken) && !StringUtils.isEmpty(deviceType)) {

@@ -7,6 +7,7 @@ import com.lego.survey.project.impl.service.IProjectService;
 import com.lego.survey.project.model.entity.*;
 import com.lego.survey.project.model.vo.*;
 import com.survey.lib.common.page.PagedResult;
+import com.survey.lib.common.vo.CurrentVo;
 import com.survey.lib.common.vo.RespDataVO;
 import com.survey.lib.common.vo.RespVO;
 import com.survey.lib.common.vo.RespVOBuilder;
@@ -203,5 +204,25 @@ public class ProjectServiceImpl implements IProjectService {
             return ownerProjects;
         }
         return sectionList.stream().map(Section::getOwnerProject).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Project> findByCurrent(CurrentVo currentVo) {
+        String role = currentVo.getRole();
+        if(role.equalsIgnoreCase("admin")){
+            return projectRepository.findAll();
+        }
+
+        List<Project> projects=new ArrayList<>();
+        List<String> projectIds = currentVo.getProjectIds();
+        if(!CollectionUtils.isEmpty(projectIds)){
+            for (String projectId : projectIds) {
+                Project project = projectRepository.findProjectByIdAndValid(projectId, 0);
+                if(project!=null){
+                    projects.add(project);
+                }
+            }
+        }
+        return projects;
     }
 }

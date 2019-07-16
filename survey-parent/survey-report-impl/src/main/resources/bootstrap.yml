@@ -7,3 +7,6 @@ spring:
     name: report-service
   profiles:
     active: dev
+
+application:
+  description: 报表服务

@@ -1,7 +1,9 @@
-package com.lego.survey.settlement.impl.config;
+package com.lego.survey.base.interceptor;
+
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -11,14 +13,18 @@ import java.util.Enumeration;
 /**
  * @author yanglf
  * @description
- * @since 2019/1/15
+ * @since 2019/7/16
  **/
-@Configuration
-public class FeignInterceptor implements RequestInterceptor {
+@Component
+public class CoreFeignRequestInterceptor implements RequestInterceptor {
+
+
+    @Value("${spring.application.name}")
+    private String serviceName;
 
     @Override
     public void apply(RequestTemplate requestTemplate) {
-        requestTemplate.header("fromName","settlement");
+        requestTemplate.header("fromService",serviceName);
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder
                 .getRequestAttributes();
         if(attributes==null){

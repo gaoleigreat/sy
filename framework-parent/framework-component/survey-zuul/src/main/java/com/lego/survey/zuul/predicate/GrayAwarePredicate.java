@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.netflix.loadbalancer.AbstractServerPredicate;
 import com.netflix.loadbalancer.PredicateKey;
 import com.netflix.loadbalancer.Server;
+import com.netflix.loadbalancer.ZoneAvoidancePredicate;
 import com.netflix.niws.loadbalancer.DiscoveryEnabledServer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
  * @author yanglf
  * @description
  * @since 2019/7/12
+ * @see ZoneAvoidancePredicate
+ * @see AbstractServerPredicate
  **/
 @Slf4j
 public class GrayAwarePredicate extends AbstractServerPredicate {
@@ -86,13 +89,13 @@ public class GrayAwarePredicate extends AbstractServerPredicate {
             if (eligibleServer instanceof DiscoveryEnabledServer) {
                 DiscoveryEnabledServer server = (DiscoveryEnabledServer) eligibleServer;
                 Map<String, String> metadata = server.getInstanceInfo().getMetadata();
-                if (StringUtils.isBlank(metadata.get("VERSION"))) {
-                    log.debug("服务未设置 VERSION");
+                if (StringUtils.isBlank(metadata.get("version"))) {
+                    log.debug("服务未设置 version");
                     continue;
                 }
-                if (!metadata.get("VERSION").equals(targetVersion)) {
+                if (!metadata.get("version").equals(targetVersion)) {
                     log.debug("当前微服务{} 版本为{}，目标版本{} 匹配失败", server.getInstanceInfo().getAppName()
-                            , metadata.get("VERSION"), targetVersion);
+                            , metadata.get("version"), targetVersion);
                     continue;
                 }
                 targetServers.add(server);

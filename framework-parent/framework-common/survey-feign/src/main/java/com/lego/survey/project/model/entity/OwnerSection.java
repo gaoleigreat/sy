@@ -20,4 +20,6 @@ public class OwnerSection {
     private String id;
     @ApiModelProperty("所属标段名称")
     private String name;
+    @ApiModelProperty("简介")
+    private String desc;
 }

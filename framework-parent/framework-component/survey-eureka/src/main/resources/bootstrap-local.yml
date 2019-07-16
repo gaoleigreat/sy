@@ -1,0 +1,26 @@
+spring:
+  security:
+    user:
+      name: ${define.user.name}
+      password: ${define.user.password}
+
+  cloud:
+    config:
+      #fail-fast: true
+      uri: http://localhost:48020
+      profile: local
+      label: master
+      username: admin
+      password: admin123456
+
+eureka:
+  server:
+    enable-self-preservation: false  # 关闭自我保护
+    eviction-interval-timer-in-ms: 1000
+    use-read-only-response-cache: false
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@114.116.44.104:48020/eureka/
+    backup-registry-impl: com.lego.survey.eureka.config.BackupServerRegistry

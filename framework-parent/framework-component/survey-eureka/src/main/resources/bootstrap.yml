@@ -6,4 +6,4 @@ spring:
   application:
     name: survey-eureka
   profiles:
-    active: dev
+    active: local

@@ -173,4 +173,21 @@ public class ProjectController {
         return RespVOBuilder.success(list);
     }
 
+
+
+    @ApiOperation(value = "查询工程标段信息", notes = "查询工程标段信息", httpMethod = "GET")
+    @ApiImplicitParams({
+
+    })
+    @Operation(value = "findProjectSection",desc = "查询工程标段信息")
+    @RequestMapping(value = "/findProjectSection", method = RequestMethod.GET)
+    public RespVO<RespDataVO<Project>> findProjectSection(HttpServletRequest request) {
+        HeaderVo headerVo = HeaderUtils.parseHeader(request);
+        CurrentVo currentVo = authClient.getAuthVo(headerVo);
+        List<Project> list = iProjectService.findByCurrent(currentVo);
+        return RespVOBuilder.success(list);
+    }
+
+
+
 }

@@ -14,3 +14,7 @@ eureka:
   instance:
     metadata-map:
       version: 1.0
+
+
+application:
+  description: 项目服务

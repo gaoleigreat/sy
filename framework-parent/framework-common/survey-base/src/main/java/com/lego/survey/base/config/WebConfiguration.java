@@ -23,12 +23,12 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new AccessInterceptor())
+     /*   registry.addInterceptor(new AccessInterceptor())
                 .addPathPatterns("/**");
         registry.addInterceptor(new AuthInterceptor())
                 .addPathPatterns("/**");
         registry.addInterceptor(new ParameterInterceptor())
-                .addPathPatterns("/**");
+                .addPathPatterns("/**");*/
     }
 
     @Override

@@ -8,3 +8,7 @@ spring:
     name: settlement-service
   profiles:
     active: dev
+
+
+application:
+  description: 沉降服务

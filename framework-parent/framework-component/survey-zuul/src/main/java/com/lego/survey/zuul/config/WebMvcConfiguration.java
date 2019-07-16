@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
@@ -53,6 +54,12 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
    /* @ConditionalOnExpression("${define.zuul.gray} ")*/
     public IRule grayAwareRule(StringRedisTemplate stringRedisTemplate){
         return new GrayAwareRule(new GrayAwarePredicate(stringRedisTemplate));
+    }
+
+
+    @Bean
+    public RequestContextListener requestContextListener(){
+        return new RequestContextListener();
     }
 
 

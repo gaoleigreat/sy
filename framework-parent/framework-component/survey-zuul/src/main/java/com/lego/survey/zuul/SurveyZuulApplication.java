@@ -12,7 +12,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableDiscoveryClient
 @EnableHystrix
 @EnableZuulProxy
-@EnableSwagger2
 @EnableFeignClients(basePackages = "com.lego.survey")
 public class SurveyZuulApplication {
 

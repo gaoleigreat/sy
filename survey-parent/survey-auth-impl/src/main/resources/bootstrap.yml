@@ -7,4 +7,9 @@ spring:
   application:
     name: auth-service
   profiles:
-    active: dev
+    active: local
+
+
+
+application:
+  description: 权限服务

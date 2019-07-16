@@ -3,6 +3,7 @@ import com.lego.survey.project.model.entity.OwnerProject;
 import com.lego.survey.project.model.entity.Project;
 import com.lego.survey.project.model.vo.ProjectVo;
 import com.survey.lib.common.page.PagedResult;
+import com.survey.lib.common.vo.CurrentVo;
 import com.survey.lib.common.vo.RespDataVO;
 import com.survey.lib.common.vo.RespVO;
 
@@ -87,4 +88,5 @@ public interface IProjectService {
      */
     List<OwnerProject>   findAll(String role, String userId);
 
+    List<Project> findByCurrent(CurrentVo currentVo);
 }

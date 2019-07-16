@@ -96,20 +96,10 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.lego.survey</groupId>
-            <artifactId>lib-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
 
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.lego.feign</groupId>
-            <artifactId>survey-feign</artifactId>
+            <groupId>com.lego.base</groupId>
+            <artifactId>survey-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

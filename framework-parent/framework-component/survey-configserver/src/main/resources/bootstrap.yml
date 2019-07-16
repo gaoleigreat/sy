@@ -7,4 +7,4 @@ spring:
   application:
     name: survey-config
   profiles:
-    active: dev
+    active: local
