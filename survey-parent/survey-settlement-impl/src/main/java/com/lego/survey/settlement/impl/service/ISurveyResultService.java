@@ -93,4 +93,12 @@ public interface ISurveyResultService {
      * @return
      */
     List<SurveyResult> queryResult(String sectionId,List<Long> originalIds);
+
+    /**
+     * 查询测量点的测量历史数据
+     * @param sectionId
+     * @param ponitCode
+     * @return
+     */
+    List<SurveyResultVo> queryPontResult(String sectionId,String ponitCode);
 }

@@ -267,4 +267,17 @@ public class SurveyResultController {
         List<SurveyResult>  surveyResults= iSurveyResultService.queryResult(sectionId, originalIds);
         return RespVOBuilder.success(surveyResults);
     }
+
+
+    @ApiOperation(value = "查询测量点的测量历史数据", httpMethod = "GET", notes = "通过原始数据查询成果数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", paramType = "query",required = true),
+            @ApiImplicitParam(name = "ponitCode", value = "测点Id", dataType = "String", paramType = "query"),
+    })
+    @RequestMapping(value = "/query/pointData", method = RequestMethod.GET)
+    public RespVO<RespDataVO<SurveyResultVo>> queryPontData(@RequestParam String sectionId,
+                                                  @RequestParam String pointCode){
+        List<SurveyResultVo>  surveyResultVos= iSurveyResultService.queryPontResult(sectionId, pointCode);
+        return RespVOBuilder.success(surveyResultVos);
+    }
 }

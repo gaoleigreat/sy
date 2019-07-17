@@ -214,10 +214,20 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
 
     @Override
     public List<SurveyResult> queryResult(String sectionId, List<Long> originalIds) {
-        List<SurveyResultVo> surveyResultVos = new ArrayList<>();
+
         List<SurveyResult> surveyResults = surveyResultMapper.queryResult(DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, originalIds);
-        // surveyResults.forEach(surveyResult -> surveyResultVos.add(SurveyResultVo.builder().build().loadSurveyResultVo(surveyResult)));
+        //
         return surveyResults;
+    }
+
+    @Override
+    public List<SurveyResultVo> queryPontResult(String sectionId, String ponitCode) {
+        List<SurveyResultVo> surveyResultVos = new ArrayList<>();
+        QueryWrapper<SurveyResult> wrapper = new QueryWrapper<>();
+        wrapper.eq("point_code",ponitCode);;
+        List<SurveyResult> surveyResults = surveyResultMapper.queryList(sectionId,wrapper);
+        surveyResults.forEach(surveyResult -> surveyResultVos.add(SurveyResultVo.builder().build().loadSurveyResultVo(surveyResult)));
+        return null;
     }
 
 }
