@@ -1,0 +1,27 @@
+spring:
+  cloud:
+    config:
+      fail-fast: false
+      uri: http://localhost:48020
+      profile: local
+      label: master
+      username: admin
+      password: admin123456
+      retry:
+        max-attempts: 3
+    stream:
+      bindings:
+        input_section_create:
+          destination: createSection     #  rabbit exchange  kafka topic
+          content-type: application/json
+          group: ${spring.application.name}
+        output_log:
+          destination: printLog
+          content-type: application/json
+        output_result:
+          destination: uploadResult
+          content-type: application/json
+        input_result:
+          destination: uploadResult
+          content-type: application/json
+          group: ${spring.application.name}

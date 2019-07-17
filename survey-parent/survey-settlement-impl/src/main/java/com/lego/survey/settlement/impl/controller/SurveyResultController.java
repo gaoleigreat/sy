@@ -242,14 +242,17 @@ public class SurveyResultController {
             @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int", defaultValue = "10", example = "10", paramType = "query"),
             @ApiImplicitParam(name = "type", value = "0-全部;1-超限", dataType = "int",defaultValue = "0", paramType = "query"),
             @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", paramType = "query",required = true),
+            @ApiImplicitParam(name = "workspaceId", value = "工区ID", dataType = "String", paramType = "query"),
+
     })
     @RequestMapping(value = "/overrunList/{pageIndex}", method = RequestMethod.GET)
     public  RespVO<PagedResult<OverrunListVo>>   queryOverrunList(@PathVariable(value = "pageIndex") int pageIndex,
                                                                   @RequestParam(required = false, defaultValue = "10") Integer pageSize,
                                                                   @RequestParam(required = false,defaultValue = "0") Integer type,
-                                                                  @RequestParam String sectionId){
+                                                                  @RequestParam String sectionId,
+                                                                  @RequestParam(required = false) String workspaceId){
 
-        PagedResult<OverrunListVo> listVoPagedResult= iSurveyResultService.queryOverrunList(pageIndex,pageSize,sectionId,type);
+        PagedResult<OverrunListVo> listVoPagedResult= iSurveyResultService.queryOverrunList(pageIndex,pageSize,sectionId,workspaceId,type);
         return RespVOBuilder.success(listVoPagedResult);
     }
 

@@ -1,0 +1,31 @@
+spring:
+  cloud:
+    config:
+      uri: http://localhost:48020
+      profile: local
+      label: master
+     # fail-fast: true
+      username: admin
+      password: admin123456
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"       # 允许访问的域名
+            allowedMethods:           # 允许请求的方法
+            - GET
+            - PUT
+            - POST
+            - DELETE
+
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
+
+

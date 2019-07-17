@@ -83,7 +83,7 @@ public interface ISurveyResultService {
      * @param type
      * @return
      */
-    PagedResult<OverrunListVo> queryOverrunList(int pageIndex, Integer pageSize, String sectionId, Integer type);
+    PagedResult<OverrunListVo> queryOverrunList(int pageIndex, Integer pageSize, String sectionId,String workspaceId, Integer type);
 
 
     /**

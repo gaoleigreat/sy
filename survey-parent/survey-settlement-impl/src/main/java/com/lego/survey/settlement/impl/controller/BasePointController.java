@@ -1,6 +1,9 @@
 package com.lego.survey.settlement.impl.controller;
+
 import com.alibaba.fastjson.JSONObject;
 import com.lego.survey.auth.feign.AuthClient;
+import com.lego.survey.base.annotation.Operation;
+import com.lego.survey.base.annotation.Resource;
 import com.lego.survey.settlement.impl.service.IBasePointService;
 import com.lego.survey.settlement.model.entity.BasePoint;
 import com.lego.survey.settlement.model.vo.BasePointVo;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+
 /**
  * @author yanglf
  * @description
@@ -29,7 +33,8 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping(DictConstant.Path.BASE_POINT)
-@Api(value = "BasePointController", description = "基准点接口")
+@Api(value = "BasePointController", description = "基准点管理")
+@Resource(value = "basePoint", desc = "基准点管理")
 public class BasePointController {
 
     @Autowired
@@ -42,17 +47,18 @@ public class BasePointController {
     private LogSender logSender;
 
 
-    @ApiOperation(value = "添加基准点", notes = "添加基准点", httpMethod = "POST")
+    @ApiOperation(value = "新增基准点", notes = "新增基准点", httpMethod = "POST")
     @ApiImplicitParams({
 
     })
+    @Operation(value = "create", desc = "新增基准点")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public RespVO create(@Validated @RequestBody BasePoint basePoint, HttpServletRequest request) {
         String code = basePoint.getCode();
         String name = basePoint.getName();
         String sectionCode = basePoint.getSectionCode();
-        BasePoint bp=iBasePointService.queryByCodeOrName(code,name,sectionCode);
-        if(bp!=null){
+        BasePoint bp = iBasePointService.queryByCodeOrName(code, name, sectionCode);
+        if (bp != null) {
             return RespVOBuilder.failure("基准点已经存在");
         }
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
@@ -70,6 +76,7 @@ public class BasePointController {
     @ApiImplicitParams({
 
     })
+    @Operation(value = "modify", desc = "修改基准点")
     @RequestMapping(value = "/modify", method = RequestMethod.PUT)
     public RespVO modify(@Validated @RequestBody BasePoint basePoint, HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
@@ -86,6 +93,7 @@ public class BasePointController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "ids", value = "删除的基准点id集合", dataType = "long", required = true, paramType = "query", allowMultiple = true),
     })
+    @Operation(value = "delete", desc = "删除基准点列表")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public RespVO delete(HttpServletRequest request,
                          @RequestParam List<Long> ids) {
@@ -108,10 +116,11 @@ public class BasePointController {
 
     })
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public RespVO<RespDataVO<BasePointVo>> query(@RequestParam String sectionCode,
-                                                  @RequestParam(required = false) String name,
-                                                  @RequestParam(required = false) Long startTimestamp,
-                                                  @RequestParam(required = false) Long endTimestamp
+    public RespVO<RespDataVO<BasePointVo>> query(
+            @RequestParam String sectionCode,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Long startTimestamp,
+            @RequestParam(required = false) Long endTimestamp
     ) {
         Date startDate = null;
         Date endDate = null;

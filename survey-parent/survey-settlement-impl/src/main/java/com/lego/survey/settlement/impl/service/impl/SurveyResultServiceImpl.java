@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lego.survey.base.exception.ExceptionBuilder;
+import com.lego.survey.project.feign.WorkspaceClient;
+import com.lego.survey.project.model.entity.Workspace;
 import com.lego.survey.settlement.impl.mapper.SurveyPointExceptionMapper;
 import com.lego.survey.settlement.impl.mapper.SurveyPointMapper;
 import com.lego.survey.settlement.impl.mapper.SurveyPointTypeMapper;
@@ -17,6 +19,7 @@ import com.lego.survey.settlement.model.vo.OverrunListVo;
 import com.lego.survey.settlement.model.vo.SurveyResultVo;
 import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.consts.HttpConsts;
+import com.survey.lib.common.consts.RespConsts;
 import com.survey.lib.common.page.PagedResult;
 import com.survey.lib.common.vo.RespVO;
 import com.survey.lib.common.vo.RespVOBuilder;
@@ -47,6 +50,9 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
 
     @Autowired
     private SurveyPointMapper surveyPointMapper;
+
+    @Autowired
+    private WorkspaceClient workspaceClient;
 
     @Autowired
     private SurveyPointTypeMapper surveyPointTypeMapper;
@@ -154,18 +160,22 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
     }
 
     @Override
-    public PagedResult<OverrunListVo> queryOverrunList(int pageIndex, Integer pageSize, String sectionId, Integer type) {
+    public PagedResult<OverrunListVo> queryOverrunList(int pageIndex, Integer pageSize, String sectionId, String workspaceId,Integer type) {
         PagedResult<OverrunListVo> voPagedResult = new PagedResult<>();
         IPage<SurveyResult> iPage = new Page<>(pageIndex, pageSize);
         List<OverrunListVo> overrunListVos = new ArrayList<>();
-        QueryWrapper<SurveyResult> wrapper = new QueryWrapper<>();
-        Page<SurveyResult> surveyResultPage = surveyResultMapper.queryList(iPage, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, wrapper);
-        List<SurveyResult> records = surveyResultPage.getRecords();
-        Map<String, SurveyPoint> pointMap = new HashMap<>();
-        List<SurveyPoint> surveyPoints = surveyPointMapper.queryByName(new QueryWrapper<>(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
-        if (!CollectionUtils.isEmpty(surveyPoints)) {
-            surveyPoints.forEach(surveyPoint -> pointMap.put(surveyPoint.getCode(), surveyPoint));
+        QueryWrapper<SurveyPoint> wrapper = new QueryWrapper<>();
+        if(!StringUtils.isBlank(workspaceId)){
+            RespVO<Workspace> respVO = workspaceClient.info(workspaceId);
+            if(respVO.getRetCode()== RespConsts.SUCCESS_RESULT_CODE){
+                Workspace info = respVO.getInfo();
+                if(info!=null){
+                    wrapper.eq("workspace_code",info.getCode());
+                }
+            }
         }
+        Page<SurveyPoint> surveyPoints = surveyPointMapper.queryList(iPage,DictConstant.TableNamePrefix.SURVEY_POINT + sectionId, wrapper);
+        List<SurveyPoint> records = surveyPoints.getRecords();
         Map<String, String> typeMap = new HashMap<>();
         List<SurveyPointType> typeList = surveyPointTypeMapper.selectList(null);
         if (!CollectionUtils.isEmpty(typeList)) {
@@ -173,7 +183,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
         }
 
         if (!CollectionUtils.isEmpty(records)) {
-            for (SurveyResult record : records) {
+            for (SurveyPoint record : records) {
                 QueryWrapper<SurveyPointException> exceptionWrapper = new QueryWrapper<>();
                 exceptionWrapper.eq("result_id", record.getId());
                 List<SurveyPointException> exceptionList = surveyPointExceptionMapper.selectList(exceptionWrapper);
@@ -182,22 +192,29 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                         continue;
                     }
                 }
-                QueryWrapper<SurveyResult> wp = new QueryWrapper<>();
-                wp.le("survey_time", record.getSurveyTime());
-                List<SurveyResult> preResult = surveyResultMapper.queryPreResult(wp, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, 1);
-                SurveyPoint surveyPoint = pointMap.get(record.getPointCode());
                 OverrunListVo overrun = new OverrunListVo();
-                overrun.setCumulativeSettlement(record.getCumulativeSettlement());
-                overrun.setCurSettlement(record.getSingleSettlement());
-                overrun.setCurValue(record.getElevation());
-                overrun.setInitValue(surveyPoint.getElevation());
-                overrun.setPointName(record.getPointName());
-                overrun.setPreValue(!CollectionUtils.isEmpty(preResult) ? preResult.get(0).getElevation() : 0);
-                overrun.setRemark(surveyPoint.getComment());
-                overrun.setSettlingRate(record.getSettlingRate());
-                overrun.setSurveyTime(record.getSurveyTime());
-                String sp = surveyPoint.getType();
+                overrun.setPointCode(record.getCode());
+                overrun.setPointName(record.getName());
+                overrun.setInitValue(record.getElevation());
+                overrun.setRemark(record.getComment());
+                String sp = record.getType();
                 overrun.setType(typeMap.get(sp) != null ? sp : sp);
+
+                List<SurveyResult> surveyResults = surveyResultMapper.queryPreResult(null, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, 1);
+                if(!CollectionUtils.isEmpty(surveyResults)){
+                    SurveyResult surveyResult = surveyResults.get(0);
+                    QueryWrapper<SurveyResult> wp = new QueryWrapper<>();
+                    wp.le("survey_time", surveyResult.getSurveyTime());
+                    List<SurveyResult> preResult = surveyResultMapper.queryPreResult(wp, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, 1);
+                    overrun.setPreValue(!CollectionUtils.isEmpty(preResult) ? preResult.get(0).getElevation() : 0);
+                    overrun.setCumulativeSettlement(surveyResult.getCumulativeSettlement());
+                    overrun.setCurSettlement(surveyResult.getSingleSettlement());
+                    overrun.setSettlingRate(surveyResult.getSettlingRate());
+                    overrun.setSurveyTime(surveyResult.getSurveyTime());
+                }
+
+                overrun.setCurValue(record.getElevation());
+
                 if (!CollectionUtils.isEmpty(exceptionList)) {
                     overrun.setIsException(true);
                 } else {
@@ -207,7 +224,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                 overrunListVos.add(overrun);
             }
         }
-        voPagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, surveyResultPage.getTotal(), (int) surveyResultPage.getPages()));
+        voPagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, surveyPoints.getTotal(), (int) surveyPoints.getPages()));
         voPagedResult.setResultList(overrunListVos);
         return voPagedResult;
     }

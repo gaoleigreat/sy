@@ -42,7 +42,8 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
         }
         List<SurveyPoint> list = null;
         if (deviceType.equals(HttpConsts.DeviceType.DEVICE_WEB)) {
-            list = surveyPointMapper.queryList(new Page(pageIndex, pageSize), tableName, queryWrapper);
+            Page<SurveyPoint> surveyPointPage = surveyPointMapper.queryList(new Page(pageIndex, pageSize), tableName, queryWrapper);
+            list=surveyPointPage.getRecords();
         } else if (deviceType.equals(HttpConsts.DeviceType.DEVICE_ANDROID)) {
             list = surveyPointMapper.queryList(tableName, queryWrapper);
         }

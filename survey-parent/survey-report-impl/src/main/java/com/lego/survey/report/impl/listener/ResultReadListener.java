@@ -1,7 +1,9 @@
 package com.lego.survey.report.impl.listener;
 import com.alibaba.excel.read.context.AnalysisContext;
 import com.lego.survey.base.exception.ExceptionBuilder;
+import com.lego.survey.settlement.feign.SurveyPointClient;
 import com.lego.survey.settlement.feign.SurveyResultClient;
+import com.lego.survey.settlement.model.vo.SurveyPointVo;
 import com.lego.survey.settlement.model.vo.SurveyResultVo;
 import com.lego.survey.lib.excel.listener.ExcelListener;
 import com.survey.lib.common.consts.RespConsts;
@@ -21,27 +23,29 @@ import java.util.List;
  **/
 @Component
 @Slf4j
-public class ResultReadListener extends ExcelListener<SurveyResultVo> {
+public class ResultReadListener extends ExcelListener<SurveyPointVo> {
 
-    private List<SurveyResultVo> surveyResultVos = new ArrayList<>();
+    private List<SurveyPointVo> surveyPointVos = new ArrayList<>();
 
     @Autowired
-    private SurveyResultClient surveyResultClient;
+    private SurveyPointClient surveyPointClient;
+
+    private String sectionId;
 
 
     @Override
-    public void invoke(SurveyResultVo surveyResultVo, AnalysisContext analysisContext) {
-        log.info("read line :{}", surveyResultVo.toString());
-        surveyResultVos.add(surveyResultVo);
+    public void invoke(SurveyPointVo surveyPointVo, AnalysisContext analysisContext) {
+        log.info("read line :{}", surveyPointVo);
+        surveyPointVos.add(surveyPointVo);
     }
 
     @Override
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
-        if (surveyResultVos == null || surveyResultVos.size() <= 0) {
+        if (surveyPointVos == null || surveyPointVos.size() <= 0) {
             return;
         }
         try {
-            RespVO respVO = surveyResultClient.createBatch(surveyResultVos);
+            RespVO respVO = surveyPointClient.createBatch(surveyPointVos,sectionId);
             if (respVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
                 log.info("insert excel success");
             }
@@ -50,7 +54,11 @@ public class ResultReadListener extends ExcelListener<SurveyResultVo> {
             ExceptionBuilder.duplicateKeyException("主键冲突", 0L);
             log.info("insert excel fail");
         }finally {
-            surveyResultVos.clear();
+            surveyPointVos.clear();
         }
+    }
+
+    public void setTableName(String sectionId) {
+        this.sectionId=sectionId;
     }
 }

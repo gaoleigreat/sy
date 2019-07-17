@@ -6,8 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.StringUtils;
 
+import javax.jws.soap.InitParam;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,7 +22,9 @@ import java.util.Arrays;
  * @since 2019/7/16
  **/
 @Slf4j
-@WebFilter(filterName = "authFilter", urlPatterns = "/*")
+@WebFilter(filterName = "authFilter", urlPatterns = "/*",initParams = {
+        @WebInitParam(name = "black_list",value = "192.168.101.103,",description = "blackList")
+})
 @Order(1)
 public class ServerRequestAuthFilter implements Filter {
     String blackList;

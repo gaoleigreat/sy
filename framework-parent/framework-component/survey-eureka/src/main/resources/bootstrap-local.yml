@@ -18,9 +18,11 @@ eureka:
     enable-self-preservation: false  # 关闭自我保护
     eviction-interval-timer-in-ms: 1000
     use-read-only-response-cache: false
+
   client:
     fetch-registry: false
     register-with-eureka: false
     service-url:
       defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@114.116.44.104:48020/eureka/
     backup-registry-impl: com.lego.survey.eureka.config.BackupServerRegistry
+    filter-only-up-instances: true
