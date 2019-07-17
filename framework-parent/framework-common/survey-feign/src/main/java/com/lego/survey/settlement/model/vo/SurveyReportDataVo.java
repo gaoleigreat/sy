@@ -98,11 +98,11 @@ public class SurveyReportDataVo extends WObject{
             return  this.id;
         }else if ("pointCode".equals(s)){
             return this.pointCode;
-        }else if ("initValue".equals(s)){
+        }else if ("initElevation".equals(s)){
             return this.initElevation;
-        }else if ("preValue".equals(s)){
+        }else if ("preElevation".equals(s)){
             return this.preElevation;
-        }else if ("curValue".equals(s)){
+        }else if ("curElevation".equals(s)){
             return this.curElevation;
         }else if ("curOffsetValue".equals(s)){
             return this.curOffsetValue;

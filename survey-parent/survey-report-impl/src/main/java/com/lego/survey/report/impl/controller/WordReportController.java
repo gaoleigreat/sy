@@ -69,7 +69,7 @@ public class WordReportController {
     @RequestMapping(value = "/get/{sectionId}/{taskId}",method = RequestMethod.GET)
     public RespVO generatePointResultWord(@PathVariable("sectionId") String sectionId,@PathVariable("taskId") Long taskId) throws Exception {
         //1 通过sectionid 和taskid 查询原始测量数据
-       RespVO<RespDataVO<SurveyReportDataVo>> respDataVORespVO =  reportDataClient.queryData(sectionId,taskId);
+        RespVO<RespDataVO<SurveyReportDataVo>> respDataVORespVO =  reportDataClient.queryData(sectionId,taskId);
         List<SurveyReportDataVo> surveyReportDataVoList =  respDataVORespVO.getInfo().getList();
         Set<String> typeSet = surveyReportDataVoList.stream().map(SurveyReportDataVo::getPointType).collect(Collectors.toSet());
 
@@ -86,7 +86,8 @@ public class WordReportController {
             surveyReportVo.setPontType(type);
 
             WReporter wReporter = new WReporter("C:/Users/xiaodao/Desktop/template.docx");
-            wReporter.export(list,0,1);
+            wReporter.export(list,1,1);
+            wReporter.export(surveyReportVo,0);
             wReporter.generate("C:/Users/xiaodao/Desktop/result"+type+".docx");
 
         }
