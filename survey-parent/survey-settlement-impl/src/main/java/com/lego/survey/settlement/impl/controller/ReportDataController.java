@@ -1,10 +1,13 @@
 package com.lego.survey.settlement.impl.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.lego.survey.settlement.impl.service.ISurveyOriginalService;
 import com.lego.survey.settlement.impl.service.ISurveyPointService;
 import com.lego.survey.settlement.impl.service.ISurveyResultService;
 import com.lego.survey.settlement.model.entity.SurveyResult;
 import com.lego.survey.settlement.model.vo.*;
+import com.lego.survey.user.feign.UserClient;
 import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.vo.RespDataVO;
 import com.survey.lib.common.vo.RespVO;
@@ -14,22 +17,28 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Validated
 @RestController
-@RequestMapping(DictConstant.Path.SURVEY_ORIGINAL)
+@RequestMapping("/reportData")
 @Api(value = "GenerateReportController", description = "生成报告接口")
-public class GenerateReportController {
+public class ReportDataController {
     @Autowired
     private ISurveyOriginalService surveyOriginalService;
     @Autowired
@@ -37,16 +46,16 @@ public class GenerateReportController {
 
     @Autowired
     private ISurveyPointService surveyPointService;
-
-
-    @ApiOperation(value = "上传数据后导出word文档", httpMethod = "GET", notes = "上传数据后导出word文档")
+    @ApiOperation(value = "查询沉降测量报告中需要插入的数据", httpMethod = "GET", notes = "上传数据后导出word文档")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "taskId", value = "任务ID", dataType = "Long", paramType = "query", required = true),
     })
-    @RequestMapping(value = "/query/list", method = RequestMethod.GET)
-    public RespVO<RespDataVO<SurveyReportDataVo>> query(@RequestParam String sectionId,
-                                                        @RequestParam Long taskId) {
+    @RequestMapping(value = "/query/settlementData", method = RequestMethod.GET)
+    public RespVO<RespDataVO<SurveyReportDataVo>> queryData(@RequestParam String sectionId,
+                                                            @RequestParam Long taskId
+    ) {
+
 
         //获取原始数据
         List<SurveyOriginalVo> originalVos = surveyOriginalService.list(taskId, sectionId);
@@ -66,7 +75,7 @@ public class GenerateReportController {
             //第一次测量结果
             List<SurveyResult> intResults = surveyResultService.queryPreResult(null, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, 1, surveyReportDataVo.getPointCode());
             //点初始值
-            SurveyPointVo surveyPointVo = surveyPointService.querySurveyPointByCode(surveyReportDataVo.getPointCode(), DictConstant.TableNamePrefix.SURVEY_POINT+ sectionId);
+            SurveyPointVo surveyPointVo = surveyPointService.querySurveyPointByCode(surveyReportDataVo.getPointCode(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
             surveyReportDataVo.setPointType(surveyPointVo.getType());
             surveyReportDataVo.setInitElevation(surveyPointVo.getElevation());
             surveyReportDataVo.setOnceLowerLimit(surveyPointVo.getOnceLowerLimit());
