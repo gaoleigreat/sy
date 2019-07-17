@@ -98,7 +98,7 @@ public class WorkspaceController {
             @ApiImplicitParam(name = "projectId", value = "工程id", dataType = "String", required = true, paramType = "query"),
             @ApiImplicitParam(name = "sectionId", value = "标段id", dataType = "String", required = true, paramType = "query"),
     })
-    @Operation(value = "list",desc = "删除工区信息")
+    @Operation(value = "list",desc = "根据标段id获取工区信息")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public RespVO<RespDataVO<Workspace>> list(HttpServletRequest request,
                                               @RequestParam String projectId,

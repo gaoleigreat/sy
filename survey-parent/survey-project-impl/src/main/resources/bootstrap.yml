@@ -18,3 +18,7 @@ eureka:
 
 application:
   description: 项目服务
+
+project-service:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.ribbon.RibbonRule

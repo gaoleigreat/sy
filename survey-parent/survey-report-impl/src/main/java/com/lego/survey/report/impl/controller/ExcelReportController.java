@@ -3,6 +3,7 @@ import com.lego.survey.project.feign.SectionClient;
 import com.lego.survey.project.model.entity.Section;
 import com.lego.survey.report.impl.listener.ResultReadListener;
 import com.lego.survey.settlement.feign.SurveyResultClient;
+import com.lego.survey.settlement.model.vo.SurveyPointVo;
 import com.lego.survey.settlement.model.vo.SurveyResultVo;
 import com.lego.survey.lib.excel.ExcelService;
 import com.survey.lib.common.consts.DictConstant;
@@ -92,14 +93,16 @@ public class ExcelReportController {
 
     })
     @RequestMapping(value = "/upload",method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public RespVO uploadPointResultExcel(@RequestPart(value = "file") MultipartFile file){
+    public RespVO uploadPointResultExcel(@RequestPart(value = "file") MultipartFile file,
+                                         @RequestParam() String sectionId){
         try {
             if(file==null || file.isEmpty()){
                 return RespVOBuilder.failure("文件不能为空");
             }
             String pathName = storePath + UuidUtils.generateShortUuid() + ".xlsx";
             file.transferTo(new File(pathName));
-            excelService.readExcel(pathName,resultReadListener,SurveyResultVo.class,1);
+            resultReadListener.setTableName(sectionId);
+            excelService.readExcel(pathName,resultReadListener, SurveyPointVo.class,1);
             return RespVOBuilder.success();
         } catch (IOException e) {
             e.printStackTrace();

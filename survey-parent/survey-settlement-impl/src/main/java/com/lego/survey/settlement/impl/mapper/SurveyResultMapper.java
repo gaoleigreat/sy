@@ -80,6 +80,7 @@ public interface SurveyResultMapper extends Mapper<SurveyResult> {
      */
     List<SurveyResult> queryPreResult(@Param("ew") QueryWrapper<SurveyResult> wrapper, @Param("tableName") String tableName, @Param("count") int count);
 
+
     /**
      * 查询初始成果数据
      * @param wrapper

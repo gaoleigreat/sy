@@ -2,6 +2,7 @@ package com.lego.survey.settlement.impl.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lego.survey.settlement.model.entity.SurveyPoint;
 import com.lego.survey.settlement.model.vo.SurveyPointVo;
 import com.lego.survey.lib.mybatis.mapper.Mapper;
@@ -25,7 +26,7 @@ public interface SurveyPointMapper extends Mapper<SurveyPoint> {
      * @param tableName
      * @return
      */
-    List<SurveyPoint> queryList(IPage iPage, @Param("tableName") String tableName, @Param("ew") QueryWrapper queryWrapper);
+    Page<SurveyPoint> queryList(IPage iPage, @Param("tableName") String tableName, @Param("ew") QueryWrapper queryWrapper);
 
     /**
      * 保存测点信息

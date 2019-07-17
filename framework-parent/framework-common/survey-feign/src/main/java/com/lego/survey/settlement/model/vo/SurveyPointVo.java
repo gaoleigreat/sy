@@ -1,5 +1,6 @@
 package com.lego.survey.settlement.model.vo;
 
+import com.alibaba.excel.metadata.BaseRowModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lego.survey.settlement.model.entity.SurveyPoint;
 import io.swagger.annotations.ApiModelProperty;
@@ -20,7 +21,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SurveyPointVo {
+public class SurveyPointVo extends BaseRowModel {
     @ApiModelProperty("id")
     private Long id;
     @NotBlank(message = "测点编号不能为空")

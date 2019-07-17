@@ -10,6 +10,7 @@ import com.lego.survey.user.model.entity.User;
 import com.lego.survey.user.model.vo.UserAddVo;
 import com.lego.survey.user.model.vo.UserVo;
 import com.survey.lib.common.consts.DictConstant;
+import com.survey.lib.common.consts.HttpConsts;
 import com.survey.lib.common.consts.RespConsts;
 import com.survey.lib.common.page.PagedResult;
 import com.survey.lib.common.utils.HeaderUtils;
@@ -66,6 +67,8 @@ public class UserController {
         if (userObj == null) {
             return RespVOBuilder.failure(RespConsts.FAIL_LOGIN_CODE, "用户不存在");
         }
+        List<String> permission = userObj.getPermission();
+        // TODO 允许采集端登录
         String password = userObj.getPassWord();
        // String withMd5 = SecurityUtils.encryptionWithMd5(pwd);
         if (!pwd.equals(password)) {
@@ -76,8 +79,6 @@ public class UserController {
         if (loginToken != null) {
             authClient.delete(loginToken, deviceType);
         }
-        String role = userObj.getRole();
-        List<String> permission = userObj.getPermission();
         //  登录逻辑
         RespVO<TokenVo> respVO = authClient.generate(userObj, deviceType);
         logSender.sendLogEvent(HttpUtils.getClientIp(request), userObj.getId(), "用户登录");
@@ -120,6 +121,8 @@ public class UserController {
         String id = authClient.getAuthVo(headerVo).getUserId();
         //修改用户信息
         RespVO modify = iUserService.modify(userId, userName, name, cardId);
+        //TODO 同步更新 工程  标段   工区信息
+
         logSender.sendLogEvent(HttpUtils.getClientIp(request), id, "修改用户信息:[" + userId + "]");
         return modify;
     }
@@ -137,6 +140,8 @@ public class UserController {
         String id = authClient.getAuthVo(headerVo).getUserId();
         //删除用户
         RespVO delete = iUserService.delete(userId);
+        // TODO 同步更新 用户关联信息
+
         //更新日志
         logSender.sendLogEvent(HttpUtils.getClientIp(request), id, "删除用户:[" + userId + "]");
         return delete;

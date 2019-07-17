@@ -1,6 +1,8 @@
 package com.lego.survey.settlement.impl.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.lego.survey.auth.feign.AuthClient;
+import com.lego.survey.base.annotation.Operation;
+import com.lego.survey.base.annotation.Resource;
 import com.lego.survey.settlement.impl.service.ISurveyOriginalService;
 import com.lego.survey.settlement.model.entity.SurveyOriginal;
 import com.lego.survey.settlement.model.vo.SurveyOriginalVo;
@@ -33,7 +35,8 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping(DictConstant.Path.SURVEY_ORIGINAL)
-@Api(value = "SurveyOriginalController", description = "原始数据接口")
+@Api(value = "SurveyOriginalController", description = "原始数据管理")
+@Resource(value = "surveyOriginal",desc = "原始数据管理")
 public class SurveyOriginalController {
 
     @Autowired
@@ -46,11 +49,12 @@ public class SurveyOriginalController {
     private LogSender logSender;
 
 
-    @ApiOperation(value = "添加原始数据", notes = "添加原始数据", httpMethod = "POST")
+    @ApiOperation(value = "上传原始数据", notes = "上传原始数据", httpMethod = "POST")
     @ApiImplicitParams({
 
     })
     @RequestMapping(value = "/create/{sectionId}", method = RequestMethod.POST)
+    @Operation(value = "/create/{sectionId}",desc = "上传原始数据")
     public RespVO create(@Validated @RequestBody SurveyOriginalVo surveyOriginalVo,
                          @PathVariable(value = "sectionId") String sectionId,
                          HttpServletRequest request) {
@@ -66,10 +70,11 @@ public class SurveyOriginalController {
     }
 
 
-    @ApiOperation(value = "批量添加原始数据", notes = "批量添加原始数据", httpMethod = "POST")
+    @ApiOperation(value = "批量上传原始数据", notes = "批量上传原始数据", httpMethod = "POST")
     @ApiImplicitParams({
 
     })
+
     @RequestMapping(value = "/createBatch/{sectionId}", method = RequestMethod.POST)
     public RespVO createBatch(@Validated @RequestBody List<SurveyOriginalVo> surveyOriginalVos,
                               @PathVariable(value = "sectionId") String sectionId,

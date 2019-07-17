@@ -16,6 +16,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OverrunListVo {
+    @ApiModelProperty("code")
+    private String pointCode;
     @ApiModelProperty("点名")
     private String pointName;
     @ApiModelProperty("测量时间")

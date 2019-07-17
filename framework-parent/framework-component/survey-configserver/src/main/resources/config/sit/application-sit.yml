@@ -20,7 +20,7 @@ eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
-    registry-fetch-interval-seconds: 5
+    registry-fetch-interval-seconds: 30  # 获取服务间隔时间
     serviceUrl:
       defaultZone: http://${define.user.name}:${define.user.password}@114.116.6.53:48010/eureka/
   instance:
@@ -31,8 +31,8 @@ eureka:
       user.name: ${define.user.name}
       user.password: ${define.user.password}
     health-check-url-path: /actuator/health
-    lease-renewal-interval-in-seconds: 1
-    lease-expiration-duration-in-seconds: 2
+    lease-renewal-interval-in-seconds: 1    # 续租间隔时间
+    lease-expiration-duration-in-seconds: 2  # 续租超时时间
     #status-page-url: http://${spring.cloud.client.ip-address}:${server.port}/swagger-ui.html
 spring:
   cloud:

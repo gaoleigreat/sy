@@ -1,0 +1,47 @@
+spring:
+  cloud:
+    config:
+      fail-fast: true
+      uri: http://localhost:48020
+      profile: local
+      label: master
+      username: admin
+      password: admin123456
+      retry:
+        max-attempts: 3
+
+logging:
+  level:
+    org.springframework: debug
+
+file:
+  service:
+    url: http://192.168.105.10:18080/
+
+fpfile:
+  path: /opt/work/file
+  url:  http://114.116.6.53:8080/fp-api/file/file/v1/fpfile/download
+ceph:
+  host: http://192.168.105.10:7480/
+  accessKey: 7BFAN4EX4ZCAT86V4Z65
+  secretKey: LW3h7jyYyk3HbbLDtcoAoA6KYeREQixcwxtzxkHK
+
+application:
+  description: 文件
+
+management:
+  endpoint:
+    shutdown:
+      enabled: true
+    env:
+      enabled: true
+    mappings:
+      enabled: true
+    health:
+      show-details: always
+    restart:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: ["health","info","shutdown","mappings","env","restart"]
