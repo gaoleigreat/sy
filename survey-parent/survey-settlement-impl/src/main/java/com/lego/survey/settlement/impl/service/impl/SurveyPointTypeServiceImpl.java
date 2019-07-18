@@ -33,9 +33,10 @@ public class SurveyPointTypeServiceImpl implements ISurveyPointTypeService {
     public RespVO<RespDataVO<SurveyPointTypeVo>> list(String sectionCode) {
         List<SurveyPointTypeVo> typeVos = new ArrayList<>();
         QueryWrapper<SurveyPointType> wrapper = new QueryWrapper<>();
-        if(sectionCode!=null){
-            wrapper.eq("section_code",sectionCode);
+        if (sectionCode != null) {
+            wrapper.eq("section_code", sectionCode);
         }
+        wrapper.eq("status", 0);
         wrapper.orderByDesc("create_time");
         List<SurveyPointType> typeList = surveyPointTypeMapper.selectList(wrapper);
         if (typeList != null) {
@@ -57,9 +58,9 @@ public class SurveyPointTypeServiceImpl implements ISurveyPointTypeService {
             } else {
                 return RespVOBuilder.failure("添加测点类型失败");
             }
-        }catch (DuplicateKeyException ex){
+        } catch (DuplicateKeyException ex) {
             ex.printStackTrace();
-            ExceptionBuilder.duplicateKeyException("主键冲突",surveyPointType.getId());
+            ExceptionBuilder.duplicateKeyException("主键冲突", surveyPointType.getId());
         }
         return RespVOBuilder.failure("添加测点类型失败");
 
@@ -79,11 +80,8 @@ public class SurveyPointTypeServiceImpl implements ISurveyPointTypeService {
     @Transactional(rollbackFor = RuntimeException.class)
     public RespVO modify(SurveyPointTypeVo surveyPointType) {
         surveyPointType.setUpdateTime(new Date());
-        if (surveyPointTypeMapper.updateById(surveyPointType.getSurveyPointType()) > 0) {
-            return RespVOBuilder.success();
-        } else {
-            return RespVOBuilder.failure("modify survey point type failed");
-        }
+        surveyPointTypeMapper.updateStatus(surveyPointType.getId());
+        return create(surveyPointType);
     }
 
     @Override
@@ -110,23 +108,23 @@ public class SurveyPointTypeServiceImpl implements ISurveyPointTypeService {
     }
 
     @Override
-    public SurveyPointType queryTypeByNameOrCode(String name, String code,String sectionCode) {
-        QueryWrapper<SurveyPointType> queryWrapper=new QueryWrapper<>();
-        queryWrapper.eq("section_code",sectionCode);
-        queryWrapper.eq("name",name).or().eq("code",code);
+    public SurveyPointType queryTypeByNameOrCode(String name, String code, String sectionCode) {
+        QueryWrapper<SurveyPointType> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("section_code", sectionCode).eq("status", 0);
+        queryWrapper.eq("name", name).or().eq("code", code);
         List<SurveyPointType> typeList = surveyPointTypeMapper.selectList(queryWrapper);
-        if(typeList!=null && typeList.size()>0){
-            return  typeList.get(0);
+        if (typeList != null && typeList.size() > 0) {
+            return typeList.get(0);
         }
         return null;
     }
 
     @Override
     public SurveyPointType queryByName(String name, String sectionCode) {
-        QueryWrapper<SurveyPointType> wrapper=new QueryWrapper<>();
-        wrapper.eq("name",name);
+        QueryWrapper<SurveyPointType> wrapper = new QueryWrapper<>();
+        wrapper.eq("name", name).eq("status", 0);
         List<SurveyPointType> surveyPointTypes = surveyPointTypeMapper.selectList(wrapper);
-        if(surveyPointTypes==null || surveyPointTypes.size()<=0){
+        if (surveyPointTypes == null || surveyPointTypes.size() <= 0) {
             return null;
         }
         return surveyPointTypes.get(0);

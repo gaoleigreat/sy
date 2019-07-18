@@ -41,4 +41,7 @@ public class SurveyPointType {
 
     @ApiModelProperty("备注")
     private String comment;
+
+    @ApiModelProperty("是否可用，0表示可用，1表示不可以使用")
+    private Byte status;
 }

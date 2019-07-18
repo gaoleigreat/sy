@@ -63,6 +63,7 @@ public class SurveyPointTypeVo {
                 .createTime(this.createTime)
                 .updateTime(this.updateTime)
                 .sectionCode(this.sectionCode)
+                .status(new Byte("0"))
                 .limits(this.getFormatLimits()).build();
     }
 
