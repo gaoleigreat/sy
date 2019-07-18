@@ -1,6 +1,7 @@
 package com.lego.survey.project.impl.service;
 import com.lego.survey.project.model.entity.OwnerProject;
 import com.lego.survey.project.model.entity.Project;
+import com.lego.survey.project.model.vo.ProjectTreeVo;
 import com.lego.survey.project.model.vo.ProjectVo;
 import com.survey.lib.common.page.PagedResult;
 import com.survey.lib.common.vo.CurrentVo;
@@ -89,4 +90,6 @@ public interface IProjectService {
     List<OwnerProject>   findAll(String role, String userId);
 
     List<Project> findByCurrent(CurrentVo currentVo);
+
+    List<ProjectTreeVo> findTreeByCurrent(CurrentVo currentVo);
 }

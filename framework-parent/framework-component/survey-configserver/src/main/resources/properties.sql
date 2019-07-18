@@ -56,9 +56,9 @@ VALUES ('application', 'dev', 'master', 'eureka.instance.lease-renewal-interval-
 INSERT INTO properties (application, profile, label, `key`, value)
 VALUES ('application', 'dev', 'master', 'eureka.instance.lease-expiration-duration-in-seconds', '2');
 INSERT INTO properties (application, profile, label, `key`, value)
-VALUES ('application', 'dev', 'master', 'spring.http.multipart.max-file-size', '5M');
+VALUES ('application', 'dev', 'master', 'spring.http.multipart.max-file-size', '5MB');
 INSERT INTO properties (application, profile, label, `key`, value)
-VALUES ('application', 'dev', 'master', 'spring.http.multipart.max-request-size', '100M');
+VALUES ('application', 'dev', 'master', 'spring.http.multipart.max-request-size', '100MB');
 INSERT INTO properties (application, profile, label, `key`, value)
 VALUES ('application', 'dev', 'master', 'spring.cloud.bus.trace.enabled', 'true');
 INSERT INTO properties (application, profile, label, `key`, value)

@@ -1,11 +1,12 @@
-package com.lego.survey.report.impl.listener;
+package com.lego.survey.settlement.impl.listener;
+
 import com.alibaba.excel.read.context.AnalysisContext;
 import com.lego.survey.base.exception.ExceptionBuilder;
-import com.lego.survey.settlement.feign.SurveyPointClient;
-import com.lego.survey.settlement.feign.SurveyResultClient;
-import com.lego.survey.settlement.model.vo.SurveyPointVo;
-import com.lego.survey.settlement.model.vo.SurveyResultVo;
 import com.lego.survey.lib.excel.listener.ExcelListener;
+import com.lego.survey.settlement.feign.SurveyPointClient;
+import com.lego.survey.settlement.impl.service.ISurveyPointService;
+import com.lego.survey.settlement.model.vo.SurveyPointVo;
+import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.consts.RespConsts;
 import com.survey.lib.common.vo.RespVO;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +24,12 @@ import java.util.List;
  **/
 @Component
 @Slf4j
-public class ResultReadListener extends ExcelListener<SurveyPointVo> {
+public class SurveyPointReadListener extends ExcelListener<SurveyPointVo> {
 
     private List<SurveyPointVo> surveyPointVos = new ArrayList<>();
 
     @Autowired
-    private SurveyPointClient surveyPointClient;
+    private ISurveyPointService iSurveyPointService;
 
     private String sectionId;
 
@@ -45,7 +46,7 @@ public class ResultReadListener extends ExcelListener<SurveyPointVo> {
             return;
         }
         try {
-            RespVO respVO = surveyPointClient.createBatch(surveyPointVos,sectionId);
+            RespVO respVO = iSurveyPointService.createBatch(surveyPointVos, DictConstant.TableNamePrefix.SURVEY_POINT+sectionId);
             if (respVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
                 log.info("insert excel success");
             }

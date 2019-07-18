@@ -209,20 +209,68 @@ public class ProjectServiceImpl implements IProjectService {
     @Override
     public List<Project> findByCurrent(CurrentVo currentVo) {
         String role = currentVo.getRole();
-        if(role.equalsIgnoreCase("admin")){
+        if (role.equalsIgnoreCase("admin")) {
             return projectRepository.findAll();
         }
 
-        List<Project> projects=new ArrayList<>();
+        List<Project> projects = new ArrayList<>();
         List<String> projectIds = currentVo.getProjectIds();
-        if(!CollectionUtils.isEmpty(projectIds)){
+        if (!CollectionUtils.isEmpty(projectIds)) {
             for (String projectId : projectIds) {
                 Project project = projectRepository.findProjectByIdAndValid(projectId, 0);
-                if(project!=null){
+                if (project != null) {
                     projects.add(project);
                 }
             }
         }
         return projects;
+    }
+
+    @Override
+    public List<ProjectTreeVo> findTreeByCurrent(CurrentVo currentVo) {
+        List<Project> projects = findByCurrent(currentVo);
+        return getProjectTreeVos(projects);
+    }
+
+    private List<ProjectTreeVo> getProjectTreeVos(List<Project> projects) {
+        List<ProjectTreeVo> projectTreeVos = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(projects)) {
+            for (Project project : projects) {
+                ProjectTreeVo projectTreeVo = new ProjectTreeVo();
+                projectTreeVo.setId(project.getId());
+                projectTreeVo.setCode(project.getCode());
+                projectTreeVo.setName(project.getName());
+                projectTreeVos.add(projectTreeVo);
+                List<OwnerSection> sections = project.getSections();
+                if (!CollectionUtils.isEmpty(sections)) {
+                    List<SectionVo> sectionVos = new ArrayList<>();
+                    for (OwnerSection ownerSection : sections) {
+                        String id = ownerSection.getId();
+                        Section section = sectionRepository.findSectionByIdAndValid(id, 0);
+                        if (section != null) {
+                            SectionVo sectionVo = SectionVo.builder()
+                                    .id(section.getId())
+                                    .name(section.getName())
+                                    .code(section.getCode()).build();
+                            sectionVos.add(sectionVo);
+                            List<OwnWorkspace> workSpaces = section.getWorkSpace();
+                            if (!CollectionUtils.isEmpty(workSpaces)) {
+                                List<WorkspaceVo> workSpaceVos = new ArrayList<>();
+                                for (OwnWorkspace workSpace : workSpaces) {
+                                    workSpaceVos.add(WorkspaceVo.builder()
+                                            .id(workSpace.getId())
+                                            .code(workSpace.getCode())
+                                            .name(workSpace.getName())
+                                            .type(workSpace.getType()).build());
+                                }
+                                sectionVo.setWorkspace(workSpaceVos);
+                            }
+                        }
+                    }
+                    projectTreeVo.setSections(sectionVos);
+                }
+            }
+        }
+        return projectTreeVos;
     }
 }

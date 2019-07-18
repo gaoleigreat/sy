@@ -8,6 +8,9 @@ import com.lego.survey.settlement.impl.service.ISurveyPointService;
 import com.lego.survey.settlement.model.entity.SurveyPoint;
 import com.lego.survey.settlement.model.vo.SurveyPointVo;
 import com.survey.lib.common.consts.HttpConsts;
+import com.survey.lib.common.utils.HeaderUtils;
+import com.survey.lib.common.utils.SnowflakeIdUtils;
+import com.survey.lib.common.vo.HeaderVo;
 import com.survey.lib.common.vo.RespVO;
 import com.survey.lib.common.vo.RespVOBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,8 +99,18 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public RespVO createBatch(List<SurveyPoint> surveyPoints, String tableName) {
+    public RespVO createBatch(List<SurveyPointVo> surveyPointVos, String tableName) {
         try {
+            List<SurveyPoint> surveyPoints = new ArrayList<>();
+
+            surveyPointVos.forEach(surveyPointVo -> {
+                surveyPointVo.setId(SnowflakeIdUtils.createId());
+                Date currentTime = new Date();
+                surveyPointVo.setCreateTime(currentTime);
+                surveyPointVo.setUpdateTime(currentTime);
+                surveyPoints.add(surveyPointVo.getSurveyPoint());
+            });
+
             Integer save = surveyPointMapper.saveBatch(surveyPoints, tableName);
             if (save <= 0) {
                 ExceptionBuilder.operateFailException("批量新增测点失败");
