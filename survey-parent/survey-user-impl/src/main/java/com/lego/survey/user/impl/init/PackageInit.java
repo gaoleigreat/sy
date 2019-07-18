@@ -30,10 +30,7 @@ public class PackageInit implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        //初始化即时租赁app安装包
-        //initApk();
-        // 初始化即时租赁app版本
-        //initApkVersion();
+        refresh();
     }
 
     private void initApkVersion(){
@@ -66,9 +63,7 @@ public class PackageInit implements InitializingBean {
     }
 
     public void refresh(){
-        //初始化即时租赁app安装包
         initApk();
-        // 初始化即时租赁app版本
         initApkVersion();
     }
 

@@ -221,7 +221,9 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                 overrun.setCurValue(record.getElevation());
 
                 if (!CollectionUtils.isEmpty(exceptionList)) {
+                    SurveyPointException surveyPointException = exceptionList.get(0);
                     overrun.setIsException(true);
+                    overrun.setExceptionType(surveyPointException.getType());
                 } else {
                     overrun.setIsException(false);
                 }

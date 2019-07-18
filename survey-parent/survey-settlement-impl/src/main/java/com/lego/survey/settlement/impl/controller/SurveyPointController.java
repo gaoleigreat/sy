@@ -2,9 +2,11 @@ package com.lego.survey.settlement.impl.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.lego.survey.auth.feign.AuthClient;
+import com.lego.survey.lib.excel.ExcelService;
 import com.lego.survey.project.feign.SectionClient;
 import com.lego.survey.project.model.entity.OwnWorkspace;
 import com.lego.survey.project.model.entity.Section;
+import com.lego.survey.settlement.impl.listener.SurveyPointReadListener;
 import com.lego.survey.settlement.impl.service.ISurveyPointService;
 import com.lego.survey.settlement.model.entity.SurveyPoint;
 import com.lego.survey.settlement.model.vo.SurveyPointVo;
@@ -14,6 +16,7 @@ import com.survey.lib.common.consts.RespConsts;
 import com.survey.lib.common.utils.HeaderUtils;
 import com.survey.lib.common.utils.HttpUtils;
 import com.survey.lib.common.utils.SnowflakeIdUtils;
+import com.survey.lib.common.utils.UuidUtils;
 import com.survey.lib.common.vo.HeaderVo;
 import com.survey.lib.common.vo.RespDataVO;
 import com.survey.lib.common.vo.RespVO;
@@ -23,10 +26,15 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,6 +61,17 @@ public class SurveyPointController {
 
     @Autowired
     private LogSender logSender;
+
+    @Autowired
+    private ExcelService excelService;
+
+    @Value("${define.survey.report.storePath:D:\\个人信息\\}")
+    private String storePath;
+
+
+
+    @Autowired
+    private SurveyPointReadListener surveyPointReadListener;
 
     @ApiOperation(value = "添加测点", notes = "添加测点", httpMethod = "POST")
     @ApiImplicitParams({
@@ -87,16 +106,8 @@ public class SurveyPointController {
                               HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
-        List<SurveyPoint> surveyPoints = new ArrayList<>();
         //TODO 校验权限
-        surveyPointVos.forEach(surveyPointVo -> {
-            surveyPointVo.setId(SnowflakeIdUtils.createId());
-            Date currentTime = new Date();
-            surveyPointVo.setCreateTime(currentTime);
-            surveyPointVo.setUpdateTime(currentTime);
-            surveyPoints.add(surveyPointVo.getSurveyPoint());
-        });
-        RespVO respVO = iSurveyPointService.createBatch(surveyPoints, DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
+        RespVO respVO = iSurveyPointService.createBatch(surveyPointVos, DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
         logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "批量添加测点");
         return respVO;
     }
@@ -185,5 +196,33 @@ public class SurveyPointController {
         logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "删除测点:[" + JSONObject.toJSONString(ids) + "]");
         return delete;
     }
+
+
+
+
+    @ApiOperation(value = "excel写入数据库", notes = "excel写入数据库", httpMethod = "POST")
+    @ApiImplicitParams({
+
+    })
+    @RequestMapping(value = "/uploadBatch",method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public RespVO uploadPointResultExcel(@RequestPart(value = "file") MultipartFile file,
+                                         @RequestParam() String sectionId){
+        try {
+            if(file==null || file.isEmpty()){
+                return RespVOBuilder.failure("文件不能为空");
+            }
+            String pathName = storePath + UuidUtils.generateShortUuid() + ".xlsx";
+            file.transferTo(new File(pathName));
+            surveyPointReadListener.setTableName(sectionId);
+            excelService.readExcel(pathName,surveyPointReadListener, SurveyPointVo.class,1);
+            return RespVOBuilder.success();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return RespVOBuilder.failure("文件解析失败");
+        }
+    }
+
+
+
 
 }

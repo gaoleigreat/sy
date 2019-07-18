@@ -56,7 +56,7 @@ public interface ISurveyPointService {
      * @param tableName
      * @return
      */
-    RespVO createBatch(List<SurveyPoint> surveyPoints, String tableName);
+    RespVO createBatch(List<SurveyPointVo> surveyPoints, String tableName);
 
     /**
      * 根据名称或者编号查询测点信息

@@ -3,7 +3,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.lego.survey.event.project.SectionSink;
 import com.lego.survey.project.model.entity.Section;
 import com.lego.survey.settlement.impl.mapper.DynamicCreateTableMapper;
+import com.lego.survey.user.feign.ConfigClient;
+import com.lego.survey.user.model.entity.Config;
+import com.lego.survey.user.model.vo.ConfigOptionVo;
 import com.survey.lib.common.consts.DictConstant;
+import com.survey.lib.common.consts.RespConsts;
+import com.survey.lib.common.vo.RespVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,31 +50,9 @@ public class SectionListener {
         if(service.contains(DictConstant.Scenes.GPFW)){
             createGPFWTable(sectionId);
         }
-        if(service.contains(DictConstant.Scenes.CGFW)){
-            createCGFWTable(sectionId);
-        }
-        if(service.contains(DictConstant.Scenes.SJFW)){
-            createSJFWTable(sectionId);
-        }
-
 
     }
 
-    /**
-     * 创建数据推送服务
-     * @param sectionId the section id
-     */
-    private void createSJFWTable(String sectionId) {
-
-    }
-
-    /**
-     * 创建成果分享服务对应的表
-     * @param sectionId the section id
-     */
-    private void createCGFWTable(String sectionId) {
-
-    }
 
     /**
      * 创建管片服务对应的表

@@ -2,6 +2,7 @@ package com.lego.survey.project.feign;
 
 import com.lego.survey.project.model.entity.Project;
 import com.lego.survey.project.model.vo.ProjectVo;
+import com.ribbon.RibbonRule;
 import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.consts.RespConsts;
 import com.survey.lib.common.vo.RespDataVO;

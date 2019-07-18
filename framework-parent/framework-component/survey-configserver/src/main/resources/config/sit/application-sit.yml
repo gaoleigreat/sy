@@ -84,8 +84,8 @@ spring:
             user.password: ${define.user.password}
   servlet:
     multipart:
-      max-file-size: 5
-      max-request-size: 10
+      max-file-size: 5MB
+      max-request-size: 10MB
 management:
   endpoints:
     web:
