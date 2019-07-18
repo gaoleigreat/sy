@@ -243,31 +243,30 @@ public class ProjectServiceImpl implements IProjectService {
                 projectTreeVos.add(projectTreeVo);
                 List<OwnerSection> sections = project.getSections();
                 if (!CollectionUtils.isEmpty(sections)) {
-                    List<SectionVo> sectionVos = new ArrayList<>();
+                    List<SectionTreeVo> sectionTreeVos = new ArrayList<>();
                     for (OwnerSection ownerSection : sections) {
                         String id = ownerSection.getId();
                         Section section = sectionRepository.findSectionByIdAndValid(id, 0);
                         if (section != null) {
-                            SectionVo sectionVo = SectionVo.builder()
+                            SectionTreeVo sectionVo = SectionTreeVo.builder()
                                     .id(section.getId())
                                     .name(section.getName())
                                     .code(section.getCode()).build();
-                            sectionVos.add(sectionVo);
+                            sectionTreeVos.add(sectionVo);
                             List<OwnWorkspace> workSpaces = section.getWorkSpace();
                             if (!CollectionUtils.isEmpty(workSpaces)) {
-                                List<WorkspaceVo> workSpaceVos = new ArrayList<>();
+                                List<WorkspaceTreeVo> workSpaceTreeVos = new ArrayList<>();
                                 for (OwnWorkspace workSpace : workSpaces) {
-                                    workSpaceVos.add(WorkspaceVo.builder()
+                                    workSpaceTreeVos.add(WorkspaceTreeVo.builder()
                                             .id(workSpace.getId())
                                             .code(workSpace.getCode())
-                                            .name(workSpace.getName())
-                                            .type(workSpace.getType()).build());
+                                            .name(workSpace.getName()).build());
                                 }
-                                sectionVo.setWorkspace(workSpaceVos);
+                                sectionVo.setWorkspaceTreeVos(workSpaceTreeVos);
                             }
                         }
                     }
-                    projectTreeVo.setSections(sectionVos);
+                    projectTreeVo.setSectionTreeVos(sectionTreeVos);
                 }
             }
         }

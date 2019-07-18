@@ -1,12 +1,12 @@
 server:
-  port: 48090
+  port: 58090
   servlet:
     context-path: /
 spring:
   application:
     name: file-service
   profiles:
-    active: dev
+    active: local
 
 
 application:
