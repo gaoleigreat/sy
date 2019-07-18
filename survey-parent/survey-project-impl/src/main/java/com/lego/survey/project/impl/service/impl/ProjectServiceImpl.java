@@ -6,6 +6,7 @@ import com.lego.survey.project.impl.repository.SectionRepository;
 import com.lego.survey.project.impl.service.IProjectService;
 import com.lego.survey.project.model.entity.*;
 import com.lego.survey.project.model.vo.*;
+import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.page.PagedResult;
 import com.survey.lib.common.vo.CurrentVo;
 import com.survey.lib.common.vo.RespDataVO;
@@ -190,10 +191,10 @@ public class ProjectServiceImpl implements IProjectService {
             return null;
         }
         List<Section> sectionList;
-        if (role.equals("master")) {
+        if (role.equals(DictConstant.Role.SECTION)) {
             // 标段管理员
             sectionList = sectionRepository.findSectionsByMasterIdAndValid(userId, 0);
-        } else if (role.equals("admin")) {
+        } else if (role.equals(DictConstant.Role.ADMIN)) {
             // 超級管理員
             List<Project> projects = projectRepository.findAll();
             if (!CollectionUtils.isEmpty(projects)) {
@@ -209,7 +210,7 @@ public class ProjectServiceImpl implements IProjectService {
     @Override
     public List<Project> findByCurrent(CurrentVo currentVo) {
         String role = currentVo.getRole();
-        if (role.equalsIgnoreCase("admin")) {
+        if (role.equalsIgnoreCase(DictConstant.Role.ADMIN)) {
             return projectRepository.findAll();
         }
 

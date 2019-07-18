@@ -77,6 +77,9 @@ public class ConfigServiceImpl implements IConfigService {
     @Override
     public Config queryByName(String name, CurrentVo authVo) {
         Config config = configRepository.findConfigByNameAndValidOrderByUpdateTimeDesc(name, 0);
+        if(!name.equals("角色配置")){
+            return config;
+        }
         String role = authVo.getRole();
         List<ConfigOptionVo> optionVos;
         if(role.equalsIgnoreCase("admin")){
