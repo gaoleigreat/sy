@@ -59,7 +59,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
 
     @Autowired
     private SurveyPointTypeMapper surveyPointTypeMapper;
-
+    @Autowired
     private ISurveyPointService surveyPointSevice;
 
     @Override
@@ -165,21 +165,21 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
     }
 
     @Override
-    public PagedResult<OverrunListVo> queryOverrunList(int pageIndex, Integer pageSize, String sectionId, String workspaceId,Integer type) {
+    public PagedResult<OverrunListVo> queryOverrunList(int pageIndex, Integer pageSize, String sectionId, String workspaceId, Integer type) {
         PagedResult<OverrunListVo> voPagedResult = new PagedResult<>();
         IPage<SurveyResult> iPage = new Page<>(pageIndex, pageSize);
         List<OverrunListVo> overrunListVos = new ArrayList<>();
         QueryWrapper<SurveyPoint> wrapper = new QueryWrapper<>();
-        if(!StringUtils.isBlank(workspaceId)){
+        if (!StringUtils.isBlank(workspaceId)) {
             RespVO<Workspace> respVO = workspaceClient.info(workspaceId);
-            if(respVO.getRetCode()== RespConsts.SUCCESS_RESULT_CODE){
+            if (respVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
                 Workspace info = respVO.getInfo();
-                if(info!=null){
-                    wrapper.eq("workspace_code",info.getCode());
+                if (info != null) {
+                    wrapper.eq("workspace_code", info.getCode());
                 }
             }
         }
-        Page<SurveyPoint> surveyPoints = surveyPointMapper.queryList(iPage,DictConstant.TableNamePrefix.SURVEY_POINT + sectionId, wrapper);
+        Page<SurveyPoint> surveyPoints = surveyPointMapper.queryList(iPage, DictConstant.TableNamePrefix.SURVEY_POINT + sectionId, wrapper);
         List<SurveyPoint> records = surveyPoints.getRecords();
         Map<String, String> typeMap = new HashMap<>();
         List<SurveyPointType> typeList = surveyPointTypeMapper.selectList(null);
@@ -206,7 +206,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                 overrun.setType(typeMap.get(sp) != null ? sp : sp);
 
                 List<SurveyResult> surveyResults = surveyResultMapper.queryPreResult(null, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, 1);
-                if(!CollectionUtils.isEmpty(surveyResults)){
+                if (!CollectionUtils.isEmpty(surveyResults)) {
                     SurveyResult surveyResult = surveyResults.get(0);
                     QueryWrapper<SurveyResult> wp = new QueryWrapper<>();
                     wp.le("survey_time", surveyResult.getSurveyTime());
@@ -246,11 +246,10 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
     public List<SurveyPontResultVo> queryPontResult(String sectionId, String ponitCode) {
         List<SurveyPontResultVo> surveyPontResultVos = new ArrayList<>();
         QueryWrapper<SurveyResult> wrapper = new QueryWrapper<>();
-        wrapper.eq("point_code",ponitCode);
-        List<SurveyResult> surveyResults = surveyResultMapper.queryList(DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId,wrapper);
-        SurveyPointVo surveyPointVo = surveyPointSevice.querySurveyPointByNameOrCode(DictConstant.TableNamePrefix.SURVEY_POINT + sectionId,ponitCode,null) ;
-        surveyResults.forEach(surveyResult -> surveyPontResultVos.add(SurveyPontResultVo.builder().build().loadSurveyResult(surveyResult,surveyPointVo)));
-
+        wrapper.eq("point_code", ponitCode);
+        List<SurveyResult> surveyResults = surveyResultMapper.queryList(DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, wrapper);
+        SurveyPointVo surveyPointVo = surveyPointSevice.querySurveyPointByNameOrCode("", ponitCode, DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
+        surveyResults.forEach(surveyResult -> surveyPontResultVos.add(SurveyPontResultVo.builder().build().loadSurveyResult(surveyResult, surveyPointVo)));
         return surveyPontResultVos;
     }
 
