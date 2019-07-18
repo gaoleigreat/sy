@@ -50,7 +50,6 @@ public class SurveyPointExceptionServiceImpl implements ISurveyPointExceptionSer
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public RespVO modify(SurveyPointException surveyPointException) {
-        surveyPointException.setCreateTime(new Date());
         int update = surveyPointExceptionMapper.updateById(surveyPointException);
         if(update<=0){
             return RespVOBuilder.failure("修改失败");

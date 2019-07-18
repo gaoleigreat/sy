@@ -155,6 +155,7 @@ public class SurveyPointResultListener {
                 log.info("can not find section info");
                 return;
             }
+
             String sectionCode = query.getInfo().getCode();
             SurveyPointExceptionVo exceptionVo = SurveyPointExceptionVo.builder()
                     .createTime(new Date())
@@ -163,6 +164,7 @@ public class SurveyPointResultListener {
                     .curTotalOffsetValue(totalSettlement)
                     .curSpeed(settlementRate)
                     .description("")
+                    .type(getType(onceSettlementIsOver, totalSettlementIsOver, settlementRateIsOver))
                     .id(SnowflakeIdUtils.createId())
                     .onceLowerLimit(surveyPointVo.getOnceLowerLimit())
                     .onceUpperLimit(surveyPointVo.getOnceUpperLimit())
@@ -181,6 +183,26 @@ public class SurveyPointResultListener {
             iSurveyPointExceptionService.create(exceptionVo.getSurveyPointException());
             log.info("----存储异常数据成果----");
         }
+    }
+
+    private int getType(boolean onceSettlementIsOver, boolean totalSettlementIsOver, boolean settlementRateIsOver) {
+        int type;
+        if(onceSettlementIsOver && totalSettlementIsOver && settlementRateIsOver){
+            type=6;
+        }else if(onceSettlementIsOver && totalSettlementIsOver){
+            type=3;
+        }else if(onceSettlementIsOver && settlementRateIsOver){
+            type=4;
+        }else if(settlementRateIsOver && totalSettlementIsOver){
+            type=5;
+        }else if(onceSettlementIsOver){
+            type=0;
+        }else if(totalSettlementIsOver){
+            type=1;
+        }else {
+            type=2;
+        }
+        return type;
     }
 
     /**

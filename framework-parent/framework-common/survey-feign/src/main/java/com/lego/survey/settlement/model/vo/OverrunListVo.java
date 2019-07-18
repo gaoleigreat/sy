@@ -38,6 +38,9 @@ public class OverrunListVo {
     private Double cumulativeSettlement;
     @ApiModelProperty("是否异常")
     private Boolean isException;
+    @ApiModelProperty("0-单次沉降异常;1-累积沉降异常;2-沉降速率异常;3-单次累积沉降量异常；4-单次沉降量沉降速率异常;5-累积沉降量沉降速率异常；6-单次、累积、沉降速率异常")
+    private Integer exceptionType;
     @ApiModelProperty("备注")
     private String remark;
+
 }
