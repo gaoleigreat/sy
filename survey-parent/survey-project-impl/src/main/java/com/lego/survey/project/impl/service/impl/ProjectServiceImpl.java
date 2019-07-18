@@ -227,46 +227,46 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public List<ProjectTreeVo> findTreeByCurrent(CurrentVo currentVo) {
+    public List<TreeVo> findTreeByCurrent(CurrentVo currentVo) {
         List<Project> projects = findByCurrent(currentVo);
         return getProjectTreeVos(projects);
     }
 
-    private List<ProjectTreeVo> getProjectTreeVos(List<Project> projects) {
-        List<ProjectTreeVo> projectTreeVos = new ArrayList<>();
+    private List<TreeVo> getProjectTreeVos(List<Project> projects) {
+        List<TreeVo> projectTreeVos = new ArrayList<>();
         if (!CollectionUtils.isEmpty(projects)) {
             for (Project project : projects) {
-                ProjectTreeVo projectTreeVo = new ProjectTreeVo();
+                TreeVo projectTreeVo = new TreeVo();
                 projectTreeVo.setId(project.getId());
                 projectTreeVo.setCode(project.getCode());
                 projectTreeVo.setName(project.getName());
                 projectTreeVos.add(projectTreeVo);
                 List<OwnerSection> sections = project.getSections();
                 if (!CollectionUtils.isEmpty(sections)) {
-                    List<SectionTreeVo> sectionTreeVos = new ArrayList<>();
+                    List<TreeVo> sectionTreeVos = new ArrayList<>();
                     for (OwnerSection ownerSection : sections) {
                         String id = ownerSection.getId();
                         Section section = sectionRepository.findSectionByIdAndValid(id, 0);
                         if (section != null) {
-                            SectionTreeVo sectionVo = SectionTreeVo.builder()
+                            TreeVo treeVo = TreeVo.builder()
                                     .id(section.getId())
                                     .name(section.getName())
                                     .code(section.getCode()).build();
-                            sectionTreeVos.add(sectionVo);
+                            sectionTreeVos.add(treeVo);
                             List<OwnWorkspace> workSpaces = section.getWorkSpace();
                             if (!CollectionUtils.isEmpty(workSpaces)) {
-                                List<WorkspaceTreeVo> workSpaceTreeVos = new ArrayList<>();
+                                List<TreeVo> workSpaceTreeVos = new ArrayList<>();
                                 for (OwnWorkspace workSpace : workSpaces) {
-                                    workSpaceTreeVos.add(WorkspaceTreeVo.builder()
+                                    workSpaceTreeVos.add(TreeVo.builder()
                                             .id(workSpace.getId())
                                             .code(workSpace.getCode())
                                             .name(workSpace.getName()).build());
                                 }
-                                sectionVo.setWorkspaceTreeVos(workSpaceTreeVos);
+                                treeVo.setTreeVos(workSpaceTreeVos);
                             }
                         }
                     }
-                    projectTreeVo.setSectionTreeVos(sectionTreeVos);
+                    projectTreeVo.setTreeVos(sectionTreeVos);
                 }
             }
         }

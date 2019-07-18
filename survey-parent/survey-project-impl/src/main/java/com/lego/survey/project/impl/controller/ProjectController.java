@@ -6,7 +6,7 @@ import com.lego.survey.project.impl.service.IProjectService;
 import com.lego.survey.project.model.entity.OwnerProject;
 import com.lego.survey.project.model.entity.Project;
 import com.lego.survey.project.model.vo.ProjectAddVo;
-import com.lego.survey.project.model.vo.ProjectTreeVo;
+import com.lego.survey.project.model.vo.TreeVo;
 import com.lego.survey.project.model.vo.ProjectVo;
 import com.lego.survey.event.user.LogSender;
 import com.survey.lib.common.consts.DictConstant;
@@ -197,10 +197,10 @@ public class ProjectController {
     })
     @Operation(value = "findProjectTreeList",desc = "查询工程标段工区信息")
     @RequestMapping(value = "/findProjectTreeList", method = RequestMethod.GET)
-    public RespVO<RespDataVO<ProjectTreeVo>> findProjectTreeList(HttpServletRequest request) {
+    public RespVO<RespDataVO<TreeVo>> findProjectTreeList(HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         CurrentVo currentVo = authClient.getAuthVo(headerVo);
-        List<ProjectTreeVo> list = iProjectService.findTreeByCurrent(currentVo);
+        List<TreeVo> list = iProjectService.findTreeByCurrent(currentVo);
         return RespVOBuilder.success(list);
     }
 
