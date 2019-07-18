@@ -24,14 +24,18 @@ public class RequestContext {
 
     public static CurrentVo getCurrent() {
         CurrentVo currentVo = current.get();
-        if(currentVo!=null && currentVo.getToken()!=null && currentVo.getDeviceType()!=null){
-            String token = currentVo.getToken();
-            String deviceType = currentVo.getDeviceType();
-            if(null == authCheckService){
-                authCheckService = (IAuthCheckService) AppContext.getContext().getBean("authCheckService");
-            }
-            return authCheckService.getData(token,deviceType);
+        try {
+            if(currentVo!=null && currentVo.getToken()!=null && currentVo.getDeviceType()!=null){
+                String token = currentVo.getToken();
+                String deviceType = currentVo.getDeviceType();
+                if(null == authCheckService){
+                    authCheckService = (IAuthCheckService) AppContext.getContext().getBean("authCheckService");
+                }
+                return authCheckService.getData(token,deviceType);
 
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
         return currentVo;
     }

@@ -40,7 +40,11 @@ public class ResourcesInit implements ApplicationRunner {
         //1.扫描权限点
         List<Resources> resources = getResource();
         //2.权限点插入数据库
-        resourcesClient.saveUserPermissionList(serviceName, resources);
+        try {
+            resourcesClient.saveUserPermissionList(serviceName, resources);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
    /* private void initServicePermission(){
