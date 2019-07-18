@@ -11,19 +11,17 @@ import org.apache.commons.lang.StringUtils;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.CollectionUtils;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
  * @author yanglf
  * @description
- * @since 2019/7/12
  * @see ZoneAvoidancePredicate
  * @see AbstractServerPredicate
+ * @since 2019/7/12
  **/
 @Slf4j
 public class GrayAwarePredicate extends AbstractServerPredicate {
@@ -31,6 +29,10 @@ public class GrayAwarePredicate extends AbstractServerPredicate {
     private final StringRedisTemplate stringRedisTemplate;
 
     private AtomicInteger nextInteger = new AtomicInteger();
+
+    private String blackList [] ={"192.168.104.16:48070"};
+
+    private String localhost="192.168.101.103";
 
     public GrayAwarePredicate(StringRedisTemplate stringRedisTemplate) {
         this.stringRedisTemplate = stringRedisTemplate;
@@ -44,7 +46,6 @@ public class GrayAwarePredicate extends AbstractServerPredicate {
         assert predicateKey != null;
         DiscoveryEnabledServer server = (DiscoveryEnabledServer) predicateKey.getServer();
 
-
         if (!CollectionUtils.isEmpty(grays)) {
             grays = grays.stream().map(String::toUpperCase).collect(Collectors.toSet());
             if (predicateKey.getServer() instanceof DiscoveryEnabledServer) {
@@ -54,6 +55,8 @@ public class GrayAwarePredicate extends AbstractServerPredicate {
                 return !(grays.contains(predicateKey.getServer().getId().toUpperCase()));
             }
         }
+
+
         return true;
     }
 
@@ -70,7 +73,7 @@ public class GrayAwarePredicate extends AbstractServerPredicate {
 
         try {
             if (!CollectionUtils.isEmpty(targetServers)) {
-                return Optional.of(targetServers.get(this.incrementAndGetModule(eligibleServers.size())));
+                return Optional.of(targetServers.get(this.incrementAndGetModule(targetServers.size())));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,15 +83,19 @@ public class GrayAwarePredicate extends AbstractServerPredicate {
 
 
     private List<DiscoveryEnabledServer> getTargetServers(List<Server> eligibleServers, String targetVersion) {
-        if (StringUtils.isBlank(targetVersion)) {
+       /* if (StringUtils.isBlank(targetVersion)) {
             log.debug("客户端未配置目标版本直接路由");
             return null;
-        }
+        }*/
         List<DiscoveryEnabledServer> targetServers = new ArrayList<>();
         for (Server eligibleServer : eligibleServers) {
             if (eligibleServer instanceof DiscoveryEnabledServer) {
                 DiscoveryEnabledServer server = (DiscoveryEnabledServer) eligibleServer;
-                Map<String, String> metadata = server.getInstanceInfo().getMetadata();
+                String host = server.getHost();
+                if(!host.equals(localhost)){
+                    continue;
+                }
+               /* Map<String, String> metadata = server.getInstanceInfo().getMetadata();
                 if (StringUtils.isBlank(metadata.get("version"))) {
                     log.debug("服务未设置 version");
                     continue;
@@ -97,7 +104,7 @@ public class GrayAwarePredicate extends AbstractServerPredicate {
                     log.debug("当前微服务{} 版本为{}，目标版本{} 匹配失败", server.getInstanceInfo().getAppName()
                             , metadata.get("version"), targetVersion);
                     continue;
-                }
+                }*/
                 targetServers.add(server);
             }
 

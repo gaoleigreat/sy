@@ -146,6 +146,7 @@ public class LoginFilter extends ZuulFilter {
         ctx.setResponseStatusCode(200);
         if(currentVo!=null){
             ctx.addZuulRequestHeader("userId",currentVo.getUserId());
+            ctx.addZuulRequestHeader("userName",currentVo.getUserName());
         }
     }
 
