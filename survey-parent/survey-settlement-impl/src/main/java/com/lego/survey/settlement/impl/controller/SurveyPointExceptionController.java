@@ -1,6 +1,7 @@
 package com.lego.survey.settlement.impl.controller;
 import com.lego.survey.auth.feign.AuthClient;
 import com.lego.survey.settlement.impl.service.ISurveyPointExceptionService;
+import com.lego.survey.settlement.model.entity.SurveyPointException;
 import com.lego.survey.settlement.model.vo.SurveyPointExceptionVo;
 import com.lego.survey.event.user.LogSender;
 import com.survey.lib.common.consts.DictConstant;
@@ -10,15 +11,22 @@ import com.survey.lib.common.utils.SnowflakeIdUtils;
 import com.survey.lib.common.vo.HeaderVo;
 import com.survey.lib.common.vo.RespDataVO;
 import com.survey.lib.common.vo.RespVO;
+import com.survey.lib.common.vo.RespVOBuilder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * @author yanglf
@@ -91,7 +99,7 @@ public class SurveyPointExceptionController {
 
     @ApiOperation(value = "修改异常报告", notes = "修改异常报告", httpMethod = "PUT")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "id", dataType = "SurveyPointTypeVo", required = true),
+            @ApiImplicitParam(name = "surveyPointExceptionVo", value = "surveyPointExceptionVo", dataType = "SurveyPointExceptionVo", required = true),
     })
     @RequestMapping(value = "/modify", method = RequestMethod.PUT)
     public RespVO modify(@Validated @RequestBody SurveyPointExceptionVo surveyPointExceptionVo,HttpServletRequest request) {
@@ -99,6 +107,36 @@ public class SurveyPointExceptionController {
         String userId = authClient.getAuthVo(headerVo).getUserId();
         RespVO modify = iSurveyPointExceptionService.modify(surveyPointExceptionVo.getSurveyPointException());
         logSender.sendLogEvent(HttpUtils.getClientIp(request),userId,"修改异常报告信息:["+surveyPointExceptionVo.getId()+"]");
+        return modify;
+    }
+
+
+
+    @ApiOperation(value = "关闭异常报告", notes = "关闭异常报告", httpMethod = "POST")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "异常ID", dataType = "Long", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "content", value = "处置信息", dataType = "String",required = true, paramType = "query"),
+            @ApiImplicitParam(name = "status", value = "是否关闭 ", dataType = "int",required = true, paramType = "query"),
+
+    })
+    @RequestMapping(value = "/close", method = RequestMethod.POST)
+    public RespVO close(@RequestParam Long id,@RequestParam String content ,@RequestParam int status , HttpServletRequest request) {
+        if (id == null){
+            return RespVOBuilder.failure("异常id不能为空");
+        }
+        if (!StringUtils.isNotBlank(content)){
+            return RespVOBuilder.failure("处置信息不能为空");
+        }
+
+        SurveyPointException surveyPointException = new SurveyPointException();
+        surveyPointException.setCloseUser(request.getHeader("userId"));
+        surveyPointException.setId(id);
+        surveyPointException.setCloseUserName(request.getHeader("userName"));
+        surveyPointException.setCloseTime(new Date());
+        surveyPointException.setStatus(status);
+        surveyPointException.setMark(content);
+        RespVO modify = iSurveyPointExceptionService.modify(surveyPointException);
+        logSender.sendLogEvent(HttpUtils.getClientIp(request),request.getHeader("userId"),"修改异常报告信息:["+id+"]");
         return modify;
     }
 }
