@@ -26,5 +26,14 @@ public interface SurveyPointTypeMapper extends Mapper<SurveyPointType> {
     List<SurveyPointType> querySurveyPointTypeBySectionCode(@Param(value = "sectioncode") String sectioncode);
 
 
+    /**
+     * 获取制定标段下的测点类型
+     *
+     * @param id the code
+     * @return the list
+     */
+    int updateStatus(@Param(value = "id") Long id);
+
+
 
 }

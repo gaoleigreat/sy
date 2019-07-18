@@ -11,17 +11,23 @@
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
         <result column="comment" property="comment"/>
+        <result column="status" property="status"/>
     </resultMap>
     
     <sql id="Base_Column_List">
-        id,name,code,limits,section_code,create_time,update_time,comment
+        id,name,code,limits,section_code,create_time,update_time,comment,status
     </sql>
 
     <select id="querySurveyPointTypeBySectionCode"
             parameterType="java.lang.String"
             resultType="com.lego.survey.settlement.model.entity.SurveyPointType">
-        select * from survey_point_type where section_code = #{sectioncode}
+        select * from survey_point_type where section_code = #{sectioncode} and staus = 0
     </select>
+
+
+    <update id="updateStatus" parameterType="java.lang.Long">
+        update survey_point_type set status = 1 where id = #{id}
+    </update>
 
 
 </mapper>
