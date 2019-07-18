@@ -10,6 +10,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -51,7 +52,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
     @Bean("grayAwareRule")
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-   /* @ConditionalOnExpression("${define.zuul.gray} ")*/
+    @Profile(value = "dev")
     public IRule grayAwareRule(StringRedisTemplate stringRedisTemplate){
         return new GrayAwareRule(new GrayAwarePredicate(stringRedisTemplate));
     }
