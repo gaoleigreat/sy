@@ -9,6 +9,7 @@ import com.lego.survey.project.model.entity.Section;
 import com.lego.survey.settlement.impl.service.ISurveyResultService;
 import com.lego.survey.settlement.model.entity.SurveyResult;
 import com.lego.survey.settlement.model.vo.OverrunListVo;
+import com.lego.survey.settlement.model.vo.SurveyPontResultVo;
 import com.lego.survey.settlement.model.vo.SurveyResultVo;
 import com.lego.survey.event.user.LogSender;
 import com.survey.lib.common.consts.DictConstant;
@@ -275,12 +276,12 @@ public class SurveyResultController {
     @ApiOperation(value = "查询测量点的测量历史数据", httpMethod = "GET", notes = "通过原始数据查询成果数据")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", paramType = "query",required = true),
-            @ApiImplicitParam(name = "ponitCode", value = "测点Id", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "pointCode", value = "测点Id", dataType = "String", paramType = "query",required = true),
     })
     @RequestMapping(value = "/query/pointData", method = RequestMethod.GET)
-    public RespVO<RespDataVO<SurveyResultVo>> queryPontData(@RequestParam String sectionId,
+    public RespVO<RespDataVO<SurveyPontResultVo>> queryPontData(@RequestParam String sectionId,
                                                   @RequestParam String pointCode){
-        List<SurveyResultVo>  surveyResultVos= iSurveyResultService.queryPontResult(sectionId, pointCode);
-        return RespVOBuilder.success(surveyResultVos);
+        List<SurveyPontResultVo>  surveyPontResultVos= iSurveyResultService.queryPontResult(sectionId, pointCode);
+        return RespVOBuilder.success(surveyPontResultVos);
     }
 }

@@ -1,7 +1,6 @@
 package com.lego.survey.settlement.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.lego.survey.settlement.model.entity.SurveyPoint;
 import com.lego.survey.settlement.model.entity.SurveyResult;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -38,23 +37,21 @@ public class SurveyPontResultVo {
     private Double speedUpperLimit;
 
 
-    @JsonIgnore
-    public SurveyPontResultVo loadLimit(SurveyPointVo surveyPoint) {
-        this.onceLowerLimit = surveyPoint.getOnceLowerLimit();
-        this.onceUpperLimit = surveyPoint.getOnceUpperLimit();
-        this.totalLowerLimit = surveyPoint.getTotalLowerLimit();
-        this.totalUpperLimit = surveyPoint.getTotalUpperLimit();
-        this.speedLowerLimit = surveyPoint.getSpeedLowerLimit();
-        this.speedUpperLimit = surveyPoint.getSpeedUpperLimit();
-        return this;
-    }
+
 
     @JsonIgnore
-    public SurveyPontResultVo loadSurveyResult(SurveyResult surveyResult) {
-        this.singleSettlement = surveyResult.getSingleSettlement();
-        this.cumulativeSettlement = surveyResult.getCumulativeSettlement();
-        this.settlingRate = surveyResult.getSettlingRate();
-        this.surveyTime = surveyResult.getSurveyTime();
-        return this;
+    public SurveyPontResultVo loadSurveyResult(SurveyResult surveyResult,SurveyPointVo surveyPoint) {
+        return SurveyPontResultVo.builder()
+                .singleSettlement(surveyResult.getSingleSettlement())
+                .cumulativeSettlement(surveyResult.getCumulativeSettlement())
+                .settlingRate(surveyResult.getSettlingRate())
+                .surveyTime(surveyResult.getSurveyTime())
+                .onceLowerLimit(surveyPoint.getOnceLowerLimit())
+                .onceUpperLimit(surveyPoint.getOnceUpperLimit())
+                .totalLowerLimit(surveyPoint.getTotalLowerLimit())
+                .totalUpperLimit(surveyPoint.getTotalUpperLimit())
+                .speedLowerLimit(surveyPoint.getSpeedLowerLimit())
+                .speedUpperLimit(surveyPoint.getSpeedUpperLimit())
+                .build();
     }
 }

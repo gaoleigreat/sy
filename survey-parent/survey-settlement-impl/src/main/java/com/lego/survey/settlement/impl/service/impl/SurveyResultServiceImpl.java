@@ -10,12 +10,15 @@ import com.lego.survey.settlement.impl.mapper.SurveyPointExceptionMapper;
 import com.lego.survey.settlement.impl.mapper.SurveyPointMapper;
 import com.lego.survey.settlement.impl.mapper.SurveyPointTypeMapper;
 import com.lego.survey.settlement.impl.mapper.SurveyResultMapper;
+import com.lego.survey.settlement.impl.service.ISurveyPointService;
 import com.lego.survey.settlement.impl.service.ISurveyResultService;
 import com.lego.survey.settlement.model.entity.SurveyPoint;
 import com.lego.survey.settlement.model.entity.SurveyPointException;
 import com.lego.survey.settlement.model.entity.SurveyPointType;
 import com.lego.survey.settlement.model.entity.SurveyResult;
 import com.lego.survey.settlement.model.vo.OverrunListVo;
+import com.lego.survey.settlement.model.vo.SurveyPointVo;
+import com.lego.survey.settlement.model.vo.SurveyPontResultVo;
 import com.lego.survey.settlement.model.vo.SurveyResultVo;
 import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.consts.HttpConsts;
@@ -56,6 +59,8 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
 
     @Autowired
     private SurveyPointTypeMapper surveyPointTypeMapper;
+
+    private ISurveyPointService surveyPointSevice;
 
     @Override
     public RespVO list(int pageIndex, int pageSize, String workspaceCode, Date startDate, Date endDate, String deviceType, String tableName) {
@@ -238,13 +243,15 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
     }
 
     @Override
-    public List<SurveyResultVo> queryPontResult(String sectionId, String ponitCode) {
-        List<SurveyResultVo> surveyResultVos = new ArrayList<>();
+    public List<SurveyPontResultVo> queryPontResult(String sectionId, String ponitCode) {
+        List<SurveyPontResultVo> surveyPontResultVos = new ArrayList<>();
         QueryWrapper<SurveyResult> wrapper = new QueryWrapper<>();
-        wrapper.eq("point_code",ponitCode);;
-        List<SurveyResult> surveyResults = surveyResultMapper.queryList(sectionId,wrapper);
-        surveyResults.forEach(surveyResult -> surveyResultVos.add(SurveyResultVo.builder().build().loadSurveyResultVo(surveyResult)));
-        return null;
+        wrapper.eq("point_code",ponitCode);
+        List<SurveyResult> surveyResults = surveyResultMapper.queryList(DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId,wrapper);
+        SurveyPointVo surveyPointVo = surveyPointSevice.querySurveyPointByNameOrCode(DictConstant.TableNamePrefix.SURVEY_POINT + sectionId,ponitCode,null) ;
+        surveyResults.forEach(surveyResult -> surveyPontResultVos.add(SurveyPontResultVo.builder().build().loadSurveyResult(surveyResult,surveyPointVo)));
+
+        return surveyPontResultVos;
     }
 
 }
