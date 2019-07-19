@@ -16,8 +16,8 @@ public class RibbonRule {
 
     /*@Bean
     @Primary
-    @Profile(value = "dev")*/
+    @Profile(value = "dev")
     public IRule myRule() {
         return new MyRule();
-    }
+    }*/
 }

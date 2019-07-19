@@ -1,5 +1,4 @@
 package com.lego.survey.zuul;
-import com.lego.survey.ribbon.RibbonRule;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
