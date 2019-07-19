@@ -102,4 +102,16 @@ public interface ISurveyResultService {
      * @return
      */
     List<SurveyPontResultVo> queryPontResult(String sectionId, String ponitCode);
+
+    /**
+     * 查询报警点详情
+     * @param pageIndex
+     * @param pageSize
+     * @param sectionId
+     * @param pointCode
+     * @param workspaceId
+     * @param type
+     * @return
+     */
+    PagedResult<OverrunListVo> queryOverrunDetails(int pageIndex, Integer pageSize, String sectionId, String pointCode,String workspaceId ,Integer type);
 }

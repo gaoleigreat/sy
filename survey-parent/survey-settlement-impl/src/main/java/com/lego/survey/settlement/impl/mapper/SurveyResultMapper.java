@@ -7,6 +7,7 @@ import com.lego.survey.lib.mybatis.mapper.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author yanglf
@@ -15,6 +16,10 @@ import java.util.List;
  **/
 @Repository
 public interface SurveyResultMapper extends Mapper<SurveyResult> {
+
+
+
+    Page<SurveyResult> queryPaged(IPage page, @Param("tableName") String tableName, @Param("pointCode") String pointCode);
 
 
     /**

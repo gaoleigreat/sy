@@ -5,7 +5,10 @@ import com.netflix.loadbalancer.AbstractLoadBalancerRule;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.ArrayUtils;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +21,8 @@ public class MyRule extends AbstractLoadBalancerRule {
 
     private int currentIndex = 0;
     private int total = 0;
+
+    private String[] localhost = {"192.168.101.103"};
 
     @Override
     public void initWithNiwsConfig(IClientConfig iClientConfig) {
@@ -38,16 +43,30 @@ public class MyRule extends AbstractLoadBalancerRule {
         // 获取全部服务
         List<Server> allServers = loadBalancer.getAllServers();
         // 非法服务剔除
+        List<Server> chooseServer = getChooseServer(upList, localhost);
         total++;
         currentIndex++;
-        if (currentIndex >= upList.size()) {
+        if (currentIndex >= chooseServer.size()) {
             currentIndex = 0;
         }
-        Server server = upList.get(currentIndex);
-        if (!server.isAlive()) {
-            choose(loadBalancer, key);
-        }
-        log.info("choose service :[{}]",server);
+        Server server = chooseServer.get(currentIndex);
+        log.info("choose service :[{}]", server);
         return server;
+    }
+
+    private List<Server> getChooseServer(List<Server> upList, String[] localhost) {
+        List<Server> availableServers = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(upList)) {
+            for (Server server : upList) {
+                String host = server.getHost();
+                if (!ArrayUtils.contains(localhost, host)) {
+                    continue;
+                }
+                if(server.isAlive()){
+                    availableServers.add(server);
+                }
+            }
+        }
+        return availableServers;
     }
 }

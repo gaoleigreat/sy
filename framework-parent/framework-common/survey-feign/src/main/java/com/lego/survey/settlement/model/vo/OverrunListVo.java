@@ -42,5 +42,15 @@ public class OverrunListVo {
     private Integer exceptionType;
     @ApiModelProperty("备注")
     private String remark;
+    @ApiModelProperty("是否处理(0-未处理;1-已处理)")
+    private Integer status;
+    @ApiModelProperty("关闭时间")
+    private Date closeTime;
+    @ApiModelProperty("关闭用户名")
+    private String closeUser;
+    @ApiModelProperty("测点状态( 1：正常 2: 新建 3: 停测 4: 破坏)")
+    private Integer pointStatus;
+    @ApiModelProperty("测量员")
+    private String surveyer;
 
 }

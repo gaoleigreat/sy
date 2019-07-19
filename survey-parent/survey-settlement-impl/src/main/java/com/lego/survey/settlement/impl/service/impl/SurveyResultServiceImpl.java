@@ -72,12 +72,20 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
             wrapper.gt("survey_time", startDate).lt("survey_time", endDate);
         }
         if (deviceType.equals(HttpConsts.DeviceType.DEVICE_WEB)) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("workspaceCode", workspaceCode);
+            if (startDate != null) {
+                map.put("startDate", startDate);
+                map.put("endDate", endDate);
+            }
+
             Page<SurveyResult> surveyResultPage = surveyResultMapper.queryList(new Page(pageIndex, pageSize), tableName, wrapper);
             surveyResultPage.getRecords().forEach(surveyResult -> surveyResultVos.add(SurveyResultVo.builder().build().loadSurveyResultVo(surveyResult)));
             pagedResult.setResultList(surveyResultVos);
             pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, surveyResultPage.getTotal(), (int) surveyResultPage.getPages()));
             return RespVOBuilder.success(surveyResultPage);
         } else if (deviceType.equals(HttpConsts.DeviceType.DEVICE_ANDROID)) {
+
             List<SurveyResult> surveyResults = surveyResultMapper.queryList(tableName, wrapper);
             surveyResults.forEach(surveyResult -> surveyResultVos.add(SurveyResultVo.builder().build().loadSurveyResultVo(surveyResult)));
             return RespVOBuilder.success(surveyResultVos);
@@ -181,11 +189,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
         }
         Page<SurveyPoint> surveyPoints = surveyPointMapper.queryList(iPage, DictConstant.TableNamePrefix.SURVEY_POINT + sectionId, wrapper);
         List<SurveyPoint> records = surveyPoints.getRecords();
-        Map<String, String> typeMap = new HashMap<>();
-        List<SurveyPointType> typeList = surveyPointTypeMapper.selectList(null);
-        if (!CollectionUtils.isEmpty(typeList)) {
-            typeList.forEach(tp -> typeMap.put(tp.getCode(), tp.getName()));
-        }
+        Map<String, String> typeMap = getTypeMap();
 
         if (!CollectionUtils.isEmpty(records)) {
             for (SurveyPoint record : records) {
@@ -216,9 +220,10 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                     overrun.setCurSettlement(surveyResult.getSingleSettlement());
                     overrun.setSettlingRate(surveyResult.getSettlingRate());
                     overrun.setSurveyTime(surveyResult.getSurveyTime());
+                    overrun.setCurValue(surveyResult.getElevation());
+                    overrun.setSurveyer(surveyResult.getSurveyer());
                 }
 
-                overrun.setCurValue(record.getElevation());
 
                 if (!CollectionUtils.isEmpty(exceptionList)) {
                     SurveyPointException surveyPointException = exceptionList.get(0);
@@ -234,6 +239,15 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
         voPagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, surveyPoints.getTotal(), (int) surveyPoints.getPages()));
         voPagedResult.setResultList(overrunListVos);
         return voPagedResult;
+    }
+
+    private Map<String, String> getTypeMap() {
+        Map<String, String> typeMap = new HashMap<>();
+        List<SurveyPointType> typeList = surveyPointTypeMapper.selectList(null);
+        if (!CollectionUtils.isEmpty(typeList)) {
+            typeList.forEach(tp -> typeMap.put(tp.getCode(), tp.getName()));
+        }
+        return typeMap;
     }
 
     @Override
@@ -253,6 +267,72 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
         SurveyPointVo surveyPointVo = surveyPointSevice.querySurveyPointByNameOrCode("", ponitCode, DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
         surveyResults.forEach(surveyResult -> surveyPontResultVos.add(SurveyPontResultVo.builder().build().loadSurveyResult(surveyResult, surveyPointVo)));
         return surveyPontResultVos;
+    }
+
+    @Override
+    public PagedResult<OverrunListVo> queryOverrunDetails(int pageIndex, Integer pageSize, String sectionId, String pointCode, String workspaceId, Integer type) {
+        PagedResult<OverrunListVo> voPagedResult = new PagedResult<>();
+        IPage<SurveyResult> resultPage = new Page<>(pageIndex, pageSize);
+        QueryWrapper<SurveyResult> resultWrapper = new QueryWrapper<>();
+        //resultWrapper.eq("point_code", pointCode);
+        IPage<SurveyResult> surveyResultPage = surveyResultMapper.queryList(resultPage, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, resultWrapper);
+        List<SurveyResult> records = surveyResultPage.getRecords();
+        List<OverrunListVo> overrunListVos = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(records)) {
+            Map<String, String> typeMap = getTypeMap();
+            for (SurveyResult record : records) {
+                if (!record.getPointCode().equals(pointCode)) {
+                    continue;
+                }
+                QueryWrapper<SurveyPointException> exceptionWrapper = new QueryWrapper<>();
+                exceptionWrapper.eq("result_id", record.getId());
+                List<SurveyPointException> exceptionList = surveyPointExceptionMapper.selectList(exceptionWrapper);
+                if (CollectionUtils.isEmpty(exceptionList)) {
+                    continue;
+                }
+                QueryWrapper<SurveyPoint> pointWrapper = new QueryWrapper<>();
+                pointWrapper.eq("code", record.getPointCode());
+                List<SurveyPoint> pointList = surveyPointMapper.queryByNameOrCode(pointWrapper, DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
+                if (CollectionUtils.isEmpty(pointList)) {
+                    continue;
+                }
+                SurveyPoint surveyPoint = pointList.get(0);
+                OverrunListVo overrun = new OverrunListVo();
+                overrun.setPointCode(surveyPoint.getCode());
+                overrun.setPointName(surveyPoint.getName());
+                overrun.setInitValue(surveyPoint.getElevation());
+                String sp = surveyPoint.getType();
+                overrun.setType(typeMap.get(sp) != null ? sp : sp);
+                overrun.setPointStatus(surveyPoint.getStatus());
+                overrun.setSurveyer(record.getSurveyer());
+
+                QueryWrapper<SurveyResult> wp = new QueryWrapper<>();
+                wp.le("survey_time", record.getSurveyTime());
+                List<SurveyResult> preResult = surveyResultMapper.queryPreResult(wp, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, 1);
+
+                overrun.setPreValue(!CollectionUtils.isEmpty(preResult) ? preResult.get(0).getElevation() : 0);
+                overrun.setCumulativeSettlement(record.getCumulativeSettlement());
+                overrun.setCurSettlement(record.getSingleSettlement());
+                overrun.setSettlingRate(record.getSettlingRate());
+                overrun.setSurveyTime(record.getSurveyTime());
+                overrun.setCurValue(record.getElevation());
+
+
+                SurveyPointException surveyPointException = exceptionList.get(0);
+                overrun.setIsException(surveyPointException != null);
+                if (surveyPointException != null) {
+                    overrun.setRemark(surveyPointException.getMark());
+                    overrun.setExceptionType(surveyPointException.getType());
+                    overrun.setStatus(surveyPointException.getStatus());
+                    overrun.setCloseTime(surveyPointException.getCloseTime());
+                    overrun.setCloseUser(surveyPointException.getCloseUser());
+                }
+                overrunListVos.add(overrun);
+            }
+        }
+        voPagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, surveyResultPage.getTotal(), (int) surveyResultPage.getPages()));
+        voPagedResult.setResultList(overrunListVos);
+        return voPagedResult;
     }
 
 }

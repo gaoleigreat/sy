@@ -30,9 +30,7 @@ public class GrayAwarePredicate extends AbstractServerPredicate {
 
     private AtomicInteger nextInteger = new AtomicInteger();
 
-    //private String blackList [] ={"192.168.101.103:48070"};
-
-    private String localhost="192.168.104.16";
+    private String localhost="192.168.101.103";
 
     public GrayAwarePredicate(StringRedisTemplate stringRedisTemplate) {
         this.stringRedisTemplate = stringRedisTemplate;

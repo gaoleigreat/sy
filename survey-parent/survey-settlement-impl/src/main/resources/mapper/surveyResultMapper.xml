@@ -3,22 +3,21 @@
 <mapper namespace="com.lego.survey.settlement.impl.mapper.SurveyResultMapper">
 
     <resultMap id="BaseResultMap" type="com.lego.survey.settlement.model.entity.SurveyResult">
-        <result column="id" property="id"/>
-        <result column="point_code" property="pointCode"/>
-        <result column="point_name" property="pointName"/>
-        <result column="survey_id" property="surveyId"/>
-        <result column="grid_x" property="gridX"/>
-        <result column="grid_y" property="gridY"/>
-        <result column="elevation" property="elevation"/>
-        <result column="surveyer" property="surveyer"/>
-        <result column="status" property="status"/>
-        <result column="workspace_code" property="workspaceCode"/>
-        <result column="survey_time" property="surveyTime"/>
-        <result column="upload_time" property="uploadTime"/>
-        <result column="original_id" property="originalId"/>
-        <result column="single_settlement" property="singleSettlement"/>
-        <result column="cumulative_settlement" property="cumulativeSettlement"/>
-        <result column="settling_rate" property="settlingRate"/>
+        <result column="point_code" jdbcType="VARCHAR" property="pointCode"/>
+        <result column="point_name" jdbcType="VARCHAR" property="pointName"/>
+        <result column="survey_id" jdbcType="VARCHAR" property="surveyId"/>
+        <result column="grid_x" jdbcType="DOUBLE" property="gridX"/>
+        <result column="grid_y" jdbcType="DOUBLE" property="gridY"/>
+        <result column="elevation" jdbcType="DOUBLE" property="elevation"/>
+        <result column="surveyer" jdbcType="VARCHAR" property="surveyer"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="workspace_code" jdbcType="VARCHAR" property="workspaceCode"/>
+        <result column="survey_time" jdbcType="DATE" property="surveyTime"/>
+        <result column="upload_time" jdbcType="DATE" property="uploadTime"/>
+        <result column="original_id" jdbcType="BIGINT" property="originalId"/>
+        <result column="single_settlement" jdbcType="DOUBLE" property="singleSettlement"/>
+        <result column="cumulative_settlement" jdbcType="DOUBLE" property="cumulativeSettlement"/>
+        <result column="settling_rate" jdbcType="DOUBLE" property="settlingRate"/>
     </resultMap>
 
 
@@ -40,7 +39,6 @@
         cumulative_settlement,
         settling_rate
     </sql>
-
 
 
     <sql id="survey_save_column">
@@ -150,6 +148,16 @@
     </delete>
 
 
+    <select id="queryPaged" resultMap="BaseResultMap">
+        SELECT
+        <include refid="survey_result_column"/>
+        from
+        ${tableName}
+        where point_code=#{pointCode}
+        order by upload_time desc
+    </select>
+
+
     <select id="queryList" resultMap="BaseResultMap">
         SELECT
         <include refid="survey_result_column"/>
@@ -167,10 +175,10 @@
         from
         ${tableName}
         <where>
-          1=1
-          <if test="ew!=null">
-              and ${ew.sqlSegment}
-          </if>
+            1=1
+            <if test="ew!=null">
+                and ${ew.sqlSegment}
+            </if>
         </where>
         order by survey_time desc
         limit #{count}
@@ -187,7 +195,6 @@
         order by survey_time asc
         limit 1
     </select>
-
 
 
     <select id="queryResult" resultMap="BaseResultMap">

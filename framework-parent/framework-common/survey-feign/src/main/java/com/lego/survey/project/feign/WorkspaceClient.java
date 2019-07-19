@@ -64,6 +64,7 @@ public interface WorkspaceClient {
      */
     @RequestMapping(value = "/info/{id}", method = RequestMethod.GET)
     RespVO<Workspace> info(@PathVariable(value = "id") String id);
+
 }
 
 

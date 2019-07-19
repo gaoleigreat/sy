@@ -200,7 +200,7 @@ public class SurveyPointController {
 
 
 
-    @ApiOperation(value = "excel写入数据库", notes = "excel写入数据库", httpMethod = "POST")
+    @ApiOperation(value = "Excel批量上传测点", notes = "Excel批量上传测点", httpMethod = "POST")
     @ApiImplicitParams({
 
     })
