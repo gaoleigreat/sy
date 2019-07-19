@@ -15,9 +15,9 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
  **/
 @EnableFeignClients("com.lego.survey")
 @EnableEurekaClient
-@SpringBootApplication(scanBasePackages = {"com.lego.survey","com.lego.survey.lib","com.ribbon"})
+@SpringBootApplication(scanBasePackages = {"com.lego.survey","com.lego.survey.lib"})
 @EnableBinding({LogSource.class, SectionSource.class})
-@RibbonClient(name = "project-service",configuration = com.ribbon.RibbonRule.class)
+/*@RibbonClient(name = "project-service",configuration = com.lego.survey.ribbon.RibbonRule.class)*/
 public class ProjectServiceApplication {
 
     public static void main(String[] args) {

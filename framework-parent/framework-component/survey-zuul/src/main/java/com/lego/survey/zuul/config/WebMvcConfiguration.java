@@ -7,7 +7,6 @@ import com.lego.survey.zuul.predicate.GrayAwarePredicate;
 import com.lego.survey.zuul.predicate.GrayAwareRule;
 import com.netflix.loadbalancer.IRule;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;

@@ -1,9 +1,10 @@
-package com.ribbon;
+package com.lego.survey.ribbon;
 
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.AbstractLoadBalancerRule;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @description
  * @since 2019/7/17
  **/
+@Slf4j
 public class MyRule extends AbstractLoadBalancerRule {
 
     private int currentIndex = 0;
@@ -45,6 +47,7 @@ public class MyRule extends AbstractLoadBalancerRule {
         if (!server.isAlive()) {
             choose(loadBalancer, key);
         }
+        log.info("choose service :[{}]",server);
         return server;
     }
 }
