@@ -1,5 +1,6 @@
 package com.lego.survey.settlement.model.vo;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lego.survey.settlement.model.entity.SurveyResult;
 import io.swagger.annotations.ApiModelProperty;
@@ -18,24 +19,37 @@ import com.lego.word.element.WObject;
 @AllArgsConstructor
 public class SurveyReportDataVo extends WObject{
 
+    @ExcelProperty(value = "序号", index = 0)
     @ApiModelProperty("ID")
     private long id;
+
+    @ExcelProperty(value = "测点编号", index = 1)
     @ApiModelProperty("测点编号")
     @NotBlank(message = "测点编号不能为空")
     private String pointCode;
     @ApiModelProperty("测量结果id")
     private Long resultId;
+    @ExcelProperty(value = "初始高程", index = 2)
     @ApiModelProperty("初始高程")
     private Double initElevation;
+
+    @ExcelProperty(value = "上期高程", index = 3)
     @ApiModelProperty("上期高程")
     private Double preElevation;
-    @ApiModelProperty("当前高程")
+
+    @ExcelProperty(value = "本次高程", index = 4)
+    @ApiModelProperty("本次高程")
     private Double curElevation;
-    @ApiModelProperty("当前单次沉降量")
+
+    @ExcelProperty(value = "本次沉降", index = 5)
+    @ApiModelProperty("本次沉降")
     private Double curOffsetValue;
-    @ApiModelProperty("当前累积沉降量")
+
+    @ExcelProperty(value = "累积沉降量", index = 6)
+    @ApiModelProperty("累积沉降量")
     private Double curTotalOffsetValue;
-    @ApiModelProperty("当前沉降速率")
+    @ExcelProperty(value = "沉降速率", index = 7)
+    @ApiModelProperty("沉降速率")
     private Double curSpeed;
     @ApiModelProperty("单次沉降量下限")
     private Double onceLowerLimit;
