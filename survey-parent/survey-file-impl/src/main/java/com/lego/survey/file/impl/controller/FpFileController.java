@@ -6,6 +6,8 @@ import com.lego.survey.file.impl.util.FpFileUtil;
 import com.survey.lib.common.vo.RespVO;
 import com.survey.lib.common.vo.RespVOBuilder;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +31,8 @@ import java.util.Map;
  * @date 2019/5/30/0030
  */
 @RestController
-@Api(tags = "fp文件存储")
-@RequestMapping("/file/v1")
+@Api(value = "FpFileController",description = "fp文件存储")
+@RequestMapping("/file")
 public class FpFileController {
 
     private static final Logger log = LoggerFactory.getLogger(FpFileController.class);
@@ -40,6 +42,11 @@ public class FpFileController {
     @Value("${fpfile.path}")
     private String fpFileRootPath;
 
+
+    @ApiOperation(value = "文件上传", httpMethod = "POST")
+    @ApiImplicitParams({
+
+    })
     @RequestMapping(value = "/fpfile/upload", method = RequestMethod.POST)
     public RespVO fpFileUpload(HttpServletRequest req) {
         List<MultipartFile> fileList = new ArrayList<>();
@@ -75,21 +82,22 @@ public class FpFileController {
     }
 
 
-    @RequestMapping(value = "/fpfile/download/{folder1}/{folder2}/{fileName}", method = RequestMethod.GET)
-    public void downloadFile(HttpServletRequest request, HttpServletResponse response, @PathVariable String folder1, @PathVariable String folder2, @PathVariable String fileName, @RequestParam(required = false) String name) throws UnsupportedEncodingException {
+    @ApiOperation(value = "文件下载", httpMethod = "GET")
+    @ApiImplicitParams({
+    })
+    @RequestMapping(value = "/fpfile/download/{fileName}", method = RequestMethod.GET)
+    public void downloadFile(HttpServletRequest request, HttpServletResponse response,
+                             @PathVariable String fileName) throws UnsupportedEncodingException {
         if (null == fileName) {
             log.error("download file error,filname is null");
         }
-        if (null == name) {
-            name = fileName;
-        }
-        String filePath = FpFileUtil.getFilePath(fpFileRootPath, folder1, folder2);
+        String filePath = FpFileUtil.getFilePath(fpFileRootPath, null, null);
         File file = new File(filePath, fileName);
         if (file.exists()) {
             // 设置强制下载不打开
             response.setContentType("application/force-download");
             // 设置文件名
-            response.addHeader("Content-Disposition", "attachment;fileName=" + java.net.URLEncoder.encode(name, "UTF-8"));
+            response.addHeader("Content-Disposition", "attachment;fileName=" + java.net.URLEncoder.encode(fileName, "UTF-8"));
             byte[] buffer = new byte[1024];
             FileInputStream fis = null;
             BufferedInputStream bis = null;

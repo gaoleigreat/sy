@@ -52,10 +52,10 @@ public class FpFileUtil {
     public static String getFileUrl(String routing, String folder1, String folder2, String filaname) {
         String url = new StringBuffer(routing)
                 .append(File.separator)
-                .append(folder1)
+           /*     .append(folder1)
                 .append(File.separator)
                 .append(folder2)
-                .append(File.separator)
+                .append(File.separator)*/
                 .append(filaname).toString();
         return url;
     }

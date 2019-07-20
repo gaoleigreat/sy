@@ -273,16 +273,14 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
     public PagedResult<OverrunListVo> queryOverrunDetails(int pageIndex, Integer pageSize, String sectionId, String pointCode, String workspaceId, Integer type) {
         PagedResult<OverrunListVo> voPagedResult = new PagedResult<>();
         IPage<SurveyResult> resultPage = new Page<>(pageIndex, pageSize);
-        //QueryWrapper<SurveyResult> resultWrapper = new QueryWrapper<>();
-        IPage<SurveyResult> surveyResultPage = surveyResultMapper.queryPaged(resultPage, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, pointCode);
+        QueryWrapper<SurveyResult> resultWrapper = new QueryWrapper<>();
+        resultWrapper.eq("point_code",pointCode);
+        IPage<SurveyResult> surveyResultPage = surveyResultMapper.queryList(resultPage, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, resultWrapper);
         List<SurveyResult> records = surveyResultPage.getRecords();
         List<OverrunListVo> overrunListVos = new ArrayList<>();
         if (!CollectionUtils.isEmpty(records)) {
             Map<String, String> typeMap = getTypeMap();
             for (SurveyResult record : records) {
-                if (!record.getPointCode().equals(pointCode)) {
-                    continue;
-                }
                 QueryWrapper<SurveyPointException> exceptionWrapper = new QueryWrapper<>();
                 exceptionWrapper.eq("result_id", record.getId());
                 List<SurveyPointException> exceptionList = surveyPointExceptionMapper.selectList(exceptionWrapper);
