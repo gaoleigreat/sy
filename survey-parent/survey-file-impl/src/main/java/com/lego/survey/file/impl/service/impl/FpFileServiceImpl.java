@@ -42,9 +42,10 @@ public class FpFileServiceImpl implements IFpFileService {
         String fileName = file.getOriginalFilename();
         String type=fileName.substring(fileName.indexOf("."));
         Map<String, Object> map = new HashMap<>();
-        map.put("data", FpFileUtil.getFileUrl(fileUrl, null, null, uuid));
-        map.put("fileName", fileName);
-        File tempFile = new File(FpFileUtil.getFileUrl(fpFileRootPath, null, null, uuid+type));
+        String newFileName = uuid + type;
+        map.put("data", FpFileUtil.getFileUrl(fileUrl, null, null, newFileName));
+        map.put("fileName", newFileName);
+        File tempFile = new File(FpFileUtil.getFileUrl(fpFileRootPath, null, null, newFileName));
         try {
             if (!tempFile.getParentFile().exists()) {
                 tempFile.getParentFile().mkdirs();//创建父级文件路径
