@@ -245,7 +245,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
         Map<String, String> typeMap = new HashMap<>();
         List<SurveyPointType> typeList = surveyPointTypeMapper.selectList(null);
         if (!CollectionUtils.isEmpty(typeList)) {
-            typeList.forEach(tp -> typeMap.put(tp.getCode(), tp.getName()));
+            typeList.forEach(tp -> typeMap.put(tp.getName(), tp.getName()));
         }
         return typeMap;
     }
@@ -253,9 +253,8 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
     @Override
     public List<SurveyResult> queryResult(String sectionId, List<Long> originalIds) {
 
-        List<SurveyResult> surveyResults = surveyResultMapper.queryResult(DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, originalIds);
         //
-        return surveyResults;
+        return surveyResultMapper.queryResult(DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, originalIds);
     }
 
     @Override
