@@ -52,5 +52,7 @@ public class OverrunListVo {
     private Integer pointStatus;
     @ApiModelProperty("测量员")
     private String surveyer;
+    @ApiModelProperty("任务ID")
+    private Long taskId;
 
 }

@@ -6,16 +6,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lego.survey.base.exception.ExceptionBuilder;
 import com.lego.survey.project.feign.WorkspaceClient;
 import com.lego.survey.project.model.entity.Workspace;
-import com.lego.survey.settlement.impl.mapper.SurveyPointExceptionMapper;
-import com.lego.survey.settlement.impl.mapper.SurveyPointMapper;
-import com.lego.survey.settlement.impl.mapper.SurveyPointTypeMapper;
-import com.lego.survey.settlement.impl.mapper.SurveyResultMapper;
+import com.lego.survey.settlement.impl.mapper.*;
 import com.lego.survey.settlement.impl.service.ISurveyPointService;
 import com.lego.survey.settlement.impl.service.ISurveyResultService;
-import com.lego.survey.settlement.model.entity.SurveyPoint;
-import com.lego.survey.settlement.model.entity.SurveyPointException;
-import com.lego.survey.settlement.model.entity.SurveyPointType;
-import com.lego.survey.settlement.model.entity.SurveyResult;
+import com.lego.survey.settlement.model.entity.*;
 import com.lego.survey.settlement.model.vo.OverrunListVo;
 import com.lego.survey.settlement.model.vo.SurveyPointVo;
 import com.lego.survey.settlement.model.vo.SurveyPontResultVo;
@@ -61,6 +55,9 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
     private SurveyPointTypeMapper surveyPointTypeMapper;
     @Autowired
     private ISurveyPointService surveyPointSevice;
+
+    @Autowired
+    private SurveyOriginalMapper surveyOriginalMapper;
 
     @Override
     public RespVO list(int pageIndex, int pageSize, String workspaceCode, Date startDate, Date endDate, String deviceType, String tableName) {
@@ -222,8 +219,11 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                     overrun.setSurveyTime(surveyResult.getSurveyTime());
                     overrun.setCurValue(surveyResult.getElevation());
                     overrun.setSurveyer(surveyResult.getSurveyer());
+                    SurveyOriginal surveyOriginal = surveyOriginalMapper.selectById(surveyResult.getOriginalId());
+                    if(surveyOriginal!=null){
+                        overrun.setTaskId(surveyOriginal.getTaskId());
+                    }
                 }
-
 
                 if (!CollectionUtils.isEmpty(exceptionList)) {
                     SurveyPointException surveyPointException = exceptionList.get(0);
@@ -302,6 +302,10 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                 overrun.setType(typeMap.get(sp) != null ? sp : sp);
                 overrun.setPointStatus(surveyPoint.getStatus());
                 overrun.setSurveyer(record.getSurveyer());
+                SurveyOriginal surveyOriginal = surveyOriginalMapper.selectById(record.getOriginalId());
+                if(surveyOriginal!=null){
+                    overrun.setTaskId(surveyOriginal.getTaskId());
+                }
 
                 QueryWrapper<SurveyResult> wp = new QueryWrapper<>();
                 wp.le("survey_time", record.getSurveyTime());

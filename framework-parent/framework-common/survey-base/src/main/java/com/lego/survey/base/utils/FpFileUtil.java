@@ -1,4 +1,4 @@
-package com.lego.survey.file.impl.util;
+package com.lego.survey.base.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,10 +52,10 @@ public class FpFileUtil {
     public static String getFileUrl(String routing, String folder1, String folder2, String filaname) {
         String url = new StringBuffer(routing)
                 .append(File.separator)
-           /*     .append(folder1)
-                .append(File.separator)
-                .append(folder2)
-                .append(File.separator)*/
+                /*     .append(folder1)
+                     .append(File.separator)
+                     .append(folder2)
+                     .append(File.separator)*/
                 .append(filaname).toString();
         return url;
     }
@@ -64,18 +64,12 @@ public class FpFileUtil {
      * 活的文件在服务器存储路径
      *
      * @param routPath
-     * @param folder1
-     * @param folder2
+     * @param fileName
      * @return
      */
-    public static String getFilePath(String routPath, String folder1, String folder2) {
-        String filePath = new StringBuffer(routPath)
-               /* .append(File.separator)
-                .append(folder1)
-                .append(File.separator)
-                .append(folder2)*/
-                .append(File.separator).toString();
-        return filePath;
+    public static String getFilePath(String routPath, String fileName) {
+        return routPath +
+                File.separator + fileName;
     }
 
     public static String getUUID() {

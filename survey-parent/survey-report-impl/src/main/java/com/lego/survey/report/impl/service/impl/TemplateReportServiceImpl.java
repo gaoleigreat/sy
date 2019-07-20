@@ -1,4 +1,6 @@
 package com.lego.survey.report.impl.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,8 +13,10 @@ import com.survey.lib.common.vo.RespVOBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author yanglf
@@ -33,7 +37,7 @@ public class TemplateReportServiceImpl implements ITemplateReportService {
         templateReport.setCreateTime(currentTime);
         templateReport.setUpdateTime(currentTime);
         int insert = templateReportMapper.insert(templateReport);
-        if(insert<=0){
+        if (insert <= 0) {
             return RespVOBuilder.failure("添加失败");
         }
         return RespVOBuilder.success();
@@ -43,7 +47,7 @@ public class TemplateReportServiceImpl implements ITemplateReportService {
     @Transactional(rollbackFor = RuntimeException.class)
     public RespVO delete(Long id) {
         int delete = templateReportMapper.deleteById(id);
-        if(delete<=0){
+        if (delete <= 0) {
             return RespVOBuilder.failure("删除失败");
         }
         return RespVOBuilder.success();
@@ -54,18 +58,18 @@ public class TemplateReportServiceImpl implements ITemplateReportService {
     public RespVO modify(TemplateReport templateReport) {
         templateReport.setUpdateTime(new Date());
         int update = templateReportMapper.updateById(templateReport);
-        if(update<=0){
+        if (update <= 0) {
             return RespVOBuilder.failure("修改失败");
         }
         return RespVOBuilder.success();
     }
 
     @Override
-    public RespVO<RespDataVO<TemplateReport>> list(int pageIndex, int pageSize,String sectionCode) {
+    public RespVO<RespDataVO<TemplateReport>> list(int pageIndex, int pageSize, String sectionCode) {
         IPage<TemplateReport> page = new Page<>(pageIndex, pageSize);
         QueryWrapper<TemplateReport> wrapper = new QueryWrapper<>();
-        if(sectionCode!=null){
-            wrapper.eq("section_code",sectionCode);
+        if (sectionCode != null) {
+            wrapper.eq("section_code", sectionCode);
         }
         wrapper.orderByDesc("create_time");
         IPage<TemplateReport> reportIPage = templateReportMapper.selectPage(page, wrapper);
@@ -76,5 +80,14 @@ public class TemplateReportServiceImpl implements ITemplateReportService {
     public RespVO<TemplateReport> queryById(Long id) {
         templateReportMapper.selectById(id);
         return RespVOBuilder.success();
+    }
+
+    @Override
+    public RespVO<TemplateReport> findByName(String name) {
+        QueryWrapper<TemplateReport> wrapper = new QueryWrapper<>();
+        wrapper.eq("name", name);
+        List<TemplateReport> templateReports = templateReportMapper.selectList(wrapper);
+        TemplateReport templateReport = !CollectionUtils.isEmpty(templateReports) ? templateReports.get(0) : null;
+        return RespVOBuilder.success(templateReport);
     }
 }

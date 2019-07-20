@@ -118,3 +118,10 @@ hystrix:
           thread:
             timeoutInMilliseconds: 60000
 
+
+
+
+fpfile:
+  path: D:\业务文档\测量\file
+  url:  http://localhost:50010/survey/api-file/file/fpfile/download
+

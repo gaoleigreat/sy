@@ -1,8 +1,8 @@
 package com.lego.survey.file.impl.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.lego.survey.base.utils.FpFileUtil;
 import com.lego.survey.file.impl.service.IFpFileService;
-import com.lego.survey.file.impl.util.FpFileUtil;
 import com.survey.lib.common.vo.RespVO;
 import com.survey.lib.common.vo.RespVOBuilder;
 import io.swagger.annotations.Api;
@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -91,8 +90,8 @@ public class FpFileController {
         if (null == fileName) {
             log.error("download file error,filname is null");
         }
-        String filePath = FpFileUtil.getFilePath(fpFileRootPath, null, null);
-        File file = new File(filePath, fileName);
+        String filePath = FpFileUtil.getFilePath(fpFileRootPath,fileName);
+        File file = new File(filePath);
         if (file.exists()) {
             // 设置强制下载不打开
             response.setContentType("application/force-download");

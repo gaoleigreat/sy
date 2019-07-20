@@ -1,6 +1,6 @@
 package com.lego.survey.file.impl.service.impl;
+import com.lego.survey.base.utils.FpFileUtil;
 import com.lego.survey.file.impl.service.IFpFileService;
-import com.lego.survey.file.impl.util.FpFileUtil;
 import com.survey.lib.common.consts.RespConsts;
 import com.survey.lib.common.vo.RespVO;
 import com.survey.lib.common.vo.RespVOBuilder;

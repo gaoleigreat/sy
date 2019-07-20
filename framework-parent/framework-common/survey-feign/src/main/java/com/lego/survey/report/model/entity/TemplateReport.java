@@ -1,4 +1,5 @@
 package com.lego.survey.report.model.entity;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +11,7 @@ import java.util.Date;
 
 /**
  * @author yanglf
- * @description   报表模板
+ * @description 报表模板
  * @since 2019/1/7
  **/
 @Data
@@ -18,7 +19,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TemplateReport {
-    @ApiModelProperty(value = "模板Id",example = "1")
+    @ApiModelProperty(value = "模板Id", example = "1")
     private Long id;
     @NotBlank(message = "模板名称不能为空")
     @ApiModelProperty("模板名称")
@@ -26,8 +27,10 @@ public class TemplateReport {
     @NotBlank(message = "模板路径不能为空")
     @ApiModelProperty("模板路径")
     private String path;
-    @ApiModelProperty(value = "模板文件格式 0：EXCEL 1: WORD 2: TXT 3: PDF",example = "0")
+    @ApiModelProperty(value = "模板文件格式 0：EXCEL 1: WORD 2: TXT 3: PDF", example = "0")
     private Integer type;
+    @ApiModelProperty("文件名称")
+    private String fileName;
     @NotBlank(message = "模板命名规则不能为空")
     @ApiModelProperty("生成的报告命名规则")
     private String reportNameRule;

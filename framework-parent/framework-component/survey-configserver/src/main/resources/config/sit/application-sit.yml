@@ -118,3 +118,9 @@ ribbon:
         isolation:
           thread:
             timeoutInMilliseconds: 60000
+
+
+
+fpfile:
+  path: /opt/work/file
+  url:  http://114.116.6.53:50010/survey/api-file/file/fpfile/download

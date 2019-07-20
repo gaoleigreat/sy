@@ -55,4 +55,5 @@ public interface ITemplateReportService {
     RespVO<TemplateReport> queryById(Long id);
 
 
+    RespVO<TemplateReport> findByName(String name);
 }
