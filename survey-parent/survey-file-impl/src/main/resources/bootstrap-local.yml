@@ -20,7 +20,7 @@ file:
 
 fpfile:
   path: /opt/work/file
-  url:  http://114.116.6.53:8080/fp-api/file/file/v1/fpfile/download
+  url:  http://localhost:50010/survey/api-file/file/fpfile/download
 ceph:
   host: http://192.168.105.10:7480/
   accessKey: 7BFAN4EX4ZCAT86V4Z65
