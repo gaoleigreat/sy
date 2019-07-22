@@ -92,7 +92,7 @@ public class ExcelReportController {
         return RespVOBuilder.success();
     }
 
-    @ApiOperation(value = "生成成果报表", notes = "生成测量成果报表", httpMethod = "get")
+    @ApiOperation(value = "生成成果报表", notes = "生成测量成果报表", httpMethod = "GET")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sectionId", value = "sectionId", dataType = "String", required = true, paramType = "query"),
             @ApiImplicitParam(name = "taskId", value = "taskId", dataType = "Long",  paramType = "query"),

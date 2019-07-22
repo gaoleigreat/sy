@@ -12,8 +12,3 @@ spring:
 
 application:
   description: 沉降服务
-
-
-logging:
-  level:
-    com.lego: debug

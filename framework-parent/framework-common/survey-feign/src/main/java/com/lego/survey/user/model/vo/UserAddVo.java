@@ -63,15 +63,21 @@ public class UserAddVo {
     private List<String> section;
 
     @ApiModelProperty("所属模块")
-    private List<String>  service;
+    private List<String> service;
 
     @ApiModelProperty("工区")
     private List<String> workSpace;
 
+    @ApiModelProperty("是否有效 0-是;1-否")
+    private Integer valid;
 
-    public User loadUser(){
-        Date currentDate=new Date();
-        return User.builder().createTime(currentDate)
+    @ApiModelProperty("身份证号")
+    private String cardId;
+
+
+    public User loadUser() {
+        Date currentDate = new Date();
+        User user = User.builder().createTime(currentDate)
                 .id(this.id)
                 .name(this.name)
                 .passWord("111111")
@@ -81,7 +87,12 @@ public class UserAddVo {
                 .updateTime(currentDate)
                 .userName(this.userName)
                 .valid(0)
+                .cardId(cardId)
                 .build();
+        if (this.valid != null) {
+            user.setValid(this.valid);
+        }
+        return user;
     }
 
 }

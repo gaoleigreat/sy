@@ -3,6 +3,8 @@ import com.lego.survey.auth.feign.AuthClient;
 import com.lego.survey.base.annotation.Operation;
 import com.lego.survey.base.annotation.Resource;
 import com.lego.survey.project.impl.service.IWorkspaceService;
+import com.lego.survey.project.model.entity.OwnWorkspace;
+import com.lego.survey.project.model.entity.Section;
 import com.lego.survey.project.model.entity.Surveyer;
 import com.lego.survey.project.model.entity.Workspace;
 import com.lego.survey.event.user.LogSender;
@@ -119,6 +121,21 @@ public class WorkspaceController {
         String userId = authClient.getAuthVo(headerVo).getUserId();
         Workspace workspace=iWorkspaceService.queryById(id);
         return RespVOBuilder.success(workspace);
+    }
+
+
+    @ApiOperation(value = "查询全部工区信息", notes = "查询全部工区信息", httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sectionIds", value = "标段ID", dataType = "String", paramType = "query"),
+    })
+    @Operation(value = "findAll", desc = "查询全部标段信息")
+    @RequestMapping(value = "/findAll", method = RequestMethod.GET)
+    public RespVO<RespDataVO<OwnWorkspace>> findAll(@RequestParam(required = false) List<String> sectionIds,
+                                               HttpServletRequest request) {
+        HeaderVo headerVo = HeaderUtils.parseHeader(request);
+        String userId = authClient.getAuthVo(headerVo).getUserId();
+        List<OwnWorkspace> sections = iWorkspaceService.findAll(sectionIds);
+        return RespVOBuilder.success(sections);
     }
 
 

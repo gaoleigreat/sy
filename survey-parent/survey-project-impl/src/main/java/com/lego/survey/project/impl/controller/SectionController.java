@@ -243,15 +243,15 @@ public class SectionController {
 
     @ApiOperation(value = "查询全部标段信息", notes = "查询全部标段信息", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectId", value = "工程ID", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "projectIds", value = "工程ID", dataType = "String", paramType = "query"),
     })
     @Operation(value = "findAll", desc = "查询全部标段信息")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public RespVO<RespDataVO<Section>> findAll(@RequestParam(required = false) String projectId,
+    public RespVO<RespDataVO<Section>> findAll(@RequestParam(required = false) List<String> projectIds,
                                                HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
-        List<Section> sections = iSectionService.findAll(projectId);
+        List<Section> sections = iSectionService.findAll(projectIds);
         return RespVOBuilder.success(sections);
     }
 

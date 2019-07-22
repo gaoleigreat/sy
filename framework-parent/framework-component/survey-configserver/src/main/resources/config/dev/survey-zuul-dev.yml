@@ -12,19 +12,6 @@ zuul:
 session:
   domain: survey-zuul
 
-
-#hystrix超时熔断
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 60000
-ribbon:
-  ConnectTimeout: 30000
-  ReadTimeout: 30000
-
 feign:
   hystrix:
     enabled: true

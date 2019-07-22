@@ -18,6 +18,7 @@ import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.stereotype.Component;
+
 import java.util.*;
 
 @Component
@@ -36,15 +37,11 @@ public class ResourcesInit implements ApplicationRunner {
     @Autowired
     private ResourcesClient resourcesClient;
 
-    private void initUserPermission(){
+    private void initUserPermission() {
         //1.扫描权限点
         List<Resources> resources = getResource();
         //2.权限点插入数据库
-        try {
-            resourcesClient.saveUserPermissionList(serviceName, resources);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+      //  resourcesClient.saveUserPermissionList(serviceName, resources);
     }
 
    /* private void initServicePermission(){
@@ -73,45 +70,45 @@ public class ResourcesInit implements ApplicationRunner {
         }
     }*/
 
-    private List<Resources> getResource(){
+    private List<Resources> getResource() {
         List<Resources> resourcesList = new ArrayList<>();
         ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
         MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory();
-        String basePath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX+"/com/lego/survey/**/controller/*Controller.class";
+        String basePath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + "/com/lego/survey/**/controller/*Controller.class";
 
         try {
 
             org.springframework.core.io.Resource[] resources = resourcePatternResolver.getResources(basePath);
             TypeFilter typeFilter = new AnnotationTypeFilter(Resource.class);
 
-            for(org.springframework.core.io.Resource resource : resources ){
+            for (org.springframework.core.io.Resource resource : resources) {
 
                 MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(resource);
-                if(typeFilter.match(metadataReader, metadataReaderFactory)){
+                if (typeFilter.match(metadataReader, metadataReaderFactory)) {
                     String rId = "";
                     String rName = "";
                     AnnotationMetadata annotationMetadata = metadataReader.getAnnotationMetadata();
-                    Map<String,Object> classMap = annotationMetadata.getAnnotationAttributes(Resource.class.getName());
-                    for(Map.Entry<String,Object> entry : classMap.entrySet()){
-                        if("value".endsWith(entry.getKey())){
-                            rId = (String)entry.getValue();
+                    Map<String, Object> classMap = annotationMetadata.getAnnotationAttributes(Resource.class.getName());
+                    for (Map.Entry<String, Object> entry : classMap.entrySet()) {
+                        if ("value".endsWith(entry.getKey())) {
+                            rId = (String) entry.getValue();
                         }
-                        if("desc".endsWith(entry.getKey())){
-                            rName = (String)entry.getValue();
+                        if ("desc".endsWith(entry.getKey())) {
+                            rName = (String) entry.getValue();
                         }
                     }
 
-                    Set<MethodMetadata> set =annotationMetadata.getAnnotatedMethods(Operation.class.getName());
-                    for(MethodMetadata methodMetadata : set){
+                    Set<MethodMetadata> set = annotationMetadata.getAnnotatedMethods(Operation.class.getName());
+                    for (MethodMetadata methodMetadata : set) {
                         Resources r = new Resources();
                         r.setRId(rId);
                         r.setRName(rName);
-                        Map<String,Object> methodMap = methodMetadata.getAnnotationAttributes(Operation.class.getName());
-                        for(Map.Entry<String,Object> entry : methodMap.entrySet()){
-                            if("value".endsWith(entry.getKey())){
+                        Map<String, Object> methodMap = methodMetadata.getAnnotationAttributes(Operation.class.getName());
+                        for (Map.Entry<String, Object> entry : methodMap.entrySet()) {
+                            if ("value".endsWith(entry.getKey())) {
                                 r.setPrId((String) entry.getValue());
                             }
-                            if("desc".endsWith(entry.getKey())){
+                            if ("desc".endsWith(entry.getKey())) {
                                 r.setPrName((String) entry.getValue());
                             }
                         }
@@ -119,8 +116,8 @@ public class ResourcesInit implements ApplicationRunner {
                     }
                 }
             }
-        }catch(Exception e){
-           e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return resourcesList;
     }
