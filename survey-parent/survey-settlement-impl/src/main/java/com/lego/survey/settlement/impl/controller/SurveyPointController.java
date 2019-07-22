@@ -2,6 +2,7 @@ package com.lego.survey.settlement.impl.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.lego.survey.auth.feign.AuthClient;
+import com.lego.survey.base.utils.FpFileUtil;
 import com.lego.survey.lib.excel.ExcelService;
 import com.lego.survey.project.feign.SectionClient;
 import com.lego.survey.project.model.entity.OwnWorkspace;
@@ -28,6 +29,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -65,8 +67,8 @@ public class SurveyPointController {
     @Autowired
     private ExcelService excelService;
 
-    @Value("${define.survey.report.storePath:D:\\个人信息\\}")
-    private String storePath;
+    @Value("${fpfile.path}")
+    private String fpFileRootPath;
 
 
 
@@ -200,26 +202,20 @@ public class SurveyPointController {
 
 
 
-    @ApiOperation(value = "excel写入数据库", notes = "excel写入数据库", httpMethod = "POST")
+    @ApiOperation(value = "Excel批量上传测点", notes = "Excel批量上传测点", httpMethod = "POST")
     @ApiImplicitParams({
 
     })
-    @RequestMapping(value = "/uploadBatch",method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public RespVO uploadPointResultExcel(@RequestPart(value = "file") MultipartFile file,
+    @RequestMapping(value = "/uploadBatch",method = RequestMethod.POST)
+    public RespVO uploadPointResultExcel(@RequestPart(value = "fileName") String fileName,
                                          @RequestParam() String sectionId){
-        try {
-            if(file==null || file.isEmpty()){
-                return RespVOBuilder.failure("文件不能为空");
-            }
-            String pathName = storePath + UuidUtils.generateShortUuid() + ".xlsx";
-            file.transferTo(new File(pathName));
-            surveyPointReadListener.setTableName(sectionId);
-            excelService.readExcel(pathName,surveyPointReadListener, SurveyPointVo.class,1);
-            return RespVOBuilder.success();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return RespVOBuilder.failure("文件解析失败");
+        if(StringUtils.isEmpty(fileName)){
+            return RespVOBuilder.failure("文件名不能为空");
         }
+        String filePath = FpFileUtil.getFilePath(fpFileRootPath,fileName);
+        surveyPointReadListener.setTableName(sectionId);
+        excelService.readExcel(filePath,surveyPointReadListener, SurveyPointVo.class,1);
+        return RespVOBuilder.success();
     }
 
 

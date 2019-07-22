@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@Api(tags="Fastdfs文件存储")
+@Api(value="FileController",description = "fastdfs文件上传")
 @RequestMapping("/file/v1")
 public class FileController {
 

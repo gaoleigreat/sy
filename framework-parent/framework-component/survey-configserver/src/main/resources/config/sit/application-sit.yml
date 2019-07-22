@@ -105,8 +105,8 @@ logging:
 # (1 + MaxAutoRetries + MaxAutoRetriesNextServer) * ReadTimeout=hystrix 超时时间
 #当ribbon超时后且hystrix没有超时，便会采取重试机制。当OkToRetryOnAllOperations设置为false时，只会对get请求进行重试
 ribbon:
-  ConnectTimeout: 30000     #ribbon 负载均衡连接超时时间
-  ReadTimeout: 60000       #ribbon 负载均衡读取超时时间
+  ConnectTimeout: 3000  #ribbon 负载均衡连接超时时间
+  ReadTimeout: 20000  #ribbon 负载均衡读取超时时间
   #MaxAutoRetries: 1   #同一台实例最大重试次数,不包括首次调用
   #MaxAutoRetriesNextServer: 1  #重试负载均衡其他的实例最大重试次数,不包括首次调用
   #OkToRetryOnAllOperations: false #否所有操作都重试
@@ -118,3 +118,9 @@ ribbon:
         isolation:
           thread:
             timeoutInMilliseconds: 60000
+
+
+
+fpfile:
+  path: /opt/work/file
+  url:  http://114.116.6.53:50010/survey/api-file/file/fpfile/download

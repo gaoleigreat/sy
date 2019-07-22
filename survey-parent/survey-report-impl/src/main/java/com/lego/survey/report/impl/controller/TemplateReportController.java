@@ -103,4 +103,22 @@ public class TemplateReportController {
         // TODO 权限校验
         return iTemplateReportService.list(pageIndex, pageSize,sectionCode);
     }
+
+
+
+    @ApiOperation(value = "根据名称获取模板信息", notes = "列举所有报告模板信息", httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name", value = "模板名称", dataType = "String", required = true,paramType = "query"),
+    })
+    @RequestMapping(value = "/findByName", method = RequestMethod.GET)
+    public RespVO<TemplateReport> findByName(@RequestParam String name,
+                                                   HttpServletRequest request) {
+        HeaderVo headerVo = HeaderUtils.parseHeader(request);
+        String userId = authClient.getAuthVo(headerVo).getUserId();
+        // TODO 权限校验
+        return iTemplateReportService.findByName(name);
+    }
+
+
+
 }

@@ -283,11 +283,16 @@ public class SectionServiceImpl implements ISectionService {
 
 
     @Override
-    public List<Section> findAll(String projectId) {
-        if (!StringUtils.isEmpty(projectId)) {
-            return sectionRepository.findSectionsByOwnerProjectIdAndValidOrderByCreateTimeDesc(projectId, 0);
+    public List<Section> findAll(List<String> projectIds) {
+        List<Section> sectionList = new ArrayList<>();
+        if (CollectionUtils.isEmpty(projectIds)) {
+            return sectionRepository.findSectionsByValid(0);
         }
-        return sectionRepository.findAll();
+        projectIds.forEach(projectId -> {
+            List<Section> sections = sectionRepository.findSectionsByOwnerProjectIdAndValidOrderByCreateTimeDesc(projectId, 0);
+            sectionList.addAll(sections);
+        });
+        return sectionList;
     }
 
     @Override

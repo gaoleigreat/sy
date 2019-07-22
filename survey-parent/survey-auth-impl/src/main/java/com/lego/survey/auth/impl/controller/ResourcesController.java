@@ -26,35 +26,35 @@ public class ResourcesController {
     private IResourcesService iResourcesService;
 
     @RequestMapping(value = "/findList", method = RequestMethod.GET)
-    @ApiOperation("查询列表")
+    @ApiOperation(value = "查询列表",httpMethod = "GET")
     public List<Resources> findList(@ModelAttribute Resources resources) {
 
         return iResourcesService.findList(resources);
     }
 
     @RequestMapping(value = "/findTree", method = RequestMethod.GET)
-    @ApiOperation("查询权限点数结构")
+    @ApiOperation(value = "查询权限点数结构",httpMethod = "GET")
     public List<Map<String, Object>> findTree(@ModelAttribute Resources resources) {
 
         return iResourcesService.findTree(resources);
     }
 
     @RequestMapping(value = "/insertList", method = RequestMethod.POST)
-    @ApiOperation("批量新增")
+    @ApiOperation(value = "批量新增",httpMethod = "POST")
     public RespVO insertList(@RequestBody List<Resources> resourcesList) {
 
         return iResourcesService.insertList(resourcesList);
     }
 
     @RequestMapping(value = "/deleteList", method = RequestMethod.POST)
-    @ApiOperation("批量删除")
+    @ApiOperation(value = "批量删除",httpMethod = "POST")
     public RespVO deleteList(@RequestBody List<Long> ids) {
 
         return iResourcesService.deleteList(ids);
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    @ApiOperation("更新")
+    @ApiOperation(value = "更新",httpMethod = "POST")
     public RespVO save(@RequestParam("scope") String scope, @RequestBody List<Resources> resources) {
 
         return iResourcesService.save(scope, resources);
@@ -62,7 +62,7 @@ public class ResourcesController {
 
 
     @RequestMapping(value = "/queryRoleResource", method = RequestMethod.POST)
-    @ApiOperation("查询角色资源信息")
+    @ApiOperation(value = "查询角色资源信息",httpMethod = "POST")
     public List<String> queryRoleResource(String role) {
 
         return iResourcesService.queryRoleResource(role);

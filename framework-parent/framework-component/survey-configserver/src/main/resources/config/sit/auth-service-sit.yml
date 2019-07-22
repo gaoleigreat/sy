@@ -23,6 +23,7 @@ define:
       maxWait: 60000 # 获取连接时最大等待时间，单位：毫秒。配置了maxwait之后，缺省启用公平锁，并发效率会有所下降
       timeBetweenEvictionRunsMillis: 60000  # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒   testWhileIdle的判断依据
       minEvictableIdleTimeMillis: 300000 # 配置一个连接在池中最小生存的时间，单位是毫秒
+      #maxEvictableIdleTimeMillis: 600000
       validationQuery: SELECT 1 FROM DUAL   #用来检测连接是否有效的sql
       testWhileIdle: true  #测试空闲连接是否有效，不影响性能
       testOnBorrow: false  #申请连接时检测连接是否有效，会影响性能
@@ -46,6 +47,7 @@ define:
       maxWait: 60000
       timeBetweenEvictionRunsMillis: 60000
       minEvictableIdleTimeMillis: 300000
+      #maxEvictableIdleTimeMillis: 600000
       validationQuery: SELECT 1 FROM DUAL
       testWhileIdle: true
       testOnBorrow: false

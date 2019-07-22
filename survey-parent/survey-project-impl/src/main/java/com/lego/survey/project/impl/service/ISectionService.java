@@ -112,10 +112,10 @@ public interface ISectionService {
 
     /**
      * 查询标段信息
-     * @param projectId
+     * @param projectIds
      * @return
      */
-    List<Section> findAll(String projectId);
+    List<Section> findAll(List<String> projectIds);
 
 
     /**

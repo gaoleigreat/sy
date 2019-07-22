@@ -7,17 +7,18 @@ define:
       url: ${define.mysql.write.url}
       username: ${define.mysql.write.username}
       password: ${define.mysql.write.password}
+      initsize: 10
+      maxActive: 20
+      minIdle: 10
+      maxWait: 120000  # 获取连接时最大等待时间，单位：毫秒。配置了maxwait之后，缺省启用公平锁，并发效率会有所下降
       initialSize: 5    #初始化时建立连接个数
-      minIdle: 5
-      maxActive: 20     #连接池最大连接数
-      maxWait: 60000 # 获取连接时最大等待时间，单位：毫秒。配置了maxwait之后，缺省启用公平锁，并发效率会有所下降
       timeBetweenEvictionRunsMillis: 60000  # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒   testWhileIdle的判断依据
       minEvictableIdleTimeMillis: 300000 # 配置一个连接在池中最小生存的时间，单位是毫秒
       validationQuery: SELECT 1 FROM DUAL   #用来检测连接是否有效的sql
       testWhileIdle: true  #测试空闲连接是否有效，不影响性能
       testOnBorrow: false  #申请连接时检测连接是否有效，会影响性能
       testOnReturn: false  #归还连接时检测连接是否有效，会影响性能
-      poolPreparedStatements: true  #否缓存prepareStatement，也就是PScache，对支持游标的数据库性能提升巨大，如oracle，mysql5.5以下不支持游标
+      poolPreparedStatements: false  #否缓存prepareStatement，也就是PScache，对支持游标的数据库性能提升巨大，如oracle，mysql5.5以下不支持游标
       maxPoolPreparedStatementPerConnectionSize: 20
       #要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。
       # 在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100
@@ -30,16 +31,17 @@ define:
       url: ${define.mysql.read1.url}
       username: ${define.mysql.read1.username}
       password: ${define.mysql.read1.password}
-      initialSize: 5
-      minIdle: 5
+      initsize: 10
       maxActive: 20
-      maxWait: 60000
+      minIdle: 10
+      initialSize: 5
+      maxWait: 120000
       timeBetweenEvictionRunsMillis: 60000
       minEvictableIdleTimeMillis: 300000
       validationQuery: SELECT 1 FROM DUAL
       testWhileIdle: true
-      testOnBorrow: false
-      testOnReturn: false
+      testOnBorrow: true
+      testOnReturn: true
       poolPreparedStatements: true
       maxPoolPreparedStatementPerConnectionSize: 20
       filters: stat,wall,slf4j # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙

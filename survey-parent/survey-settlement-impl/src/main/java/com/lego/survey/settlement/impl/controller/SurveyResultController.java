@@ -285,6 +285,29 @@ public class SurveyResultController {
     }
 
 
+    @ApiOperation(value = "报警点详情", httpMethod = "GET", notes = "报警点详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", required = true, example = "1", paramType = "path"),
+            @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int", defaultValue = "10", example = "10", paramType = "query"),
+            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", paramType = "query",required = true),
+            @ApiImplicitParam(name = "workspaceId", value = "工区ID", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "pointCode", value = "测点code", dataType = "String", paramType = "query",required = true),
+    })
+    @RequestMapping(value = "/overrunDetails/{pageIndex}", method = RequestMethod.GET)
+    public  RespVO<PagedResult<OverrunListVo>>   queryOverrunDetails(@PathVariable(value = "pageIndex") int pageIndex,
+                                                                  @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                                                                  @RequestParam(required = false,defaultValue = "0") Integer type,
+                                                                  @RequestParam String sectionId,
+                                                                  @RequestParam(required = false) String workspaceId,
+                                                                  @RequestParam String pointCode){
+
+        PagedResult<OverrunListVo> listVoPagedResult= iSurveyResultService.queryOverrunDetails(pageIndex,pageSize,sectionId,pointCode,workspaceId,type);
+        return RespVOBuilder.success(listVoPagedResult);
+    }
+
+
+
+
 
 
     @ApiOperation(value = "通过原始数据查询成果数据", httpMethod = "GET", notes = "通过原始数据查询成果数据")

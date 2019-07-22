@@ -1,6 +1,6 @@
 package com.lego.survey.file.impl.service.impl;
+import com.lego.survey.base.utils.FpFileUtil;
 import com.lego.survey.file.impl.service.IFpFileService;
-import com.lego.survey.file.impl.util.FpFileUtil;
 import com.survey.lib.common.consts.RespConsts;
 import com.survey.lib.common.vo.RespVO;
 import com.survey.lib.common.vo.RespVOBuilder;
@@ -36,19 +36,21 @@ public class FpFileServiceImpl implements IFpFileService {
 
     @Override
     public RespVO<Map<String, Object>> upload(MultipartFile file) {
-        String folder1 = FpFileUtil.getFolder();
-        String folder2 = FpFileUtil.getFolder();
+        /*String folder1 = FpFileUtil.getFolder();
+        String folder2 = FpFileUtil.getFolder();*/
         String uuid = FpFileUtil.getUUID();
         String fileName = file.getOriginalFilename();
+        String type=fileName.substring(fileName.indexOf("."));
         Map<String, Object> map = new HashMap<>();
-        map.put("data", FpFileUtil.getFileUrl(fileUrl, folder1, folder2, uuid + "?name=" + fileName));
-        map.put("fileName", fileName);
-        File tempFile = new File(FpFileUtil.getFileUrl(fpFileRootPath, folder1, folder2, uuid));
+        String newFileName = uuid + type;
+        map.put("data", FpFileUtil.getFileUrl(fileUrl, null, null, newFileName));
+        map.put("fileName", newFileName);
+        File tempFile = new File(FpFileUtil.getFileUrl(fpFileRootPath, null, null, newFileName));
         try {
             if (!tempFile.getParentFile().exists()) {
                 tempFile.getParentFile().mkdirs();//创建父级文件路径
-                tempFile.createNewFile();//创建文件
             }
+            tempFile.createNewFile();//创建文件
             // 转存文件
             file.transferTo(tempFile);
         } catch (Exception e) {

@@ -3,6 +3,8 @@ package com.lego.survey.ribbon;
 import com.netflix.loadbalancer.IRule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
 /**
  * @author yanglf
@@ -12,8 +14,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RibbonRule {
 
-    @Bean
+    /*@Bean
+    @Primary
+    @Profile(value = "dev")
     public IRule myRule() {
         return new MyRule();
-    }
+    }*/
 }

@@ -25,6 +25,10 @@ public interface SectionRepository extends MongoRepository<Section, String> {
 
 
 
+    List<Section>  findSectionsByValid(int valid);
+
+
+
 
 
     /**
@@ -112,5 +116,7 @@ public interface SectionRepository extends MongoRepository<Section, String> {
      * @return
      */
     List<Section>  findSectionsBySurveyerIdAndValid(String surveyId,int valid);
+
+
 
 }

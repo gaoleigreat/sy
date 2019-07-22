@@ -241,11 +241,33 @@ public class UserServiceImpl implements IUserService {
                     .phone(user.getPhone())
                     .name(user.getName())
                     .id(user.getId())
-                    .permission(user.getPermission())
+                    .cardId(user.getCardId())
+                    .valid(user.getValid())
                     .build();
             if (user.getGroup() != null) {
                 userAddVo.setGroup(user.getGroup().getName());
             }
+            List<String> permissions = user.getPermission();
+            if (!CollectionUtils.isEmpty(permissions)) {
+                List<String> permissionDesc = new ArrayList<>();
+                Config config = iConfigService.queryByName("权限配置");
+                if (config != null) {
+                    for (String permission : permissions) {
+                        List<ConfigOptionVo> options = config.getOption();
+                        if (!CollectionUtils.isEmpty(options)) {
+                            for (ConfigOptionVo option : options) {
+                                String name = option.getName();
+                                if (name.equals(permission)) {
+                                    permissionDesc.add(option.getDesc());
+                                }
+                            }
+                        }
+                    }
+                }
+                userAddVo.setPermission(permissionDesc);
+            }
+
+
             List<OwnProject> ownProjects = user.getOwnProjects();
             if (!CollectionUtils.isEmpty(ownProjects)) {
                 List<String> collect = ownProjects.stream().map(OwnProject::getName).collect(Collectors.toList());
@@ -277,7 +299,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserAddVo findByUserId(String userId) {
         User user = userRepository.findUserByIdAndValid(userId, 0);
-        if(user!=null){
+        if (user != null) {
             return user.loadUserVo();
         }
         return null;

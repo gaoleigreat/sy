@@ -1,8 +1,11 @@
 package com.lego.survey.project.impl.service;
 
+import com.lego.survey.project.model.entity.OwnWorkspace;
 import com.lego.survey.project.model.entity.Workspace;
 import com.survey.lib.common.vo.RespDataVO;
 import com.survey.lib.common.vo.RespVO;
+
+import java.util.List;
 
 /**
  * The interface Workspace service.
@@ -51,4 +54,10 @@ public interface IWorkspaceService {
      * @return
      */
     Workspace queryById(String id);
+
+    /**
+     * @param sectionIds
+     * @return
+     */
+    List<OwnWorkspace> findAll(List<String> sectionIds);
 }

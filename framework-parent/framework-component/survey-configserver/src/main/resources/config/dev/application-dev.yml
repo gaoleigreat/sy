@@ -9,18 +9,18 @@ define:
     password: '{cipher}a1d30c1325f1b0cd2e4619bff2be57bc32ae0413c0ce1fee07153b60bfa3a782'
   mysql:
     write:
-      url: jdbc:mysql://114.116.6.53:3306/survey_dev?useUnicode=true&characterEncoding=utf8&useSSL=false
+      url: jdbc:mysql://114.115.233.31:3306/survey?useUnicode=true&characterEncoding=utf8&useSSL=false
       username: root
       password: mysql
     read1:
-      url: jdbc:mysql://114.116.6.53:3306/survey_dev?useUnicode=true&characterEncoding=utf8&useSSL=false
+      url: jdbc:mysql://114.115.233.31:3306/survey?useUnicode=true&characterEncoding=utf8&useSSL=false
       username: root
       password: mysql
 eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
-    registry-fetch-interval-seconds: 5
+    registry-fetch-interval-seconds: 30
     serviceUrl:
       defaultZone: http://${define.user.name}:${define.user.password}@114.116.44.104:48010/eureka/
   instance:
@@ -44,9 +44,9 @@ spring:
       override-system-properties: false    # 是否覆盖Java运行时参数
   data:
     mongodb:
-      host: 114.116.6.53
+      host: 114.115.233.31
       port: 27017
-      database: survey_dev
+      database: survey
       #username: admin
       #password: '{cipher}a1d30c1325f1b0cd2e4619bff2be57bc32ae0413c0ce1fee07153b60bfa3a782'
   redis:
@@ -103,9 +103,10 @@ logging:
 #重试期间，时间超过了hystrix的超时时间，便会立即执行熔断，fallback
 # (1 + MaxAutoRetries + MaxAutoRetriesNextServer) * ReadTimeout=hystrix 超时时间
 #当ribbon超时后且hystrix没有超时，便会采取重试机制。当OkToRetryOnAllOperations设置为false时，只会对get请求进行重试
+
 ribbon:
-  ConnectTimeout: 30000     #ribbon 负载均衡连接超时时间
-  ReadTimeout: 60000       #ribbon 负载均衡读取超时时间
+  ConnectTimeout: 3000  #ribbon 负载均衡连接超时时间
+  ReadTimeout: 20000  #ribbon 负载均衡读取超时时间
   #MaxAutoRetries: 1   #同一台实例最大重试次数,不包括首次调用
   #MaxAutoRetriesNextServer: 1  #重试负载均衡其他的实例最大重试次数,不包括首次调用
   #OkToRetryOnAllOperations: false #否所有操作都重试
@@ -117,4 +118,10 @@ hystrix:
         isolation:
           thread:
             timeoutInMilliseconds: 60000
+
+
+
+fpfile:
+  path: D:\业务文档\测量\file
+  url:  http://localhost:50010/survey/api-file/file/fpfile/download
 
