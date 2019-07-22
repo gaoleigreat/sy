@@ -47,10 +47,10 @@ public class WordReportServiceImpl implements IWordReportService {
         }
 
         //设置制造员
-        String token = httpServletRequest.getHeader("token");
+      /*  String token = httpServletRequest.getHeader("token");
 
         String userName = userClient.queryUserByToken(token).getInfo().getName();
-        surveyReportVo.setMaker(userName);
+        surveyReportVo.setMaker(userName);*/
         return surveyReportVo;
     }
 }

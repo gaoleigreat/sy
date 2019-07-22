@@ -1,16 +1,18 @@
 package com.lego.survey.settlement.impl.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lego.survey.auth.feign.AuthClient;
 import com.lego.survey.event.settlement.SurveyPointResultSource;
 import com.lego.survey.project.feign.SectionClient;
 import com.lego.survey.project.model.entity.OwnWorkspace;
 import com.lego.survey.project.model.entity.Section;
+import com.lego.survey.settlement.feign.ReportDataClient;
+import com.lego.survey.settlement.impl.service.ISurveyOriginalService;
+import com.lego.survey.settlement.impl.service.ISurveyPointService;
 import com.lego.survey.settlement.impl.service.ISurveyResultService;
 import com.lego.survey.settlement.model.entity.SurveyResult;
-import com.lego.survey.settlement.model.vo.OverrunListVo;
-import com.lego.survey.settlement.model.vo.SurveyPontResultVo;
-import com.lego.survey.settlement.model.vo.SurveyResultVo;
+import com.lego.survey.settlement.model.vo.*;
 import com.lego.survey.event.user.LogSender;
 import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.consts.RespConsts;
@@ -26,16 +28,26 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author yanglf
@@ -62,6 +74,21 @@ public class SurveyResultController {
 
     @Autowired
     private SectionClient sectionClient;
+
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+    @Autowired
+    private ReportDataClient reportDataClient;
+
+    @Autowired
+    private ISurveyOriginalService surveyOriginalService;
+    @Autowired
+    private ISurveyResultService surveyResultService;
+
+    @Autowired
+    private ISurveyPointService surveyPointService;
+
 
 
     @ApiOperation(value = "添加成果数据", notes = "添加成果数据", httpMethod = "POST")
@@ -283,5 +310,139 @@ public class SurveyResultController {
                                                   @RequestParam String pointCode){
         List<SurveyPontResultVo>  surveyPontResultVos= iSurveyResultService.queryPontResult(sectionId, pointCode);
         return RespVOBuilder.success(surveyPontResultVos);
+    }
+
+
+    @ApiOperation(value = "生成成果报表", notes = "生成测量成果报表", httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sectionId", value = "sectionId", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "taskId", value = "taskId", dataType = "Long",  paramType = "query"),
+    })
+    @RequestMapping(value = "/generateDataExcel", method = RequestMethod.GET)
+    public RespVO generateExcel( HttpServletResponse response,@RequestParam String sectionId,@RequestParam Long taskId) throws Exception {
+        InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("template.xlsx");
+        XSSFWorkbook workBook = new XSSFWorkbook(inputStream);
+        // 给sheet命名
+
+        String fileName = "test" + System.currentTimeMillis() + ".xlsx";
+        response.setContentType("application/force-download");
+        List<SurveyReportDataVo> surveyReportDataVoList =  queryData(sectionId,taskId);
+        Set<String> typeSet = surveyReportDataVoList.stream().map(SurveyReportDataVo::getPointType).collect(Collectors.toSet());
+        for (String type:typeSet) {
+            List<SurveyReportDataVo> list = surveyReportDataVoList.stream().filter(o ->o.getPointType().equals(type)).collect(Collectors.toList());
+            SurveyReportDataVo surveyReportDataVo = list.get(0);
+            SurveyReportVo surveyReportVo = getSurveyReportVo(surveyReportDataVo.getWorkspaceCode());
+            surveyReportVo.setSurveyer(surveyReportDataVo.getSurveyer());
+            surveyReportVo.setInitSurveyTime(surveyReportDataVo.getInitSurveyTime());
+            surveyReportVo.setPreSurveyTime(surveyReportDataVo.getPreSurveyTime());
+            surveyReportVo.setSurveyTime(surveyReportDataVo.getSurveyTime());
+            surveyReportVo.setOnceLowerLimit(surveyReportDataVo.getOnceLowerLimit());
+            surveyReportVo.setDocname(type+"沉降检测表");
+            surveyReportVo.setPontType(type);
+            XSSFSheet sheet = workBook.cloneSheet(0,type);
+            sheet.getRow(5).getCell(1).setCellValue(surveyReportVo.getDocname());
+            sheet.getRow(6).getCell(1).setCellValue(surveyReportVo.getDocname());
+            sheet.getRow(7).getCell(1).setCellValue(surveyReportVo.getDocname());
+            for (int j =0; j<list.size();j++) {
+                sheet.shiftRows(11+j, sheet.getLastRowNum(), 1, true, false);
+                XSSFRow row =  sheet.getRow(11+j)==null?sheet.createRow(11+j):sheet.getRow(11+j);
+                row.setRowStyle(sheet.getRow(11).getRowStyle());
+
+                row.createCell(0).setCellValue(j);
+                row.createCell(1).setCellValue(list.get(j).getPointCode());
+                row.createCell(2).setCellValue(list.get(j).getInitElevation());
+                row.createCell(3).setCellValue(list.get(j).getPreElevation());
+                row.createCell(4).setCellValue(list.get(j).getCurElevation());
+                row.createCell(5).setCellValue(list.get(j).getCurOffsetValue());
+                row.createCell(6).setCellValue(list.get(j).getCurSpeed());
+                row.createCell(7).setCellValue(list.get(j).getCurTotalOffsetValue());
+            }
+        }
+        // 设置文件名
+        response.addHeader("Content-Disposition", "attachment;fileName=" + java.net.URLEncoder.encode(fileName, "UTF-8"));
+        OutputStream out = response.getOutputStream();
+        workBook.removeSheetAt(0);
+        // 移除workbook中的模板sheet
+        workBook.write(out);
+
+        inputStream.close();
+        out.flush();
+        out.close();
+        return RespVOBuilder.success();
+    }
+
+    public SurveyReportVo getSurveyReportVo(String workspaceCode) {
+        SurveyReportVo surveyReportVo = new SurveyReportVo();
+
+        //用来封装所有条件的对象
+        Query query = new Query();
+        //用来构建条件
+        Criteria criteria = new Criteria();
+        criteria.and("workSpace").elemMatch(new Criteria().and("code").is(workspaceCode));
+        query.addCriteria(criteria);
+        JSONObject jsonObject = mongoTemplate.findOne(query, JSONObject.class, "section");
+        // 标段名
+        surveyReportVo.setTitle(jsonObject.getString("name"));
+
+        //设置地址
+        JSONArray jsonArray = jsonObject.getJSONArray("workSpace");
+        for (int i = 0; i < jsonArray.size(); i++) {
+            if (jsonArray.getJSONObject(i).getString("code").equals(workspaceCode)) {
+                surveyReportVo.setAddress(jsonArray.getJSONObject(i).getString("name"));
+            }
+        }
+
+        //设置制造员
+      /*  String token = httpServletRequest.getHeader("token");
+
+        String userName = userClient.queryUserByToken(token).getInfo().getName();
+        surveyReportVo.setMaker(userName);*/
+        return surveyReportVo;
+    }
+
+    public List<SurveyReportDataVo> queryData(@RequestParam String sectionId,
+                                                            @RequestParam Long taskId
+    ) {
+
+
+        //获取原始数据
+        List<SurveyOriginalVo> originalVos = surveyOriginalService.list(taskId, sectionId);
+        //获取原始数据ID
+        List<Long> originalIds = originalVos.stream().map(SurveyOriginalVo::getId).collect(Collectors.toList());
+        //获取结果数据
+        List<SurveyResult> surveyResults = surveyResultService.queryResult(sectionId, originalIds);
+
+        //测量结果
+        List<SurveyReportDataVo> surveyReportDataVos = new ArrayList<>();
+        surveyResults.forEach(surveyResult -> surveyReportDataVos.add(SurveyReportDataVo.builder().build().loadSurveyReportDataVo(surveyResult)));
+
+        for (SurveyReportDataVo surveyReportDataVo : surveyReportDataVos) {
+
+            //上次测量结果
+            List<SurveyResult> tempResults = surveyResultService.queryPreResult(surveyReportDataVo.getSurveyTime(), DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, 1, surveyReportDataVo.getPointCode());
+            //第一次测量结果
+            List<SurveyResult> intResults = surveyResultService.queryPreResult(null, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, 1, surveyReportDataVo.getPointCode());
+            //点初始值
+            SurveyPointVo surveyPointVo = surveyPointService.querySurveyPointByCode(surveyReportDataVo.getPointCode(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
+            surveyReportDataVo.setPointType(surveyPointVo.getType());
+            surveyReportDataVo.setInitElevation(surveyPointVo.getElevation());
+            surveyReportDataVo.setOnceLowerLimit(surveyPointVo.getOnceLowerLimit());
+            surveyReportDataVo.setOnceUpperLimit(surveyPointVo.getOnceUpperLimit());
+            surveyReportDataVo.setSpeedLowerLimit(surveyPointVo.getSpeedLowerLimit());
+            surveyReportDataVo.setSpeedUpperLimit(surveyPointVo.getSpeedUpperLimit());
+            surveyReportDataVo.setTotalLowerLimit(surveyPointVo.getTotalLowerLimit());
+            surveyReportDataVo.setTotalUpperLimit(surveyPointVo.getTotalUpperLimit());
+
+
+            if (!CollectionUtils.isEmpty(intResults) && intResults.size() > 1) {
+                surveyReportDataVo.setInitSurveyTime(intResults.get(intResults.size() - 1).getSurveyTime());
+            }
+            if (!CollectionUtils.isEmpty(tempResults)) {
+                surveyReportDataVo.setPreElevation(tempResults.get(0).getElevation());
+                surveyReportDataVo.setPreSurveyTime(tempResults.get(0).getSurveyTime());
+            }
+
+        }
+        return surveyReportDataVos;
     }
 }

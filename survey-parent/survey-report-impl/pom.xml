@@ -76,8 +76,9 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.11</version>
+            <version>8.0.16</version>
         </dependency>
+
 
         <!-- event -->
         <dependency>
@@ -115,7 +116,6 @@
             <groupId>com.lego.survey</groupId>
             <artifactId>lib-excel</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
 
 
@@ -148,23 +148,19 @@
             <groupId>com.legao.word</groupId>
             <artifactId>poi</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>4.1.0</version>
             <exclusions>
                 <exclusion>
-                    <groupId>org.projectlombok</groupId>
-                    <artifactId>lombok</artifactId>
+                    <groupId>org.apache.poi</groupId>
+                    <artifactId>poi</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
+                    <groupId>org.apache.poi</groupId>
+                    <artifactId>poi-ooxml</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
+
+
 
         <!-- client 依赖 -->
 
