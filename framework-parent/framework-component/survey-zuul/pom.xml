@@ -85,13 +85,13 @@
 
 
         <dependency>
-            <groupId>com.lego.survey</groupId>
+            <groupId>com.lego.log</groupId>
             <artifactId>lib-log</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>com.lego.survey</groupId>
+            <groupId>com.lego.swagger</groupId>
             <artifactId>lib-swagger</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>

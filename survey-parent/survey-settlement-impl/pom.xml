@@ -92,7 +92,7 @@
 
 
         <dependency>
-            <groupId>com.lego.survey</groupId>
+            <groupId>com.lego.mybatis</groupId>
             <artifactId>lib-mybatis</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
@@ -107,7 +107,7 @@
 
 
         <dependency>
-            <groupId>com.lego.survey</groupId>
+            <groupId>com.lego.log</groupId>
             <version>0.0.1-SNAPSHOT</version>
             <artifactId>lib-log</artifactId>
         </dependency>
@@ -130,7 +130,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.lego.survey</groupId>
+            <groupId>com.lego.excel</groupId>
             <artifactId>lib-excel</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
