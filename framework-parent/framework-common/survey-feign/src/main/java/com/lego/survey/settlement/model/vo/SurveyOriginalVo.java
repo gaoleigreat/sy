@@ -74,7 +74,7 @@ public class SurveyOriginalVo {
                 .index(surveyOriginal.getIndex())
                 .taskId(surveyOriginal.getTaskId())
                 .datas(surveyOriginal.getDatas())
-                .surveyDatas(JSONObject.parseArray(surveyOriginal.getDatas(), OriginalDataVo.class))
+             //   .surveyDatas(JSONObject.parseArray(StringEscapeUtils.unescapeJava(surveyOriginal.getDatas()), OriginalDataVo.class))
                         //.datas(JSONObject.parseArray(surveyOriginal.getDatas(),OriginalDataVo.class))
                  .build();
     }
