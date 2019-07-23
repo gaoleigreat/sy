@@ -252,8 +252,6 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
 
     @Override
     public List<SurveyResult> queryResult(String sectionId, List<Long> originalIds) {
-
-        //
         return surveyResultMapper.queryResult(DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, originalIds);
     }
 
