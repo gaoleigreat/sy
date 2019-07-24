@@ -290,7 +290,7 @@ public class SectionController {
     })
     @Operation(value = "findBySectionMasterBySectionCode", desc = "查询标段管理员")
     @RequestMapping(value = "/findBySectionMasterBySectionCode/{sectionCode}", method = RequestMethod.GET)
-    public List<Master> findBySectionMasterBySectionId(@PathVariable String sectionCode) {
+    public List<Master> findBySectionMasterBySectionCode(@PathVariable String sectionCode) {
         // TODO ID -> CODE
         return iSectionService.findBySectionMasterBySectionCode(sectionCode);
     }

@@ -45,7 +45,7 @@ public interface IWorkspaceService {
      * @param sectionCode
      * @return
      */
-    RespVO<RespDataVO<Workspace>>  queryByProjectIdAndSectionId( String sectionCode);
+    RespVO<RespDataVO<Workspace>>  queryBySectionCode( String sectionCode);
 
     /**
      * 根据ID获取工区信息
@@ -55,10 +55,10 @@ public interface IWorkspaceService {
     Workspace queryById(String id);
 
     /**
-     * @param sectionIds
+     * @param sectionCodes
      * @return
      */
-    List<OwnWorkspace> findAll(List<String> sectionIds);
+    List<OwnWorkspace> findAll(List<String> sectionCodes);
 
     Workspace queryByCode(String code);
 }

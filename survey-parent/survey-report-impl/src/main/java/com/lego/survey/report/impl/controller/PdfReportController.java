@@ -32,10 +32,10 @@ public class PdfReportController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", required = true,example = "1", paramType = "path"),
             @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int",defaultValue = "10",example = "10",paramType = "query"),
-            @ApiImplicitParam(name = "sectionId", value = "标段id", dataType = "String",required = true,paramType = "path"),
+            @ApiImplicitParam(name = "sectionCode", value = "标段code", dataType = "String",required = true,paramType = "path"),
     })
-    @RequestMapping(value = "/generate/{sectionId}",method = RequestMethod.POST)
-    public RespVO generatePointResultExcel(@PathVariable("sectionId") String sectionId,
+    @RequestMapping(value = "/generate/{sectionCode}",method = RequestMethod.POST)
+    public RespVO generatePointResultExcel(@PathVariable("sectionCode") String sectionCode,
                                            @RequestParam(required = false, defaultValue = "1") int pageIndex,
                                            @RequestParam(required = false, defaultValue = "10") int pageSize
     ) {

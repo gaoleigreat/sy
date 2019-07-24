@@ -123,8 +123,8 @@ public interface IUserService {
      */
     PagedResult<UserAddVo> queryList(int pageIndex,
                                   int pageSize,
-                                  String projectId,
-                                  String sectionId,
+                                  String projectCode,
+                                  String sectionCode,
                                   String role,
                                   String groupId);
 

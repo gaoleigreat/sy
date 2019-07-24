@@ -94,11 +94,11 @@ public class ExcelReportController {
 
     @ApiOperation(value = "生成成果报表", notes = "生成测量成果报表", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "sectionId", value = "sectionId", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "sectionCode", value = "sectionCode", dataType = "String", required = true, paramType = "query"),
             @ApiImplicitParam(name = "taskId", value = "taskId", dataType = "Long",  paramType = "query"),
     })
     @RequestMapping(value = "/generateExcel", method = RequestMethod.GET)
-    public RespVO generateExcel( HttpServletResponse response,@RequestParam String sectionId,@RequestParam Long taskId) throws Exception {
+    public RespVO generateExcel( HttpServletResponse response,@RequestParam String sectionCode,@RequestParam Long taskId) throws Exception {
         InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("template.xlsx");
         XSSFWorkbook workBook = new XSSFWorkbook(inputStream);
         // 给sheet命名
@@ -108,7 +108,7 @@ public class ExcelReportController {
 
 
         //1 通过sectionid 和taskid 查询原始测量数据
-        RespVO<RespDataVO<SurveyReportDataVo>> respDataVORespVO =  reportDataClient.queryData(sectionId,taskId);
+        RespVO<RespDataVO<SurveyReportDataVo>> respDataVORespVO =  reportDataClient.queryData(sectionCode,taskId);
         List<SurveyReportDataVo> surveyReportDataVoList =  respDataVORespVO.getInfo().getList();
         Set<String> typeSet = surveyReportDataVoList.stream().map(SurveyReportDataVo::getPointType).collect(Collectors.toSet());
         int i =1;

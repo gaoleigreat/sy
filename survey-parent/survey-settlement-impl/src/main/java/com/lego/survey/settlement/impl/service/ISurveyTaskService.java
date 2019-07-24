@@ -26,7 +26,7 @@ public interface ISurveyTaskService {
      * @param surveyTaskVo   survey task
      * @return  create result
      */
-    RespVO create(SurveyTaskVo surveyTaskVo, String sectionId);
+    RespVO create(SurveyTaskVo surveyTaskVo, String sectionCode);
 
 
     /**

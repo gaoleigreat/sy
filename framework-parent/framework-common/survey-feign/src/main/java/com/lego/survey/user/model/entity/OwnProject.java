@@ -20,4 +20,6 @@ public class OwnProject {
     private String id;
     @ApiModelProperty("工程名称")
     private String name;
+    @ApiModelProperty("工程code")
+    private String code;
 }

@@ -43,7 +43,7 @@ class ReportDataClientFallback implements ReportDataClient {
 
 
     @Override
-    public RespVO queryData(String sectionId, Long taskId) {
+    public RespVO queryData(String sectionCode, Long taskId) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 

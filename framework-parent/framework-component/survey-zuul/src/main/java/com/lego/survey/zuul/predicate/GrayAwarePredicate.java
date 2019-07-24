@@ -30,7 +30,7 @@ public class GrayAwarePredicate extends AbstractServerPredicate {
 
     private AtomicInteger nextInteger = new AtomicInteger();
 
-    private String localhost="192.168.101.103";
+    private String localhost = "192.168.101.103";
 
     public GrayAwarePredicate(StringRedisTemplate stringRedisTemplate) {
         this.stringRedisTemplate = stringRedisTemplate;
@@ -90,10 +90,10 @@ public class GrayAwarePredicate extends AbstractServerPredicate {
             if (eligibleServer instanceof DiscoveryEnabledServer) {
                 DiscoveryEnabledServer server = (DiscoveryEnabledServer) eligibleServer;
                 String host = server.getHost();
-                if(!host.equals(localhost)){
+                if (!host.equals(localhost)) {
                     continue;
                 }
-               /* Map<String, String> metadata = server.getInstanceInfo().getMetadata();
+                Map<String, String> metadata = server.getInstanceInfo().getMetadata();
                 if (StringUtils.isBlank(metadata.get("version"))) {
                     log.debug("服务未设置 version");
                     continue;
@@ -102,7 +102,7 @@ public class GrayAwarePredicate extends AbstractServerPredicate {
                     log.debug("当前微服务{} 版本为{}，目标版本{} 匹配失败", server.getInstanceInfo().getAppName()
                             , metadata.get("version"), targetVersion);
                     continue;
-                }*/
+                }
                 targetServers.add(server);
             }
 

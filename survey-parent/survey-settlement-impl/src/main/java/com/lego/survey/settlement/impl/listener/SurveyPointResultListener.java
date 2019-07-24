@@ -40,9 +40,6 @@ public class SurveyPointResultListener {
     @Autowired
     private ISurveyPointExceptionService iSurveyPointExceptionService;
 
-    @Autowired
-    private SectionClient sectionClient;
-
     /**
      * 接受批量上传 测量结果 事件
      *
@@ -67,7 +64,7 @@ public class SurveyPointResultListener {
      */
     @StreamListener(value = SurveyPointResultSink.INPUT_RESULT, condition = "headers['type']==1")
     public void uploadResult(@Payload SurveyResult surveyResult, @Header String sectionCode) {
-        log.info("接收到上传成果数据:{},sectionId:{}", surveyResult, sectionCode);
+        log.info("接收到上传成果数据:{},sectionCode:{}", surveyResult, sectionCode);
         checkResultData(surveyResult, sectionCode);
     }
 

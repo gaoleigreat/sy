@@ -181,11 +181,11 @@ public class SurveyResultController {
         if (sectionRespVO.getRetCode() != RespConsts.SUCCESS_RESULT_CODE) {
             return RespVOBuilder.failure("上传失败");
         }
-        String sectionId = sectionRespVO.getInfo().getId();
-        RespVO respVO = iSurveyResultService.createBatch(surveyResults, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId);
+        String sectionCode = sectionRespVO.getInfo().getCode();
+        RespVO respVO = iSurveyResultService.createBatch(surveyResults, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode);
         logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "批量新增成果数据");
         // 发送上传成果 消息
-        surveyPointResultSource.uploadResult().send(MessageBuilder.withPayload(surveyResults).setHeader("type", 2).setHeader("sectionId", sectionId).build());
+        surveyPointResultSource.uploadResult().send(MessageBuilder.withPayload(surveyResults).setHeader("type", 2).setHeader("sectionCode", sectionCode).build());
         return respVO;
     }
 
@@ -496,7 +496,7 @@ public class SurveyResultController {
     @ApiImplicitParams({
 
     })
-    @RequestMapping(value = "/uploadBatch",method = RequestMethod.POST)
+    @RequestMapping(value = "/uploadPointResultExcel",method = RequestMethod.POST)
     public RespVO uploadPointResultExcel(@RequestPart(value = "fileName") String fileName,
                                          @RequestParam() String sectionCode){
         // TODO ID -> CODE

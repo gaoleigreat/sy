@@ -80,7 +80,7 @@ public class WorkspaceServiceImpl implements IWorkspaceService {
     }
 
     @Override
-    public RespVO<RespDataVO<Workspace>> queryByProjectIdAndSectionId(String sectionCode) {
+    public RespVO<RespDataVO<Workspace>> queryBySectionCode(String sectionCode) {
         Section section = sectionRepository.findSectionByCodeAndValid(sectionCode, 0);
         List<Workspace> workspaces = new ArrayList<>();
         if (section != null) {

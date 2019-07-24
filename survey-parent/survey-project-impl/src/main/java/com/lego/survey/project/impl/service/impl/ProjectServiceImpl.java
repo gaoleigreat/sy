@@ -8,10 +8,7 @@ import com.lego.survey.project.model.entity.*;
 import com.lego.survey.project.model.vo.*;
 import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.page.PagedResult;
-import com.survey.lib.common.vo.CurrentVo;
-import com.survey.lib.common.vo.RespDataVO;
-import com.survey.lib.common.vo.RespVO;
-import com.survey.lib.common.vo.RespVOBuilder;
+import com.survey.lib.common.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -222,10 +219,10 @@ public class ProjectServiceImpl implements IProjectService {
         }
 
         List<Project> projects = new ArrayList<>();
-        List<String> projectIds = currentVo.getProjectIds();
-        if (!CollectionUtils.isEmpty(projectIds)) {
-            for (String projectId : projectIds) {
-                Project project = projectRepository.findProjectByIdAndValid(projectId, 0);
+        List<String> projectCodes = currentVo.getProjects();
+        if (!CollectionUtils.isEmpty(projectCodes)) {
+            for (String code : projectCodes) {
+                Project project = projectRepository.findProjectByCodeAndValid(code, 0);
                 if (project != null) {
                     projects.add(project);
                 }

@@ -68,7 +68,7 @@ public class AuthServiceImpl implements IAuthService {
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(jwtProperty.getBase64Secret());
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
-        CurrentVo currentVo = generateCurrentVo(user);
+        CurrentVo currentVo = generateCurrentVo(user,deviceType);
 
         JwtBuilder jwtBuilder = Jwts.builder().setHeaderParam("type", "JWT")
                 .claim("current", currentVo)
@@ -106,7 +106,7 @@ public class AuthServiceImpl implements IAuthService {
         return TokenVo.builder().token(token).expireTime(exp).build();
     }
 
-    private CurrentVo generateCurrentVo(User user) {
+    private CurrentVo generateCurrentVo(User user,String deviceType) {
         CurrentVo currentVo = new CurrentVo();
         currentVo.setGroupId(user.getGroup().getId());
         currentVo.setGroupName(user.getGroup().getName());
@@ -114,11 +114,11 @@ public class AuthServiceImpl implements IAuthService {
         currentVo.setPermissions(user.getPermission());
         currentVo.setPhone(user.getPhone());
         List<OwnProject> ownProjects = user.getOwnProjects();
-        List<String> projectIds = new ArrayList<>();
+        List<String> projectCodes = new ArrayList<>();
         if (!CollectionUtils.isEmpty(ownProjects)) {
-            ownProjects.forEach(ownProject -> projectIds.add(ownProject.getId()));
+            ownProjects.forEach(ownProject -> projectCodes.add(ownProject.getCode()));
         }
-        currentVo.setProjectIds(projectIds);
+        currentVo.setProjectIds(projectCodes);
         currentVo.setRole(user.getRole());
         currentVo.setUserId(user.getId());
         currentVo.setUserName(user.getUserName());
@@ -133,11 +133,14 @@ public class AuthServiceImpl implements IAuthService {
             });
         }
         currentVo.setUserSections(userSectionVos);
+
+        currentVo.setDeviceType(deviceType);
         String role = user.getRole();
         if(role!=null){
             List<String> resource = iResourcesService.queryRoleResource(role);
             currentVo.setResourcesScopes(resource);
         }
+
         return currentVo;
     }
 
@@ -235,7 +238,7 @@ public class AuthServiceImpl implements IAuthService {
         if (authVo == null) {
             return 0;
         }
-        CurrentVo currentVo = generateCurrentVo(user);
+        CurrentVo currentVo = generateCurrentVo(user,deviceType);
         authVo.setCurrentVo(currentVo);
         Long expire = stringRedisTemplate.getExpire(token, TimeUnit.SECONDS);
         if (expire == null) {

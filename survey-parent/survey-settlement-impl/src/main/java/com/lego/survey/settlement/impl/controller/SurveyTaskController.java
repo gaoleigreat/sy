@@ -71,7 +71,7 @@ public class SurveyTaskController {
         if (surveyTaskVo.getId() == null) {
             surveyTaskVo.setId(SnowflakeIdUtils.createId());
         }
-        RespVO respVO = iSurveyTaskService.create(surveyTaskVo, section.getId());
+        RespVO respVO = iSurveyTaskService.create(surveyTaskVo, section.getCode());
         logSender.sendLogEvent(HttpUtils.getClientIp(request),userId,"新增任务:["+surveyTaskVo.getId()+"]");
         return respVO;
     }
@@ -102,7 +102,7 @@ public class SurveyTaskController {
             @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int", defaultValue = "10", example = "10", paramType = "query"),
             @ApiImplicitParam(name = "sectionCode", value = "标段CODE", dataType = "String",required = true, paramType = "path"),
     })
-    @RequestMapping(value = "/list/{sectionId}/{pageIndex}", method = RequestMethod.GET)
+    @RequestMapping(value = "/list/{sectionCode}/{pageIndex}", method = RequestMethod.GET)
     public RespVO<PagedResult<SurveyTaskVo>> query(
             @PathVariable(value = "sectionCode") String sectionCode,
             @PathVariable(value = "pageIndex") int pageIndex,

@@ -56,9 +56,9 @@ public class SectionListener {
 
     /**
      * 创建管片服务对应的表
-     * @param sectionId  the section id
+     * @param sectionCode  the section id
      */
-    private void createGPFWTable(String sectionId) {
+    private void createGPFWTable(String sectionCode) {
 
     }
 

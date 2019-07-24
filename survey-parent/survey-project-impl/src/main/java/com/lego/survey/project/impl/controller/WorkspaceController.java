@@ -106,7 +106,7 @@ public class WorkspaceController {
                                               @RequestParam String sectionCode) {
         // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
-        return iWorkspaceService.queryByProjectIdAndSectionId(sectionCode);
+        return iWorkspaceService.queryBySectionCode(sectionCode);
     }
 
     @ApiOperation(value = "根据code获取工区信息", notes = "根据code获取工区信息", httpMethod = "GET")

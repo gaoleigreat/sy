@@ -20,4 +20,6 @@ public class OwnSection {
     private String id;
     @ApiModelProperty("标段名称")
     private String name;
+    @ApiModelProperty("标段code")
+    private String code;
 }
