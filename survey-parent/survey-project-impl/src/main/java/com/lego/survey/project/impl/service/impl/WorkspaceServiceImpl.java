@@ -30,8 +30,8 @@ public class WorkspaceServiceImpl implements IWorkspaceService {
 
     @Override
     public RespVO add(Workspace workSpace) {
-        String sectionId = workSpace.getSection();
-        Section section = sectionRepository.findSectionByIdAndValid(sectionId, 0);
+        String sectionCode = workSpace.getSection();
+        Section section = sectionRepository.findSectionByCodeAndValid(sectionCode, 0);
         List<OwnWorkspace> workspaceList = section.getWorkSpace();
         OwnWorkspace workspace = OwnWorkspace.builder().id(workSpace.getId()).code(workSpace.getCode())
                 .name(workSpace.getName())
@@ -66,11 +66,11 @@ public class WorkspaceServiceImpl implements IWorkspaceService {
     }
 
     @Override
-    public RespVO deleteWorkSpace(String workSpaceId) {
-        Section section = sectionRepository.findSectionByWorkSpaceIdAndValid(workSpaceId, 0);
+    public RespVO deleteWorkSpace(String code) {
+        Section section = sectionRepository.findSectionByWorkSpaceCodeAndValid(code, 0);
         List<OwnWorkspace> workspaceList = section.getWorkSpace();
         workspaceList.forEach(x -> {
-            if (x.getId().equals(workSpaceId)) {
+            if (x.getCode().equals(code)) {
                 x.setValid(1);
             }
         });
@@ -80,8 +80,8 @@ public class WorkspaceServiceImpl implements IWorkspaceService {
     }
 
     @Override
-    public RespVO<RespDataVO<Workspace>> queryByProjectIdAndSectionId(String projectId, String sectionId) {
-        Section section = sectionRepository.findSectionByIdAndValid(sectionId, 0);
+    public RespVO<RespDataVO<Workspace>> queryBySectionCode(String sectionCode) {
+        Section section = sectionRepository.findSectionByCodeAndValid(sectionCode, 0);
         List<Workspace> workspaces = new ArrayList<>();
         if (section != null) {
             List<OwnWorkspace> workSpaces = section.getWorkSpace();
@@ -97,8 +97,9 @@ public class WorkspaceServiceImpl implements IWorkspaceService {
                             .id(workSpace.getId())
                             .name(workSpace.getName())
                             .type(workSpace.getType())
+                            .section(sectionCode)
                             .surveyer(workSpace.getSurveyer())
-                            .project(projectId)
+                            .project(section.getOwnerProject().getCode())
                             .build();
                     workspaces.add(workspace);
                 }
@@ -111,27 +112,13 @@ public class WorkspaceServiceImpl implements IWorkspaceService {
     public Workspace queryById(String id) {
         Section section = sectionRepository.findSectionByWorkSpaceIdAndValid(id, 0);
         if (section != null) {
-            OwnerProject ownerProject = section.getOwnerProject();
-            List<OwnWorkspace> workSpaces = section.getWorkSpace();
-            if (!CollectionUtils.isEmpty(workSpaces)) {
-                for (OwnWorkspace workSpace : workSpaces) {
-                    Integer valid = workSpace.getValid();
-                    String wId = workSpace.getId();
-                    if (valid != 0 || !wId.equals(id)) {
-                        continue;
+            List<Workspace> workspaces = section.loadWorkspace();
+            if (!CollectionUtils.isEmpty(workspaces)) {
+                for (Workspace workspace : workspaces) {
+                    String workspaceId = workspace.getId();
+                    if (workspaceId.equals(id)) {
+                        return workspace;
                     }
-                    Workspace workspace = new Workspace();
-                    workspace.setCode(workSpace.getCode());
-                    workspace.setId(workSpace.getId());
-                    workspace.setDesc(workSpace.getDesc());
-                    workspace.setName(workSpace.getName());
-                    workspace.setSurveyer(workSpace.getSurveyer());
-                    workspace.setType(workSpace.getType());
-                    if (ownerProject != null) {
-                        String projectId = ownerProject.getId();
-                        workspace.setProject(projectId);
-                    }
-                    return workspace;
                 }
             }
         }
@@ -139,24 +126,24 @@ public class WorkspaceServiceImpl implements IWorkspaceService {
     }
 
     @Override
-    public List<OwnWorkspace> findAll(List<String> sectionIds) {
-        List<OwnWorkspace> ownWorkspaceList=new ArrayList<>();
-        if (CollectionUtils.isEmpty(sectionIds)) {
+    public List<OwnWorkspace> findAll(List<String> sectionCodes) {
+        List<OwnWorkspace> ownWorkspaceList = new ArrayList<>();
+        if (CollectionUtils.isEmpty(sectionCodes)) {
             List<Section> sectionList = sectionRepository.findSectionsByValid(0);
             if (!CollectionUtils.isEmpty(sectionList)) {
                 sectionList.forEach(section -> {
                     List<OwnWorkspace> workSpace = section.getWorkSpace();
-                    if(!CollectionUtils.isEmpty(workSpace)){
+                    if (!CollectionUtils.isEmpty(workSpace)) {
                         ownWorkspaceList.addAll(workSpace);
                     }
                 });
             }
-        }else {
-            for (String sectionId : sectionIds) {
-                Section section = sectionRepository.findSectionByIdAndValid(sectionId, 0);
-                if(section!=null){
+        } else {
+            for (String sectionCode : sectionCodes) {
+                Section section = sectionRepository.findSectionByCodeAndValid(sectionCode, 0);
+                if (section != null) {
                     List<OwnWorkspace> workSpace = section.getWorkSpace();
-                    if(!CollectionUtils.isEmpty(workSpace)){
+                    if (!CollectionUtils.isEmpty(workSpace)) {
                         ownWorkspaceList.addAll(workSpace);
                     }
                 }
@@ -164,6 +151,23 @@ public class WorkspaceServiceImpl implements IWorkspaceService {
         }
 
         return ownWorkspaceList;
+    }
+
+    @Override
+    public Workspace queryByCode(String code) {
+        Section section = sectionRepository.findSectionByWorkSpaceCodeAndValid(code, 0);
+        if (section != null) {
+            List<Workspace> workspaces = section.loadWorkspace();
+            if (!CollectionUtils.isEmpty(workspaces)) {
+                for (Workspace workspace : workspaces) {
+                    String workspaceCode = workspace.getCode();
+                    if (workspaceCode.equals(code)) {
+                        return workspace;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
 }

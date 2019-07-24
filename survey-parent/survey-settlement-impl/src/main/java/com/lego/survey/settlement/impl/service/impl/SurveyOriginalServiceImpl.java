@@ -48,13 +48,13 @@ public class SurveyOriginalServiceImpl implements ISurveyOriginalService {
     }
 
     @Override
-    public List<SurveyOriginalVo> list(Long taskId, String tableName) {
+    public List<SurveyOriginalVo> list(Long taskId, String sectionCode) {
         List<SurveyOriginalVo> surveyOriginalVos = new ArrayList<>();
         QueryWrapper<SurveyOriginal> queryWrapper = new QueryWrapper<>();
-        if (taskId != null && tableName !=null) {
+        if (taskId != null && sectionCode !=null) {
             queryWrapper.eq("task_id", taskId);
         }
-        List<SurveyOriginal> surveyOriginals = surveyOriginalMapper.queryAll(DictConstant.TableNamePrefix.SURVEY_ORIGINAL + tableName,queryWrapper);
+        List<SurveyOriginal> surveyOriginals = surveyOriginalMapper.queryAll(DictConstant.TableNamePrefix.SURVEY_ORIGINAL + sectionCode,queryWrapper);
 
         if (surveyOriginals != null) {
             surveyOriginals.forEach(surveyOriginal -> surveyOriginalVos.add(SurveyOriginalVo.builder().build().loadSurveyOriginalVo(surveyOriginal)));
@@ -92,8 +92,8 @@ public class SurveyOriginalServiceImpl implements ISurveyOriginalService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public RespVO delete(List<Long> ids, String tableName) {
-        Integer delete = surveyOriginalMapper.deleteBatch(ids, tableName);
+    public RespVO delete(List<String> codes, String tableName) {
+        Integer delete = surveyOriginalMapper.deleteBatch(codes, tableName);
         if (delete <= 0) {
             return RespVOBuilder.failure("删除原始数据失败");
         }

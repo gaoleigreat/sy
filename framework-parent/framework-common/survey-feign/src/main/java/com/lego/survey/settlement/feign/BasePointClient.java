@@ -62,11 +62,11 @@ public interface BasePointClient {
     /**
      * 删除基准点信息
      *
-     * @param ids
+     * @param codes
      * @return
      */
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    RespVO delete(@RequestParam("ids") List<Long> ids);
+    RespVO delete(@RequestParam("codes") List<String> codes);
 
 }
 
@@ -89,7 +89,7 @@ class BasePointClientFallback implements BasePointClient{
     }
 
     @Override
-    public RespVO delete(List<Long> ids) {
+    public RespVO delete(List<String> codes) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 }

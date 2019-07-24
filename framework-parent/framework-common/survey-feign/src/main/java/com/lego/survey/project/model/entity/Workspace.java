@@ -51,11 +51,11 @@ public class Workspace {
     /**
      * 所属标段
      */
-    @ApiModelProperty("所属标段")
+    @ApiModelProperty("所属标段CODE")
     private String section;
     /**
      * 所属项目
      */
-    @ApiModelProperty("所属工程")
+    @ApiModelProperty("所属工程CODE")
     private String project;
 }

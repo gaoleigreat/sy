@@ -402,7 +402,7 @@ public class SurveyResultController {
                 style.setBorderTop(BorderStyle.THIN);
                 style.setBorderLeft(BorderStyle.THIN);
                 style.setBorderRight(BorderStyle.THIN);
-               style = sheet.getRow(10).getCell(0).getCellStyle();
+                style = sheet.getRow(10).getCell(0).getCellStyle();
                 row.createCell(1);
                 row.getCell(1).setCellStyle(style);
                 if (null != list.get(j).getPointCode()) {

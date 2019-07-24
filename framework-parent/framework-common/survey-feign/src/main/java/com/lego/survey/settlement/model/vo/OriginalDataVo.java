@@ -17,9 +17,9 @@ import java.util.Date;
 @NoArgsConstructor
 public class OriginalDataVo {
     private String tag;
-    private String distance;
+    private Double distance;
     @ApiModelProperty("原始数据value")
-    private String value;
+    private Double value;
     @ApiModelProperty("测量时间")
     private Date surveyTime;
     @ApiModelProperty("索引")

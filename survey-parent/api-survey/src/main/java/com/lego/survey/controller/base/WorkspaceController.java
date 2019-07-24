@@ -89,18 +89,16 @@ public class WorkspaceController {
 
     @ApiOperation(value = "工区列表信息查询",httpMethod = "GET",notes = "工区列表信息查询")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectId", value = "工程ID", dataType = "String",required = true,paramType = "query"),
-            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String",required = true,paramType = "query"),
+            @ApiImplicitParam(name = "sectionCode", value = "标段ID", dataType = "String",required = true,paramType = "query"),
     })
     @RequestMapping(value = "/list",method = RequestMethod.GET)
-    public RespVO<RespDataVO<Workspace>> list(@RequestParam String projectId,
-                                              @RequestParam String sectionId,
+    public RespVO<RespDataVO<Workspace>> list(@RequestParam String sectionCode,
                                               HttpServletRequest request){
         AuthVo authVo = (AuthVo) request.getAttribute("authVo");
         if(authVo==null){
             ExceptionBuilder.sessionTimeoutException();
         }
-        return workspaceClient.list(projectId,sectionId);
+        return workspaceClient.list(sectionCode);
     }
 
 }

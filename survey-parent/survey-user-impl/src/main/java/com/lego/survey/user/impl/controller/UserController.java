@@ -269,8 +269,8 @@ public class UserController {
 
     @ApiOperation(value = "获取所有用户", httpMethod = "GET", notes = "获取所有用户")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectId", value = "项目ID", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "projectCode", value = "项目code", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "sectionCode", value = "标段code", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "role", value = "角色", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "groupId", value = "单位ID", dataType = "String",  paramType = "query"),
             @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", required = true, example = "1", paramType = "path"),
@@ -279,14 +279,14 @@ public class UserController {
     @RequestMapping(value = "/list/{pageIndex}", method = RequestMethod.GET)
     public RespVO<PagedResult<UserAddVo>> list(@PathVariable(value = "pageIndex") int pageIndex,
                                     @RequestParam(required = false, defaultValue = "10") int pageSize,
-                                    @RequestParam(required = false) String  projectId,
-                                    @RequestParam(required = false) String sectionId,
+                                    @RequestParam(required = false) String  projectCode,
+                                    @RequestParam(required = false) String sectionCode,
                                     @RequestParam(required = false) String role,
                                     @RequestParam(required = false) String groupId,
                                     HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         CurrentVo currentVo = authClient.getAuthVo(headerVo);
-        PagedResult<UserAddVo> pagedResult = iUserService.queryList(pageIndex, pageSize,projectId,sectionId,role,groupId);
+        PagedResult<UserAddVo> pagedResult = iUserService.queryList(pageIndex, pageSize,projectCode,sectionCode,role,groupId);
         return RespVOBuilder.success(pagedResult);
     }
 

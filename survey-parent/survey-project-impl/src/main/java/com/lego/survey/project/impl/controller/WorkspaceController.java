@@ -83,58 +83,57 @@ public class WorkspaceController {
 
     @ApiOperation(value = "删除工区信息", httpMethod = "DELETE", notes = "删除工区信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "workSpaceId", value = "工区id", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "code", value = "工区code", dataType = "String", required = true, paramType = "query"),
     })
     @Operation(value = "delete",desc = "删除工区信息")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public RespVO delete(String workSpaceId, HttpServletRequest request) {
+    public RespVO delete(String code, HttpServletRequest request) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
-        iWorkspaceService.deleteWorkSpace(workSpaceId);
-        logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "删除工区:[" + workSpaceId + "]");
+        iWorkspaceService.deleteWorkSpace(code);
+        logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "删除工区:[" + code + "]");
         return RespVOBuilder.success();
     }
 
-    @ApiOperation(value = "根据标段id获取工区信息", notes = "根据标段id获取工区信息", httpMethod = "GET")
+    @ApiOperation(value = "根据标段code获取工区信息", notes = "根据标段code获取工区信息", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectId", value = "工程id", dataType = "String", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "sectionId", value = "标段id", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "sectionCode", value = "标段code", dataType = "String", required = true, paramType = "query"),
     })
     @Operation(value = "list",desc = "根据标段id获取工区信息")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public RespVO<RespDataVO<Workspace>> list(HttpServletRequest request,
-                                              @RequestParam String projectId,
-                                              @RequestParam String sectionId) {
+                                              @RequestParam String sectionCode) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
-        String userId = authClient.getAuthVo(headerVo).getUserId();
-        return iWorkspaceService.queryByProjectIdAndSectionId(projectId, sectionId);
+        return iWorkspaceService.queryBySectionCode(sectionCode);
     }
 
-    @ApiOperation(value = "根据ID获取工区信息", notes = "根据ID获取工区信息", httpMethod = "GET")
+    @ApiOperation(value = "根据code获取工区信息", notes = "根据code获取工区信息", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "工区ID", dataType = "String", required = true, paramType = "path"),
+            @ApiImplicitParam(name = "code", value = "工区code", dataType = "String", required = true, paramType = "path"),
     })
     @Operation(value = "info",desc = "根据ID获取工区信息")
-    @RequestMapping(value = "/info/{id}", method = RequestMethod.GET)
-    public RespVO<Workspace> info(@PathVariable(value = "id") String id,HttpServletRequest request) {
+    @RequestMapping(value = "/info/{code}", method = RequestMethod.GET)
+    public RespVO<Workspace> info(@PathVariable(value = "code") String code,HttpServletRequest request) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
-        String userId = authClient.getAuthVo(headerVo).getUserId();
-        Workspace workspace=iWorkspaceService.queryById(id);
+        Workspace workspace=iWorkspaceService.queryByCode(code);
         return RespVOBuilder.success(workspace);
     }
 
 
     @ApiOperation(value = "查询全部工区信息", notes = "查询全部工区信息", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "sectionIds", value = "标段ID", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "sectionCodes", value = "标段CODE", dataType = "String", paramType = "query"),
     })
     @Operation(value = "findAll", desc = "查询全部标段信息")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public RespVO<RespDataVO<OwnWorkspace>> findAll(@RequestParam(required = false) List<String> sectionIds,
+    public RespVO<RespDataVO<OwnWorkspace>> findAll(@RequestParam(required = false) List<String> sectionCodes,
                                                HttpServletRequest request) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
-        String userId = authClient.getAuthVo(headerVo).getUserId();
-        List<OwnWorkspace> sections = iWorkspaceService.findAll(sectionIds);
+        List<OwnWorkspace> sections = iWorkspaceService.findAll(sectionCodes);
         return RespVOBuilder.success(sections);
     }
 

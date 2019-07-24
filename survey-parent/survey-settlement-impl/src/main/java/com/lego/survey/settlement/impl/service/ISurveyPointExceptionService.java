@@ -30,10 +30,10 @@ public interface ISurveyPointExceptionService {
 
     /**
      * 删除基准点异常
-     * @param id
+     * @param code
      * @return
      */
-    RespVO   delete(Long id);
+    RespVO   delete(Long code);
 
 
     /**

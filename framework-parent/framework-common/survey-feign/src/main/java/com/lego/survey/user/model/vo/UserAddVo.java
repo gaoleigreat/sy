@@ -56,16 +56,16 @@ public class UserAddVo {
     @ApiModelProperty("权限")
     private List<String> permission;
 
-    @ApiModelProperty("所属工程")
+    @ApiModelProperty("所属工程code")
     private List<String> project;
 
-    @ApiModelProperty("所属标段")
+    @ApiModelProperty("所属标段code")
     private List<String> section;
 
     @ApiModelProperty("所属模块")
     private List<String> service;
 
-    @ApiModelProperty("工区")
+    @ApiModelProperty("工区code")
     private List<String> workSpace;
 
     @ApiModelProperty("是否有效 0-是;1-否")

@@ -61,7 +61,7 @@ public class ProjectController {
             return RespVOBuilder.failure(RespConsts.FAIL_RESULT_CODE, "项目名称已经存在");
         }
         String projectCode = projectAddVo.getCode();
-        Project queryByCode = iProjectService.queryByCode(projectCode);
+        ProjectVo queryByCode = iProjectService.queryByCode(projectCode);
         if (queryByCode != null) {
             return RespVOBuilder.failure(RespConsts.FAIL_RESULT_CODE, "项目编号已经存在");
         }
@@ -97,25 +97,28 @@ public class ProjectController {
 
     @ApiOperation(value = "查询工程详细信息", notes = "查询工程详细信息", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "工程id", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "code", value = "工程code", dataType = "String", required = true, paramType = "query"),
 
     })
     @Operation(value = "info",desc = "查询工程详细信息")
     @RequestMapping(value = "/info", method = RequestMethod.GET)
-    public RespVO<ProjectVo> query(@RequestParam String id, HttpServletRequest request) {
+    public RespVO<ProjectVo> query(@RequestParam String code, HttpServletRequest request) {
+        //TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
-        return iProjectService.queryById(id);
+        ProjectVo projectVo= iProjectService.queryByCode(code);
+        return RespVOBuilder.success(projectVo);
     }
 
     @ApiOperation(value = "删除工程", notes = "删除工程", httpMethod = "DELETE")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectId", value = "工程id", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "code", value = "工程code", dataType = "String", required = true, paramType = "query"),
     })
     @Operation(value = "delete",desc = "删除工程")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public RespVO<RespDataVO<ProjectVo>> delete(HttpServletRequest request,
-                                                @RequestParam String projectId) {
+                                                @RequestParam String code) {
+        // TODO ID  -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         CurrentVo currentVo = authClient.getAuthVo(headerVo);
         String userId = currentVo.getUserId();
@@ -123,8 +126,8 @@ public class ProjectController {
         if(!role.equals("admin")){
             return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE,RespConsts.FAIL_NOPRESSION_MSG);
         }
-        iProjectService.deleteProject(projectId);
-        logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "删除项目工程:[" + projectId + "]");
+        iProjectService.deleteProject(code);
+        logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "删除项目工程:[" + code + "]");
         return RespVOBuilder.success();
     }
 

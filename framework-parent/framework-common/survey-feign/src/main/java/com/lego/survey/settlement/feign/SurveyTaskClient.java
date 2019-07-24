@@ -35,14 +35,14 @@ public interface SurveyTaskClient {
     /**
      * 查看任务列表
      *
-     * @param sectionId
+     * @param sectionCode
      * @param pageIndex
      * @param pageSize
      * @return
      */
-    @RequestMapping(value = "/list/{sectionId}/{pageIndex}", method = RequestMethod.GET)
+    @RequestMapping(value = "/list/{sectionCode}/{pageIndex}", method = RequestMethod.GET)
     RespVO<RespDataVO<SurveyTaskVo>> query(
-            @PathVariable(value = "sectionId") String sectionId,
+            @PathVariable(value = "sectionCode") String sectionCode,
             @PathVariable(value = "pageIndex") int pageIndex,
             @RequestParam("pageSize") int pageSize);
 
@@ -51,25 +51,25 @@ public interface SurveyTaskClient {
      * 修改任务信息
      *
      * @param surveyTaskVo
-     * @param sectionId
+     * @param sectionCode
      * @return
      */
-    @RequestMapping(value = "/modify/{sectionId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/modify/{sectionCode}", method = RequestMethod.PUT)
     RespVO modify(@RequestBody SurveyTaskVo surveyTaskVo,
-                  @PathVariable(value = "sectionId") String sectionId
+                  @PathVariable(value = "sectionCode") String sectionCode
     );
 
 
     /**
      * 删除任务
      *
-     * @param sectionId
+     * @param sectionCode
      * @param ids
      * @return
      */
-    @RequestMapping(value = "/delete/{sectionId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete/{sectionCode}", method = RequestMethod.DELETE)
     RespVO delete(
-            @PathVariable(value = "sectionId") String sectionId,
+            @PathVariable(value = "sectionCode") String sectionCode,
             @RequestParam("ids") List<Long> ids
     );
 
@@ -85,17 +85,17 @@ class SurveyTaskClientFallback implements SurveyTaskClient{
     }
 
     @Override
-    public RespVO<RespDataVO<SurveyTaskVo>> query(String sectionId, int pageIndex, int pageSize) {
+    public RespVO<RespDataVO<SurveyTaskVo>> query(String sectionCode, int pageIndex, int pageSize) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 
     @Override
-    public RespVO modify(SurveyTaskVo surveyTaskVo, String sectionId) {
+    public RespVO modify(SurveyTaskVo surveyTaskVo, String sectionCode) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 
     @Override
-    public RespVO delete(String sectionId, List<Long> ids) {
+    public RespVO delete(String sectionCode, List<Long> ids) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 }

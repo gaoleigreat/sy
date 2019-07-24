@@ -40,22 +40,19 @@ public class SurveyPointResultListener {
     @Autowired
     private ISurveyPointExceptionService iSurveyPointExceptionService;
 
-    @Autowired
-    private SectionClient sectionClient;
-
     /**
      * 接受批量上传 测量结果 事件
      *
      * @param surveyResults result  list
-     * @param sectionId     section id
+     * @param sectionCode     section id
      */
     @StreamListener(value = SurveyPointResultSink.INPUT_RESULT, condition = "headers['type']==2")
-    public void batchUpdateResult(@Payload List<SurveyResult> surveyResults, @Header String sectionId) {
-        log.info("接收到上传成果数据:{},sectionId:{}", surveyResults, sectionId);
+    public void batchUpdateResult(@Payload List<SurveyResult> surveyResults, @Header String sectionCode) {
+        log.info("接收到上传成果数据:{},sectionCode:{}", surveyResults, sectionCode);
         if (surveyResults == null) {
             return;
         }
-        surveyResults.forEach(surveyResult -> checkResultData(surveyResult, sectionId));
+        surveyResults.forEach(surveyResult -> checkResultData(surveyResult, sectionCode));
     }
 
 
@@ -63,12 +60,12 @@ public class SurveyPointResultListener {
      * 处理 上传 单个测量成果 数据  事件
      *
      * @param surveyResult result
-     * @param sectionId    section id
+     * @param sectionCode    section id
      */
     @StreamListener(value = SurveyPointResultSink.INPUT_RESULT, condition = "headers['type']==1")
-    public void uploadResult(@Payload SurveyResult surveyResult, @Header String sectionId) {
-        log.info("接收到上传成果数据:{},sectionId:{}", surveyResult, sectionId);
-        checkResultData(surveyResult, sectionId);
+    public void uploadResult(@Payload SurveyResult surveyResult, @Header String sectionCode) {
+        log.info("接收到上传成果数据:{},sectionCode:{}", surveyResult, sectionCode);
+        checkResultData(surveyResult, sectionCode);
     }
 
 
@@ -76,10 +73,10 @@ public class SurveyPointResultListener {
      * 判断 测量成果  是否 超限
      *
      * @param surveyResult
-     * @param sectionId
+     * @param sectionCode
      */
-    private void checkResultData(SurveyResult surveyResult, String sectionId) {
-        SurveyPointVo surveyPointVo = iSurveyPointService.querySurveyPointByCode(surveyResult.getPointCode(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
+    private void checkResultData(SurveyResult surveyResult, String sectionCode) {
+        SurveyPointVo surveyPointVo = iSurveyPointService.querySurveyPointByCode(surveyResult.getPointCode(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
         Date surveyTime = surveyResult.getSurveyTime();
         Date uploadTime = surveyResult.getUploadTime();
         Double currElevation = surveyResult.getElevation();
@@ -93,7 +90,7 @@ public class SurveyPointResultListener {
         double settlementRate = 0;
         double preSettlementRate = 0;
         boolean settlementRateIsOver = false;
-        List<SurveyResult> preResults = iSurveyResultService.queryPreResult(surveyTime,DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, 2,null);
+        List<SurveyResult> preResults = iSurveyResultService.queryPreResult(surveyTime,DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 2,null);
         if (preResults != null && preResults.size() > 0) {
             SurveyResult preResult = preResults.get(0);
             preElevation = preResult.getElevation();
@@ -111,7 +108,7 @@ public class SurveyPointResultListener {
             onceSettlementIsOver = onceIsOverrun(surveyPointVo, onceSettlement);
             log.info("当前单次沉降量是否超限:{},单次沉降量范围:{}~{}", onceSettlement, surveyPointVo.getOnceLowerLimit(), surveyPointVo.getOnceUpperLimit());
         }
-        SurveyResult initResult = iSurveyResultService.queryInitResult(DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId);
+        SurveyResult initResult = iSurveyResultService.queryInitResult(DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode);
         if (initResult != null) {
             //  计算  当前累积沉降量 = 本次高程 - 初次高程
             Double initElevation = initResult.getElevation();
@@ -124,7 +121,7 @@ public class SurveyPointResultListener {
             log.info("上次累积沉降量:{}=上次高程{}-初始高程{}", preTotalSettlement, preElevation, initElevation);
 
         }
-        SurveyPointVo initPointVo = iSurveyPointService.queryInitPoint(DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
+        SurveyPointVo initPointVo = iSurveyPointService.queryInitPoint(DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
         if (initPointVo != null) {
             // 计算沉降速率  当前沉降速率 = 累积沉降量 / 历经的天数（自然天数）
             Date initTime = initPointVo.getCreateTime();
@@ -143,20 +140,13 @@ public class SurveyPointResultListener {
         surveyResult.setSingleSettlement(onceSettlement);
         surveyResult.setCumulativeSettlement(totalSettlement);
         surveyResult.setSettlingRate(settlementRate);
-        iSurveyResultService.modify(surveyResult,DictConstant.TableNamePrefix.SURVEY_RESULT+sectionId);
-        saveSurveyException(surveyResult, sectionId, surveyPointVo, currElevation, preElevation, onceSettlement, preSettlement, onceSettlementIsOver, totalSettlement, preTotalSettlement, totalSettlementIsOver, settlementRate, preSettlementRate, settlementRateIsOver);
+        iSurveyResultService.modify(surveyResult,DictConstant.TableNamePrefix.SURVEY_RESULT+sectionCode);
+        saveSurveyException(surveyResult, sectionCode, surveyPointVo, currElevation, preElevation, onceSettlement, preSettlement, onceSettlementIsOver, totalSettlement, preTotalSettlement, totalSettlementIsOver, settlementRate, preSettlementRate, settlementRateIsOver);
     }
 
-    private void saveSurveyException(SurveyResult surveyResult, String sectionId, SurveyPointVo surveyPointVo, Double currElevation, double preElevation, double onceSettlement, double preSettlement, boolean onceSettlementIsOver, double totalSettlement, double preTotalSettlement, boolean totalSettlementIsOver, double settlementRate, double preSettlementRate, boolean settlementRateIsOver) {
+    private void saveSurveyException(SurveyResult surveyResult, String sectionCode, SurveyPointVo surveyPointVo, Double currElevation, double preElevation, double onceSettlement, double preSettlement, boolean onceSettlementIsOver, double totalSettlement, double preTotalSettlement, boolean totalSettlementIsOver, double settlementRate, double preSettlementRate, boolean settlementRateIsOver) {
         if (onceSettlementIsOver || totalSettlementIsOver || settlementRateIsOver) {
             log.info("---数据超限---");
-            RespVO<SectionVo> query = sectionClient.query(sectionId);
-            if (query.getRetCode() != RespConsts.SUCCESS_RESULT_CODE) {
-                log.info("can not find section info");
-                return;
-            }
-
-            String sectionCode = query.getInfo().getCode();
             SurveyPointExceptionVo exceptionVo = SurveyPointExceptionVo.builder()
                     .createTime(new Date())
                     .curElevation(currElevation)

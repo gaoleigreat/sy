@@ -48,21 +48,21 @@ public class ReportDataController {
     private ISurveyPointService surveyPointService;
     @ApiOperation(value = "查询沉降测量报告中需要插入的数据", httpMethod = "GET", notes = "上传数据后导出word文档")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(name = "sectionCode", value = "标段code", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "taskId", value = "任务ID", dataType = "Long", paramType = "query", required = true),
     })
     @RequestMapping(value = "/query/settlementData", method = RequestMethod.GET)
-    public RespVO<RespDataVO<SurveyReportDataVo>> queryData(@RequestParam String sectionId,
+    public RespVO<RespDataVO<SurveyReportDataVo>> queryData(@RequestParam String sectionCode,
                                                             @RequestParam Long taskId
     ) {
 
 
         //获取原始数据
-        List<SurveyOriginalVo> originalVos = surveyOriginalService.list(taskId, sectionId);
+        List<SurveyOriginalVo> originalVos = surveyOriginalService.list(taskId, sectionCode);
         //获取原始数据ID
         List<Long> originalIds = originalVos.stream().map(SurveyOriginalVo::getId).collect(Collectors.toList());
         //获取结果数据
-        List<SurveyResult> surveyResults = surveyResultService.queryResult(sectionId, originalIds);
+        List<SurveyResult> surveyResults = surveyResultService.queryResult(sectionCode, originalIds);
 
         //测量结果
         List<SurveyReportDataVo> surveyReportDataVos = new ArrayList<>();
@@ -71,11 +71,11 @@ public class ReportDataController {
         for (SurveyReportDataVo surveyReportDataVo : surveyReportDataVos) {
 
             //上次测量结果
-            List<SurveyResult> tempResults = surveyResultService.queryPreResult(surveyReportDataVo.getSurveyTime(), DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, 1, surveyReportDataVo.getPointCode());
+            List<SurveyResult> tempResults = surveyResultService.queryPreResult(surveyReportDataVo.getSurveyTime(), DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 1, surveyReportDataVo.getPointCode());
             //第一次测量结果
-            List<SurveyResult> intResults = surveyResultService.queryPreResult(null, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, 1, surveyReportDataVo.getPointCode());
+            List<SurveyResult> intResults = surveyResultService.queryPreResult(null, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 1, surveyReportDataVo.getPointCode());
             //点初始值
-            SurveyPointVo surveyPointVo = surveyPointService.querySurveyPointByCode(surveyReportDataVo.getPointCode(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
+            SurveyPointVo surveyPointVo = surveyPointService.querySurveyPointByCode(surveyReportDataVo.getPointCode(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
             surveyReportDataVo.setPointType(surveyPointVo.getType());
             surveyReportDataVo.setInitElevation(surveyPointVo.getElevation());
             surveyReportDataVo.setOnceLowerLimit(surveyPointVo.getOnceLowerLimit());

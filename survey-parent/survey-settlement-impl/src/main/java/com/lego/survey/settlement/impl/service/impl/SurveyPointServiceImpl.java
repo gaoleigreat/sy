@@ -78,8 +78,8 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public RespVO delete(List<Long> ids, String tableName) {
-        Integer integer = surveyPointMapper.deleteBatch(ids, tableName);
+    public RespVO delete(List<String> codes, String tableName) {
+        Integer integer = surveyPointMapper.deleteBatch(codes, tableName);
         if (integer <= 0) {
             ExceptionBuilder.operateFailException("删除测点失败");
         }

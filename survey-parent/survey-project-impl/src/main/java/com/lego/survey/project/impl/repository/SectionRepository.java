@@ -50,6 +50,9 @@ public interface SectionRepository extends MongoRepository<Section, String> {
     List<Section> findSectionsByOwnerProjectIdAndValidOrderByCreateTimeDesc(String projectId, int valid);
 
 
+    List<Section>  findSectionsByOwnerProjectCodeAndValidOrderByCreateTimeDesc(String projectCode, int valid);
+
+
     /**
      * 根据单位id获取标段信息
      *

@@ -150,7 +150,10 @@ public class UserServiceImpl implements IUserService {
                 if (respVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
                     ProjectVo info = respVO.getInfo();
                     if (info != null) {
-                        ownProjects.add(OwnProject.builder().id(info.getId()).name(info.getName()).build());
+                        ownProjects.add(OwnProject.builder()
+                                .id(info.getId())
+                                .name(info.getName())
+                                .code(info.getCode()).build());
                     }
                 }
                 user.setOwnProjects(ownProjects);
@@ -164,7 +167,11 @@ public class UserServiceImpl implements IUserService {
                 if (respVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
                     SectionVo info = respVO.getInfo();
                     if (info != null) {
-                        ownSections.add(OwnSection.builder().id(info.getId()).name(info.getName()).build());
+                        ownSections.add(OwnSection.builder().
+                                id(info.getId())
+                                .name(info.getName())
+                                .code(info.getCode())
+                                .build());
                     }
                 }
                 user.setOwnSections(ownSections);
@@ -212,8 +219,8 @@ public class UserServiceImpl implements IUserService {
     @Override
     public PagedResult<UserAddVo> queryList(int pageIndex,
                                             int pageSize,
-                                            String projectId,
-                                            String sectionId,
+                                            String projectCode,
+                                            String sectionCode,
                                             String role,
                                             String groupId) {
         List<UserAddVo> userAddVos = new ArrayList<>();
@@ -227,11 +234,11 @@ public class UserServiceImpl implements IUserService {
         if (!StringUtils.isEmpty(role)) {
             criteria.and("role").is(role);
         }
-        if (!StringUtils.isEmpty(projectId)) {
-            criteria.and("projectId").is(projectId);
+        if (!StringUtils.isEmpty(projectCode)) {
+            criteria.and("ownProjects.code").is(projectCode);
         }
-        if (!StringUtils.isEmpty(sectionId)) {
-            criteria.and("sectionId").is(sectionId);
+        if (!StringUtils.isEmpty(sectionCode)) {
+            criteria.and("ownSections.code").is(sectionCode);
         }
         query.addCriteria(criteria);
         List<User> userList = mongoTemplate.find(query, User.class, "user");

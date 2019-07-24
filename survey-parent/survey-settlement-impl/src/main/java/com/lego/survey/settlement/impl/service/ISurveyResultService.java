@@ -80,38 +80,41 @@ public interface ISurveyResultService {
      * 获取数据列表
      * @param pageIndex
      * @param pageSize
-     * @param sectionId
+     * @param sectionCode
      * @param type
      * @return
      */
-    PagedResult<OverrunListVo> queryOverrunList(int pageIndex, Integer pageSize, String sectionId,String workspaceId, Integer type);
+    PagedResult<OverrunListVo> queryOverrunList(int pageIndex,
+                                                Integer pageSize,
+                                                String sectionCode,
+                                                String workspaceCode,
+                                                Integer type);
 
 
     /**
      * 根据原始数据Id查询成果数据
-     * @param sectionId
+     * @param sectionCode
      * @param originalIds
      * @return
      */
-    List<SurveyResult> queryResult(String sectionId,List<Long> originalIds);
+    List<SurveyResult> queryResult(String sectionCode,List<Long> originalIds);
 
     /**
      * 查询测量点的测量历史数据
-     * @param sectionId
+     * @param sectionCode
      * @param ponitCode
      * @return
      */
-    List<SurveyPontResultVo> queryPontResult(String sectionId, String ponitCode);
+    List<SurveyPontResultVo> queryPontResult(String sectionCode, String ponitCode);
 
     /**
      * 查询报警点详情
      * @param pageIndex
      * @param pageSize
-     * @param sectionId
+     * @param sectionCode
      * @param pointCode
-     * @param workspaceId
      * @param type
      * @return
      */
-    PagedResult<OverrunListVo> queryOverrunDetails(int pageIndex, Integer pageSize, String sectionId, String pointCode,String workspaceId ,Integer type);
+    PagedResult<OverrunListVo> queryOverrunDetails(int pageIndex, Integer pageSize, String sectionCode, String pointCode ,Integer type);
 }

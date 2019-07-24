@@ -91,18 +91,18 @@ public class BasePointController {
 
     @ApiOperation(value = "删除基准点列表", httpMethod = "DELETE", notes = "删除基准点列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "删除的基准点id集合", dataType = "long", required = true, paramType = "query", allowMultiple = true),
+            @ApiImplicitParam(name = "codes", value = "删除的基准点code集合", dataType = "String", required = true, paramType = "query", allowMultiple = true),
     })
     @Operation(value = "delete", desc = "删除基准点列表")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public RespVO delete(HttpServletRequest request,
-                         @RequestParam List<Long> ids) {
+                         @RequestParam List<String> codes) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
-        CurrentVo currentVo = authClient.getAuthVo(headerVo);
-        String userId = currentVo.getUserId();
         // 验证用户正确性
-        RespVO delete = iBasePointService.delete(ids);
-        logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "删除基准点:[" + JSONObject.toJSONString(ids) + "]");
+        String userId = headerVo.getUserId();
+        RespVO delete = iBasePointService.delete(codes);
+        logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "删除基准点:[" + JSONObject.toJSONString(codes) + "]");
         return delete;
     }
 

@@ -33,9 +33,9 @@ public class SurveyOriginalController {
     @ApiImplicitParams({
 
     })
-    @RequestMapping(value = "/create/{sectionId}", method = RequestMethod.POST)
-    public RespVO add(@RequestBody SurveyOriginalVo surveyOriginalVo, @PathVariable(value = "sectionId") String sectionId) {
-        return surveyOriginalClient.create(surveyOriginalVo, sectionId);
+    @RequestMapping(value = "/create/{sectionCode}", method = RequestMethod.POST)
+    public RespVO add(@RequestBody SurveyOriginalVo surveyOriginalVo, @PathVariable(value = "sectionCode") String sectionCode) {
+        return surveyOriginalClient.create(surveyOriginalVo, sectionCode);
     }
 
 

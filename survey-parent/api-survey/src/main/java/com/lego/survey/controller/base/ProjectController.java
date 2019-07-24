@@ -79,12 +79,12 @@ public class ProjectController {
 
     @ApiOperation(value = "查询项目工程详细信息", notes = "查询项目工程详细信息", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "项目工程id", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "code", value = "项目工程id", dataType = "String", required = true, paramType = "query"),
 
     })
     @RequestMapping(value = "/info", method = RequestMethod.GET)
-    public RespVO<ProjectVo> query(@RequestParam String id) {
-        return projectClient.query(id);
+    public RespVO<ProjectVo> query(@RequestParam String code) {
+        return projectClient.query(code);
     }
 
 

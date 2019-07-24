@@ -33,7 +33,7 @@ public interface ReportDataClient {
      * 查询沉降测量报告中需要插入的数据
      */
     @RequestMapping(value = "/query/settlementData", method = RequestMethod.GET)
-    RespVO<RespDataVO<SurveyReportDataVo>> queryData(@RequestParam( value = "sectionId") String sectionId,
+    RespVO<RespDataVO<SurveyReportDataVo>> queryData(@RequestParam( value = "sectionCode") String sectionCode,
                                                      @RequestParam(value = "taskId") Long taskId);
 }
 
@@ -43,7 +43,7 @@ class ReportDataClientFallback implements ReportDataClient {
 
 
     @Override
-    public RespVO queryData(String sectionId, Long taskId) {
+    public RespVO queryData(String sectionCode, Long taskId) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 

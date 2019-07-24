@@ -37,33 +37,30 @@ public interface WorkspaceClient {
 
     /**
      * 删除工区信息
-     *
-     * @param workspaceId
+     * @param code
      * @return
      */
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    RespVO delete(@RequestParam("workspaceId") String workspaceId);
+    RespVO delete(@RequestParam("code") String code);
 
 
     /**
      * 根据标段id获取工区信息
      *
-     * @param projectId
-     * @param sectionId
+     * @param sectionCode
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    RespVO<RespDataVO<Workspace>> list(@RequestParam(value = "projectId") String projectId,
-                                       @RequestParam(value = "sectionId") String sectionId);
+    RespVO<RespDataVO<Workspace>> list(@RequestParam(value = "sectionCode") String sectionCode);
 
     /**
      * 获取工区信息
      *
-     * @param id
+     * @param code
      * @return
      */
-    @RequestMapping(value = "/info/{id}", method = RequestMethod.GET)
-    RespVO<Workspace> info(@PathVariable(value = "id") String id);
+    @RequestMapping(value = "/info/{code}", method = RequestMethod.GET)
+    RespVO<Workspace> info(@PathVariable(value = "code") String code);
 
 }
 
@@ -82,17 +79,17 @@ class  WorkspaceClientFallback implements WorkspaceClient{
     }
 
     @Override
-    public RespVO delete(String workspaceId) {
+    public RespVO delete(String code) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
     }
 
     @Override
-    public RespVO<RespDataVO<Workspace>> list(String projectId, String sectionId) {
+    public RespVO<RespDataVO<Workspace>> list(String sectionCode) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
     }
 
     @Override
-    public RespVO<Workspace> info(String id) {
+    public RespVO<Workspace> info(String code) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
     }
 }

@@ -35,9 +35,6 @@ import java.util.stream.Collectors;
 public class WordReportController {
 
     @Autowired
-    private SurveyResultClient surveyResultClient;
-
-    @Autowired
     private IWordReportService wordReportService;
 
     @Autowired
@@ -49,10 +46,10 @@ public class WordReportController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", required = true,example = "1", paramType = "path"),
             @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int",defaultValue = "10",example = "10",paramType = "query"),
-            @ApiImplicitParam(name = "sectionId", value = "标段id", dataType = "String",required = true,paramType = "path"),
+            @ApiImplicitParam(name = "sectionCode", value = "标段code", dataType = "String",required = true,paramType = "path"),
     })
-    @RequestMapping(value = "/generate/{sectionId}",method = RequestMethod.POST)
-    public RespVO generatePointResultExcel(@PathVariable("sectionId") String sectionId,
+    @RequestMapping(value = "/generate/{sectionCode}",method = RequestMethod.POST)
+    public RespVO generatePointResultExcel(@PathVariable("sectionCode") String sectionCode,
                                            @RequestParam(required = false, defaultValue = "1") int pageIndex,
                                            @RequestParam(required = false, defaultValue = "10") int pageSize
     ) {
@@ -63,13 +60,13 @@ public class WordReportController {
 
     @ApiOperation(value = "生成word测量成果报表", notes = "生成word测量成果报表", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "sectionId", value = "标段id", dataType = "String",required = true,paramType = "path"),
+            @ApiImplicitParam(name = "sectionCode", value = "标段id", dataType = "String",required = true,paramType = "path"),
             @ApiImplicitParam(name = "taskId", value = "任务id", dataType = "String",required = true,paramType = "path"),
     })
-    @RequestMapping(value = "/get/{sectionId}/{taskId}",method = RequestMethod.GET)
-    public RespVO generatePointResultWord(@PathVariable("sectionId") String sectionId,@PathVariable("taskId") Long taskId) throws Exception {
-        //1 通过sectionid 和taskid 查询原始测量数据
-        RespVO<RespDataVO<SurveyReportDataVo>> respDataVORespVO =  reportDataClient.queryData(sectionId,taskId);
+    @RequestMapping(value = "/get/{sectionCode}/{taskId}",method = RequestMethod.GET)
+    public RespVO generatePointResultWord(@PathVariable("sectionCode") String sectionCode,@PathVariable("taskId") Long taskId) throws Exception {
+        //1 通过sectionCode 和taskid 查询原始测量数据
+        RespVO<RespDataVO<SurveyReportDataVo>> respDataVORespVO =  reportDataClient.queryData(sectionCode,taskId);
         List<SurveyReportDataVo> surveyReportDataVoList =  respDataVORespVO.getInfo().getList();
         Set<String> typeSet = surveyReportDataVoList.stream().map(SurveyReportDataVo::getPointType).collect(Collectors.toSet());
 

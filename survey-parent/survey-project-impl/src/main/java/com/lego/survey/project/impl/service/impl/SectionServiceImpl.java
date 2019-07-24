@@ -92,11 +92,13 @@ public class SectionServiceImpl implements ISectionService {
     }
 
     @Override
-    public RespVO delete(String id) {
-        Section section = sectionRepository.findSectionByIdAndValid(id, 0);
-        section.setValid(1);
-        sectionRepository.save(section);
-        // TODO 更新关联表状态
+    public RespVO delete(String code) {
+        Section section = sectionRepository.findSectionByCodeAndValid(code, 0);
+        if(section!=null){
+            section.setValid(1);
+            sectionRepository.save(section);
+            // TODO 更新关联表状态
+        }
         return RespVOBuilder.success();
     }
 
@@ -104,22 +106,7 @@ public class SectionServiceImpl implements ISectionService {
     public RespVO<SectionAddVo> queryById(String id) {
         Section section = sectionRepository.findSectionByIdAndValid(id, 0);
         if (section != null) {
-            SectionAddVo addVo = SectionAddVo.builder().address(section.getAddress())
-                    .code(section.getCode())
-                    .desc(section.getDesc())
-                    .id(section.getId())
-                    .name(section.getName())
-                    .property(section.getProperty())
-                    .services(section.getService()).build();
-            OwnerProject ownerProject = section.getOwnerProject();
-            if (ownerProject != null) {
-                addVo.setProjectId(ownerProject.getId());
-            }
-            UpperGroup ownerGroup = section.getOwnerGroup();
-            if (ownerGroup != null) {
-                addVo.setGroupId(ownerGroup.getId());
-            }
-            return RespVOBuilder.success(addVo);
+            return RespVOBuilder.success(section.loadAddVo());
         }
         return RespVOBuilder.success();
     }
@@ -148,8 +135,12 @@ public class SectionServiceImpl implements ISectionService {
     }
 
     @Override
-    public Section queryByCode(String code) {
-        return sectionRepository.findSectionByCodeAndValid(code, 0);
+    public SectionAddVo queryByCode(String code) {
+        Section section = sectionRepository.findSectionByCodeAndValid(code, 0);
+        if (section != null) {
+            return section.loadAddVo();
+        }
+        return null;
     }
 
     @Override
@@ -161,6 +152,36 @@ public class SectionServiceImpl implements ISectionService {
     public RespVO<RespDataVO<SectionVo>> queryByProjectId(String projectId) {
         List<SectionVo> sectionVos = new ArrayList<>();
         Project project = projectRepository.findProjectByIdAndValid(projectId, 0);
+        List<OwnerSection> sectionList = project.getSections();
+        if (sectionList != null) {
+            for (OwnerSection ownerSection : sectionList) {
+                Section section = sectionRepository.findSectionByIdAndValid(ownerSection.getId(), 0);
+                UpperGroup ownerGroup = section.getOwnerGroup();
+                Group group = groupRepository.findGroupByIdAndValid(ownerGroup.getId(), 0);
+                SectionVo sectionVo = SectionVo.builder().build();
+                sectionVo.setId(section.getId());
+                sectionVo.setName(section.getName());
+                sectionVo.setCode(section.getCode());
+                sectionVo.setAddress(section.getAddress());
+                sectionVo.setDesc(section.getDesc());
+                sectionVo.setGroup(GroupVo.builder().name(group.getName()).upperGroup(group.getUpperGroup())
+                        .desc(group.getDesc())
+                        .id(group.getId()).build());
+                List<WorkspaceVo> workspaceVos = getWorkspaceVos(section);
+                sectionVo.setWorkspace(workspaceVos);
+
+                List<ColleaguesVo> colleaguesVos = getColleaguesVos(section);
+                sectionVo.setColleagues(colleaguesVos);
+                sectionVos.add(sectionVo);
+            }
+        }
+        return RespVOBuilder.success(sectionVos);
+    }
+
+    @Override
+    public RespVO<RespDataVO<SectionVo>> queryByProjectCode(String projectCode) {
+        List<SectionVo> sectionVos = new ArrayList<>();
+        Project project = projectRepository.findProjectByCodeAndValid(projectCode, 0);
         List<OwnerSection> sectionList = project.getSections();
         if (sectionList != null) {
             for (OwnerSection ownerSection : sectionList) {
@@ -222,7 +243,7 @@ public class SectionServiceImpl implements ISectionService {
     }
 
     @Override
-    public PagedResult<SectionVo> list(int pageIndex, int pageSize, String projectId) {
+    public PagedResult<SectionVo> list(int pageIndex, int pageSize, String projectCode) {
         List<SectionVo> sectionVos = new ArrayList<>();
         PagedResult<SectionVo> pagedResult = new PagedResult<>();
 
@@ -230,8 +251,8 @@ public class SectionServiceImpl implements ISectionService {
         query.with(PageRequest.of(pageIndex - 1, pageSize, Sort.Direction.DESC, "createTime"));
         Criteria c = new Criteria();
         c.and("valid").is(0);
-        if (!StringUtils.isEmpty(projectId)) {
-            c.and("ownerProject._id").is(projectId);
+        if (!StringUtils.isEmpty(projectCode)) {
+            c.and("ownerProject.code").is(projectCode);
         }
         query.addCriteria(c);
         List<Section> sectionList = mongoTemplate.find(query, Section.class, "section");
@@ -283,13 +304,13 @@ public class SectionServiceImpl implements ISectionService {
 
 
     @Override
-    public List<Section> findAll(List<String> projectIds) {
+    public List<Section> findAll(List<String> projectCodes) {
         List<Section> sectionList = new ArrayList<>();
-        if (CollectionUtils.isEmpty(projectIds)) {
+        if (CollectionUtils.isEmpty(projectCodes)) {
             return sectionRepository.findSectionsByValid(0);
         }
-        projectIds.forEach(projectId -> {
-            List<Section> sections = sectionRepository.findSectionsByOwnerProjectIdAndValidOrderByCreateTimeDesc(projectId, 0);
+        projectCodes.forEach(projectCode -> {
+            List<Section> sections = sectionRepository.findSectionsByOwnerProjectCodeAndValidOrderByCreateTimeDesc(projectCode, 0);
             sectionList.addAll(sections);
         });
         return sectionList;
@@ -321,6 +342,39 @@ public class SectionServiceImpl implements ISectionService {
             for (OwnWorkspace ownWorkspace : workspaceList) {
                 String id = ownWorkspace.getId();
                 if (id.equals(workspaceId)) {
+                    return ownWorkspace.getSurveyer();
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<Master> findBySectionMasterBySectionCode(String sectionCode) {
+        Section section = sectionRepository.findSectionByCodeAndValid(sectionCode, 0);
+        if (section != null) {
+            return section.getMaster();
+        }
+        return null;
+    }
+
+    @Override
+    public List<Surveyer> findSurveyerBySectionCode(String sectionCode) {
+        Section section = sectionRepository.findSectionByCodeAndValid(sectionCode, 0);
+        if (section != null) {
+            return section.getSurveyer();
+        }
+        return null;
+    }
+
+    @Override
+    public List<Surveyer> findSurveyerByWorkspaceCode(String workspaceCode) {
+        Section section = sectionRepository.findSectionByWorkSpaceCodeAndValid(workspaceCode, 0);
+        if (section != null) {
+            List<OwnWorkspace> workspaceList = section.getWorkSpace();
+            for (OwnWorkspace ownWorkspace : workspaceList) {
+                String code = ownWorkspace.getCode();
+                if (code.equals(workspaceCode)) {
                     return ownWorkspace.getSurveyer();
                 }
             }

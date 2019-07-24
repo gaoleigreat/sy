@@ -80,8 +80,10 @@ public class LoginFilter extends ZuulFilter {
             String remoteIp = HttpUtils.getClientIp(req);
             String localIp = req.getLocalAddr();
             String pvId = HttpUtils.generatePVID(req, remoteIp, localIp);
+            long timeMillis = System.currentTimeMillis();
+            String traceInfo = timeMillis + "-" + remoteIp + "-" + uri+"-"+authDomain;
 
-            sb.append(System.currentTimeMillis()).append("\t").append("ACCESS").append("\t").append(pvId).append("\t")
+            sb.append(timeMillis).append("\t").append("ACCESS").append("\t").append(pvId).append("\t")
                     .append(localIp).append("\t").append(remoteIp).append("\t").append(uri).append("\t");
             logger.info(sb.toString());
 
@@ -89,7 +91,7 @@ public class LoginFilter extends ZuulFilter {
             Boolean isIgnore = isIgnore(uri);
             logger.info("url:[{}]--------isIgnore:[{}]",uri,isIgnore);
             if (isIgnore) {
-                setRequest(ctx,null);
+                setRequest(ctx,null,traceInfo);
                 ctx.set("pvId", pvId);
                 return null;
             }
@@ -103,9 +105,8 @@ public class LoginFilter extends ZuulFilter {
                 RespVO<CurrentVo> currentVoRespVO = authClient.parseUserToken(userToken, deviceType);
                 if (currentVoRespVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
                     CurrentVo currentVo = currentVoRespVO.getInfo();
-                    logger.info("url:[{}]--------------currentVo:[{}]",uri,currentVo);
                     if(currentVo!=null){
-                        setRequest(ctx,currentVo);
+                        setRequest(ctx,currentVo,traceInfo);
                         ctx.set("pvId", pvId);
                         return null;
                     }
@@ -140,8 +141,9 @@ public class LoginFilter extends ZuulFilter {
     }
 
 
-    private void setRequest(RequestContext ctx,CurrentVo currentVo) {
+    private void setRequest(RequestContext ctx,CurrentVo currentVo,String traceInfo) {
         ctx.getZuulRequestHeaders().put("DOMAIN", authDomain);
+        ctx.getZuulRequestHeaders().put("TRACE",traceInfo);
         ctx.setSendZuulResponse(true);
         ctx.setResponseStatusCode(200);
         if(currentVo!=null){

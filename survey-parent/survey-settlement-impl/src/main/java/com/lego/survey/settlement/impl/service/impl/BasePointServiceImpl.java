@@ -1,4 +1,5 @@
 package com.lego.survey.settlement.impl.service.impl;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.lego.survey.base.exception.ExceptionBuilder;
 import com.lego.survey.settlement.impl.mapper.BasePointMapper;
@@ -82,9 +83,11 @@ public class BasePointServiceImpl implements IBasePointService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public RespVO delete(List<Long> ids) {
-        for (Long id : ids) {
-            BasePoint basePoint = basePointMapper.selectById(id);
+    public RespVO delete(List<String> codes) {
+        for (String code : codes) {
+            QueryWrapper<BasePoint> wrapper=new QueryWrapper<>();
+            wrapper.eq("code",code);
+            BasePoint basePoint = basePointMapper.selectOne(wrapper);
             basePoint.setValid(1);
             basePoint.setUpdateTime(new Date());
             int update = basePointMapper.updateById(basePoint);

@@ -79,7 +79,7 @@ public class SectionController {
             return RespVOBuilder.failure(RespConsts.FAIL_RESULT_CODE, "标段名称已经存在");
         }
         String sectionCode = sectionAddVo.getCode();
-        Section queryByCode = iSectionService.queryByCode(sectionCode);
+        SectionAddVo queryByCode = iSectionService.queryByCode(sectionCode);
         if (queryByCode != null) {
             return RespVOBuilder.failure(RespConsts.FAIL_RESULT_CODE, "标段编号已经存在");
         }
@@ -101,16 +101,13 @@ public class SectionController {
 
     private Section getSection(SectionAddVo sectionAddVo) {
         Section section = sectionAddVo.loadSection();
-        String projectId = sectionAddVo.getProjectId();
-        if (projectId != null) {
-            RespVO<ProjectVo> projectVoRespVO = iProjectService.queryById(projectId);
-            if (projectVoRespVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
-                ProjectVo projectVo = projectVoRespVO.getInfo();
-                if (projectVo != null) {
-                    section.setOwnerProject(OwnerProject.builder().id(projectVo.getId())
-                            .code(projectVo.getCode())
-                            .name(projectVo.getName()).build());
-                }
+        String projectCode = sectionAddVo.getProjectCode();
+        if (projectCode != null) {
+            ProjectVo projectVo = iProjectService.queryByCode(projectCode);
+            if (projectVo != null) {
+                section.setOwnerProject(OwnerProject.builder().id(projectVo.getId())
+                        .code(projectVo.getCode())
+                        .name(projectVo.getName()).build());
             }
         }
         String groupId = sectionAddVo.getGroupId();
@@ -154,15 +151,27 @@ public class SectionController {
 
     @ApiOperation(value = "查询标段信息", notes = "查询标段信息", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "标段id", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "code", value = "标段code", dataType = "String", required = true, paramType = "query"),
     })
     @Operation(value = "query", desc = "查询标段信息")
     @RequestMapping(value = "/query", method = RequestMethod.GET)
-    public RespVO<SectionAddVo> query(@RequestParam String id, HttpServletRequest request) {
+    public RespVO<SectionAddVo> query(@RequestParam String code, HttpServletRequest request) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
-        return iSectionService.queryById(id);
+        SectionAddVo sectionAddVo = iSectionService.queryByCode(code);
+        return RespVOBuilder.success(sectionAddVo);
 
+    }
+
+    @ApiOperation(value = "查询标段信息", notes = "查询标段信息", httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "code", value = "标段code", dataType = "String", required = true, paramType = "path"),
+    })
+    @Operation(value = "query", desc = "查询标段信息")
+    @RequestMapping(value = "/queryByCode/{code}", method = RequestMethod.GET)
+    public SectionAddVo queryByCode(@PathVariable(value = "code") String code) {
+        return iSectionService.queryByCode(code);
     }
 
 
@@ -179,17 +188,18 @@ public class SectionController {
     }
 
 
-    @ApiOperation(value = "根据工区id获取标段信息", notes = "根据工区id获取标段信息", httpMethod = "GET")
+    /*@ApiOperation(value = "根据工区CODE获取标段信息", notes = "根据工区CODE获取标段信息", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "workspaceId", value = "工区id", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "workspaceCode", value = "工区code", dataType = "String", required = true, paramType = "query"),
     })
-    @Operation(value = "queryByWorkspaceId", desc = "根据工区id获取标段信息")
-    @RequestMapping(value = "/queryByWorkspaceId", method = RequestMethod.GET)
-    public RespVO<Section> queryByWorkspaceId(@RequestParam String workspaceId, HttpServletRequest request) {
+    @Operation(value = "queryByWorkspaceCode", desc = "根据工区CODE获取标段信息")
+    @RequestMapping(value = "/queryByWorkspaceCode", method = RequestMethod.GET)
+    public RespVO<Section> queryByWorkspaceId(@RequestParam String workspaceCode, HttpServletRequest request) {
+        // ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
-        return iSectionService.queryByWorkspaceId(workspaceId);
-    }
+        return iSectionService.queryByWorkspaceCode(workspaceCode);
+    }*/
 
 
     @ApiOperation(value = "根据工区编码获取标段信息", notes = "根据工区编码获取标段信息", httpMethod = "GET")
@@ -198,33 +208,33 @@ public class SectionController {
     })
     @Operation(value = "queryByWorkspaceCode", desc = "根据工区编码获取标段信息")
     @RequestMapping(value = "/queryByWorkspaceCode", method = RequestMethod.GET)
-    public RespVO<Section> queryByWorkspaceCode(@RequestParam String workspaceId, HttpServletRequest request) {
+    public RespVO<Section> queryByWorkspaceCode(@RequestParam String workspaceCode, HttpServletRequest request) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
-        return iSectionService.queryByWorkspaceCode(workspaceId);
+        return iSectionService.queryByWorkspaceCode(workspaceCode);
     }
 
 
     @ApiOperation(value = "删除标段", notes = "删除标段", httpMethod = "DELETE")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "标段id", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "code", value = "标段code", dataType = "String", required = true, paramType = "query"),
     })
     @Operation(value = "delete", desc = "删除标段")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public RespVO delete(@RequestParam String id, HttpServletRequest request) {
+    public RespVO delete(@RequestParam String code, HttpServletRequest request) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
-        // TODO 权限校验
-
-        RespVO respVO = iSectionService.delete(id);
-        logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "删除标段信息:[" + id + "]");
+        RespVO respVO = iSectionService.delete(code);
+        logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "删除标段信息:[" + code + "]");
         return respVO;
     }
 
 
     @ApiOperation(value = "查询标段列表", notes = "查询标段列表", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectId", value = "工程ID", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "projectCode", value = "工程code", dataType = "String", required = true, paramType = "query"),
             @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", required = true, example = "1", paramType = "path"),
             @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int", defaultValue = "10", example = "10", paramType = "query"),
     })
@@ -232,75 +242,81 @@ public class SectionController {
     @RequestMapping(value = "/list/{pageIndex}", method = RequestMethod.GET)
     public RespVO<PagedResult<SectionVo>> list(@PathVariable(value = "pageIndex") int pageIndex,
                                                @RequestParam(required = false, defaultValue = "10") int pageSize,
-                                               @RequestParam(required = false) String projectId,
+                                               @RequestParam(required = false) String projectCode,
                                                HttpServletRequest request) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
-        PagedResult<SectionVo> pagedResult = iSectionService.list(pageIndex, pageSize, projectId);
+        PagedResult<SectionVo> pagedResult = iSectionService.list(pageIndex, pageSize, projectCode);
         return RespVOBuilder.success(pagedResult);
     }
 
 
     @ApiOperation(value = "查询全部标段信息", notes = "查询全部标段信息", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectIds", value = "工程ID", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "projectCodes", value = "工程CODE", dataType = "String", paramType = "query"),
     })
     @Operation(value = "findAll", desc = "查询全部标段信息")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public RespVO<RespDataVO<Section>> findAll(@RequestParam(required = false) List<String> projectIds,
+    public RespVO<RespDataVO<Section>> findAll(@RequestParam(required = false) List<String> projectCodes,
                                                HttpServletRequest request) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
-        List<Section> sections = iSectionService.findAll(projectIds);
+        List<Section> sections = iSectionService.findAll(projectCodes);
         return RespVOBuilder.success(sections);
     }
 
 
     @ApiOperation(value = "查询标段列表", notes = "查询标段列表", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectId", value = "工程ID", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "projectCode", value = "工程code", dataType = "String", required = true, paramType = "query"),
     })
-    @Operation(value = "queryByProjectId", desc = "查询标段列表")
-    @RequestMapping(value = "/queryByProjectId", method = RequestMethod.GET)
+    @Operation(value = "queryByProjectCode", desc = "查询标段列表")
+    @RequestMapping(value = "/queryByProjectCode", method = RequestMethod.GET)
     public RespVO<RespDataVO<SectionVo>> queryByProjectId(
-            @RequestParam String projectId,
+            @RequestParam String projectCode,
             HttpServletRequest request) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
-        return iSectionService.queryByProjectId(projectId);
+        return iSectionService.queryByProjectCode(projectCode);
     }
 
 
     @ApiOperation(value = "查询标段管理员", notes = "查询标段管理员", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", required = true, paramType = "path"),
+            @ApiImplicitParam(name = "sectionCode", value = "标段code", dataType = "String", required = true, paramType = "path"),
     })
-    @Operation(value = "findBySectionMasterBySectionId", desc = "查询标段管理员")
-    @RequestMapping(value = "/findBySectionMasterBySectionId/{sectionId}", method = RequestMethod.GET)
-    public List<Master> findBySectionMasterBySectionId(@PathVariable String sectionId) {
-        return iSectionService.findBySectionMasterBySectionId(sectionId);
+    @Operation(value = "findBySectionMasterBySectionCode", desc = "查询标段管理员")
+    @RequestMapping(value = "/findBySectionMasterBySectionCode/{sectionCode}", method = RequestMethod.GET)
+    public List<Master> findBySectionMasterBySectionCode(@PathVariable String sectionCode) {
+        // TODO ID -> CODE
+        return iSectionService.findBySectionMasterBySectionCode(sectionCode);
     }
 
 
     @ApiOperation(value = "查询标段测量员", notes = "查询标段测量员", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", required = true, paramType = "path"),
+            @ApiImplicitParam(name = "sectionCode", value = "标段code", dataType = "String", required = true, paramType = "path"),
     })
-    @Operation(value = "findSectionSurveyerBySectionId", desc = "查询标段测量员")
-    @RequestMapping(value = "/findSectionSurveyerBySectionId/{sectionId}", method = RequestMethod.GET)
-    public List<Surveyer> findSectionSurveyerBySectionId(@PathVariable String sectionId) {
-        return iSectionService.findSectionSurveyerBySectionId(sectionId);
+    @Operation(value = "findSurveyerBySectionCode", desc = "查询标段测量员")
+    @RequestMapping(value = "/findSurveyerBySectionCode/{sectionCode}", method = RequestMethod.GET)
+    public List<Surveyer> findSurveyerBySectionCode(@PathVariable String sectionCode) {
+        // TODO ID -> CODE
+        return iSectionService.findSurveyerBySectionCode(sectionCode);
     }
 
 
     @ApiOperation(value = "查询工区测量员", notes = "查询工区测量员", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "workspaceId", value = "工区ID", dataType = "String", required = true, paramType = "path"),
+            @ApiImplicitParam(name = "workspaceCode", value = "工区code", dataType = "String", required = true, paramType = "path"),
     })
-    @Operation(value = "findSurveyerByWorkspaceId", desc = "查询工区测量员")
-    @RequestMapping(value = "/findSurveyerByWorkspaceId/{workspaceId}", method = RequestMethod.GET)
-    public List<Surveyer> findSurveyerByWorkspaceId(@PathVariable String workspaceId) {
-        return iSectionService.findSurveyerByWorkspaceId(workspaceId);
+    @Operation(value = "findSurveyerByWorkspaceCode", desc = "查询工区测量员")
+    @RequestMapping(value = "/findSurveyerByWorkspaceCode/{workspaceCode}", method = RequestMethod.GET)
+    public List<Surveyer> findSurveyerByWorkspaceCode(@PathVariable String workspaceCode) {
+        // TODO ID -> CODE
+        return iSectionService.findSurveyerByWorkspaceCode(workspaceCode);
     }
 
 

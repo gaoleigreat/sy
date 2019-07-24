@@ -58,11 +58,11 @@ public interface SurveyPointMapper extends Mapper<SurveyPoint> {
     /**
      * 批量删除测点
      *
-     * @param ids
+     * @param codes
      * @param tableName
      * @return
      */
-    Integer deleteBatch(@Param("ids") List<Long> ids, @Param("tableName") String tableName);
+    Integer deleteBatch(@Param("codes") List<String> codes, @Param("tableName") String tableName);
 
 
     /**

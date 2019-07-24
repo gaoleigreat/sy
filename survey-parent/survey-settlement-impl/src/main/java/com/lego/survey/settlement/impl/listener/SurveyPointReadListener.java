@@ -31,7 +31,7 @@ public class SurveyPointReadListener extends ExcelListener<SurveyPointVo> {
     @Autowired
     private ISurveyPointService iSurveyPointService;
 
-    private String sectionId;
+    private String sectionCode;
 
 
     @Override
@@ -46,7 +46,7 @@ public class SurveyPointReadListener extends ExcelListener<SurveyPointVo> {
             return;
         }
         try {
-            RespVO respVO = iSurveyPointService.createBatch(surveyPointVos, DictConstant.TableNamePrefix.SURVEY_POINT+sectionId);
+            RespVO respVO = iSurveyPointService.createBatch(surveyPointVos, DictConstant.TableNamePrefix.SURVEY_POINT+sectionCode);
             if (respVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
                 log.info("insert excel success");
             }
@@ -59,7 +59,7 @@ public class SurveyPointReadListener extends ExcelListener<SurveyPointVo> {
         }
     }
 
-    public void setTableName(String sectionId) {
-        this.sectionId=sectionId;
+    public void setTableName(String sectionCode) {
+        this.sectionCode=sectionCode;
     }
 }

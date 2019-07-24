@@ -50,13 +50,13 @@ public class SurveyTaskServiceImpl implements ISurveyTaskService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public RespVO create(SurveyTaskVo surveyTaskVo, String sectionId) {
+    public RespVO create(SurveyTaskVo surveyTaskVo, String sectionCode) {
         try {
             SurveyTask surveyTask = surveyTaskVo.getSurveyTask();
             // 添加   task
-            SurveyTask storeTask=surveyTaskMapper.queryById(surveyTask.getId(),DictConstant.TableNamePrefix.SURVEY_TASK+sectionId);
+            SurveyTask storeTask=surveyTaskMapper.queryById(surveyTask.getId(),DictConstant.TableNamePrefix.SURVEY_TASK+sectionCode);
             if(storeTask==null){
-                Integer save = surveyTaskMapper.save(surveyTask, DictConstant.TableNamePrefix.SURVEY_TASK+sectionId);
+                Integer save = surveyTaskMapper.save(surveyTask, DictConstant.TableNamePrefix.SURVEY_TASK+sectionCode);
                 if (save <= 0) {
                     return RespVOBuilder.failure("添加任务失败");
                 }
@@ -65,7 +65,7 @@ public class SurveyTaskServiceImpl implements ISurveyTaskService {
             Integer saveBatch;
             List<SurveyOriginal> surveyOriginals = surveyTaskVo.getSurveyOriginal();
             if (surveyOriginals != null) {
-                saveBatch = surveyOriginalMapper.saveBatch(surveyOriginals, DictConstant.TableNamePrefix.SURVEY_ORIGINAL+sectionId);
+                saveBatch = surveyOriginalMapper.saveBatch(surveyOriginals, DictConstant.TableNamePrefix.SURVEY_ORIGINAL+sectionCode);
                 if(saveBatch<=0){
                     ExceptionBuilder.operateFailException("添加任务失败");
                 }

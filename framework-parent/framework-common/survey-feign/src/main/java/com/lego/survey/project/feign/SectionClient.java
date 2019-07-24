@@ -2,6 +2,7 @@ package com.lego.survey.project.feign;
 import com.lego.survey.project.model.entity.Master;
 import com.lego.survey.project.model.entity.Section;
 import com.lego.survey.project.model.entity.Surveyer;
+import com.lego.survey.project.model.vo.SectionAddVo;
 import com.lego.survey.project.model.vo.SectionVo;
 import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.consts.RespConsts;
@@ -42,20 +43,20 @@ public interface SectionClient {
 
     /**
      * 根据id查询标段信息
-     * @param id
+     * @param code
      * @return
      */
     @RequestMapping(value = "/query", method = RequestMethod.GET)
-    RespVO<SectionVo> query(@RequestParam("id") String id);
+    RespVO<SectionVo> query(@RequestParam("code") String code);
 
 
     /**
      * 删除标段信息
-     * @param id
+     * @param code
      * @return
      */
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    RespVO delete(@RequestParam("id") String id);
+    RespVO delete(@RequestParam("code") String code);
 
 
     /**
@@ -89,39 +90,45 @@ public interface SectionClient {
 
     /**
      * 根据工区编码获取标段信息
-     * @param workspaceId
+     * @param workspaceCode
      * @return
      */
     @RequestMapping(value = "/queryByWorkspaceCode", method = RequestMethod.GET)
-    RespVO<Section> queryByWorkspaceCode(@RequestParam("workspaceId") String workspaceId);
+    RespVO<Section> queryByWorkspaceCode(@RequestParam("workspaceCode") String workspaceCode);
 
 
     /**
      * 根据工区ID获取工区测量员
-     * @param workspaceId
+     * @param workspaceCode
      * @return
      */
-    @RequestMapping(value = "/findSurveyerByWorkspaceId/{workspaceId}", method = RequestMethod.GET)
-    List<Surveyer> findSurveyerByWorkspaceId(@PathVariable(value = "workspaceId") String workspaceId);
+    @RequestMapping(value = "/findSurveyerByWorkspaceCode/{workspaceCode}", method = RequestMethod.GET)
+    List<Surveyer> findSurveyerByWorkspaceCode(@PathVariable(value = "workspaceCode") String workspaceCode);
 
 
     /**
      * 查询标段测量员
-     * @param sectionId
+     * @param sectionCode
      * @return
      */
-    @RequestMapping(value = "/findSectionSurveyerBySectionId/{sectionId}", method = RequestMethod.GET)
-    List<Surveyer> findSectionSurveyerBySectionId(@PathVariable(value = "sectionId") String sectionId);
+    @RequestMapping(value = "/findSurveyerBySectionCode/{sectionCode}", method = RequestMethod.GET)
+    List<Surveyer> findSurveyerBySectionCode(@PathVariable(value = "sectionCode") String sectionCode);
 
 
     /**
      * 查询标段管理员
-     * @param sectionId
+     * @param sectionCode
      * @return
      */
-    @RequestMapping(value = "/findBySectionMasterBySectionId/{sectionId}", method = RequestMethod.GET)
-    List<Master> findBySectionMasterBySectionId(@PathVariable(value = "sectionId") String sectionId);
+    @RequestMapping(value = "/findBySectionMasterBySectionCode/{sectionCode}", method = RequestMethod.GET)
+    List<Master> findBySectionMasterBySectionCode(@PathVariable(value = "sectionCode") String sectionCode);
 
+    /**
+     * @param code
+     * @return
+     */
+    @RequestMapping(value = "/queryByCode/{code}", method = RequestMethod.GET)
+    SectionAddVo queryByCode(@PathVariable(value = "code") String code);
 }
 
 
@@ -139,12 +146,12 @@ class SectionClientFallback implements SectionClient{
     }
 
     @Override
-    public RespVO<SectionVo> query(String id) {
+    public RespVO<SectionVo> query(String code) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
     }
 
     @Override
-    public RespVO delete(String id) {
+    public RespVO delete(String code) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
     }
 
@@ -159,27 +166,32 @@ class SectionClientFallback implements SectionClient{
     }
 
     @Override
-    public RespVO<Section> queryByWorkspaceId(String workspaceId) {
+    public RespVO<Section> queryByWorkspaceId(String workspaceCode) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
     }
 
     @Override
-    public RespVO<Section> queryByWorkspaceCode(String workspaceId) {
+    public RespVO<Section> queryByWorkspaceCode(String workspaceCode) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
     }
 
     @Override
-    public List<Surveyer> findSurveyerByWorkspaceId(String workspaceId) {
+    public List<Surveyer> findSurveyerByWorkspaceCode(String workspaceCode) {
         return null;
     }
 
     @Override
-    public List<Surveyer> findSectionSurveyerBySectionId(String sectionId) {
+    public List<Surveyer> findSurveyerBySectionCode(String sectionCode) {
         return null;
     }
 
     @Override
-    public List<Master> findBySectionMasterBySectionId(String sectionId) {
+    public List<Master> findBySectionMasterBySectionCode(String sectionCode) {
+        return null;
+    }
+
+    @Override
+    public SectionAddVo queryByCode(String code) {
         return null;
     }
 }
