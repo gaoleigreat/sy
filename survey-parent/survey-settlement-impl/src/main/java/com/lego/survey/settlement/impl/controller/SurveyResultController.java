@@ -303,7 +303,7 @@ public class SurveyResultController {
                                                                   @RequestParam(required = false) String workspaceId,
                                                                   @RequestParam String pointCode) {
 
-        PagedResult<OverrunListVo> listVoPagedResult = iSurveyResultService.queryOverrunDetails(pageIndex, pageSize, sectionId, pointCode, workspaceId, type);
+        PagedResult<OverrunListVo> listVoPagedResult = iSurveyResultService.queryOverrunDetails(pageIndex, pageSize, sectionId, pointCode, type);
         return RespVOBuilder.success(listVoPagedResult);
     }
 
