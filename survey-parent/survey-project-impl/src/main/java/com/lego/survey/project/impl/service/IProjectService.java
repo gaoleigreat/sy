@@ -55,7 +55,7 @@ public interface IProjectService {
      * @param code
      * @return
      */
-    Project queryByCode(String code);
+    ProjectVo queryByCode(String code);
 
 
     /**
@@ -68,10 +68,10 @@ public interface IProjectService {
 
     /**
      * 删除工程项目
-     * @param projectId
+     * @param code
      * @return
      */
-    RespVO   deleteProject(String projectId);
+    RespVO   deleteProject(String code);
 
 
     /**

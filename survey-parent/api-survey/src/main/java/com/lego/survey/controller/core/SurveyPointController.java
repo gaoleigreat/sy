@@ -80,16 +80,16 @@ public class SurveyPointController {
 
     @ApiOperation(value = "删除测点", httpMethod = "DELETE", notes = "删除测点")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "测点id", dataType = "long", required = true, example = "1", paramType = "query",allowMultiple = true),
+            @ApiImplicitParam(name = "codes", value = "测点id", dataType = "String", required = true, example = "1", paramType = "query",allowMultiple = true),
             @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", required = true, paramType = "path"),
     })
     @RequestMapping(value = "/delete/{sectionId}", method = RequestMethod.DELETE)
     public RespVO delete(
             @PathVariable(value = "sectionId") String sectionId,
-            @RequestParam List<Long> ids,
+            @RequestParam List<String> codes,
             HttpServletRequest request
     ) {
-        return surveyPointClient.delete(sectionId, ids);
+        return surveyPointClient.delete(sectionId, codes);
     }
 
 }

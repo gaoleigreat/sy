@@ -42,11 +42,11 @@ public interface ProjectClient {
     /**
      * 查询工程项目
      *
-     * @param id
+     * @param code
      * @return
      */
     @RequestMapping(value = "/info", method = RequestMethod.GET)
-    RespVO<ProjectVo> query(@RequestParam("id") String id);
+    RespVO<ProjectVo> query(@RequestParam("code") String code);
 
     /**
      * 查询工程列表
@@ -61,11 +61,11 @@ public interface ProjectClient {
 
     /**
      * 删除工程
-     * @param projectId
+     * @param code
      * @return
      */
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    RespVO delete(@RequestParam("projectId") String projectId);
+    RespVO delete(@RequestParam("code") String code);
 
 }
 
@@ -83,7 +83,7 @@ class  ProjectClientFallback implements ProjectClient{
     }
 
     @Override
-    public RespVO<ProjectVo> query(String id) {
+    public RespVO<ProjectVo> query(String code) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
     }
 
@@ -93,7 +93,7 @@ class  ProjectClientFallback implements ProjectClient{
     }
 
     @Override
-    public RespVO delete(String projectId) {
+    public RespVO delete(String code) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
     }
 }

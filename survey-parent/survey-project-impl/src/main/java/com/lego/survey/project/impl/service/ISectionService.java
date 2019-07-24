@@ -38,10 +38,10 @@ public interface ISectionService {
     /**
      * 删除标段
      *
-     * @param id
+     * @param code
      * @return
      */
-    RespVO delete(String id);
+    RespVO delete(String code);
 
 
     /**
@@ -84,7 +84,7 @@ public interface ISectionService {
      * @param code
      * @return
      */
-    Section  queryByCode(String code);
+    SectionAddVo  queryByCode(String code);
 
 
     /**
@@ -102,20 +102,23 @@ public interface ISectionService {
     RespVO<RespDataVO<SectionVo>> queryByProjectId(String projectId);
 
 
+    RespVO<RespDataVO<SectionVo>> queryByProjectCode(String projectCode);
+
+
     /**
      * 查询标段列表
      * @param pageIndex
      * @param pageSize
      * @return
      */
-    PagedResult<SectionVo> list(int pageIndex, int pageSize, String projectId);
+    PagedResult<SectionVo> list(int pageIndex, int pageSize, String projectCode);
 
     /**
      * 查询标段信息
-     * @param projectIds
+     * @param projectCodes
      * @return
      */
-    List<Section> findAll(List<String> projectIds);
+    List<Section> findAll(List<String> projectCodes);
 
 
     /**
@@ -142,7 +145,9 @@ public interface ISectionService {
     List<Surveyer>   findSurveyerByWorkspaceId(String workspaceId);
 
 
+    List<Master> findBySectionMasterBySectionCode(String sectionCode);
 
+    List<Surveyer> findSurveyerBySectionCode(String sectionCode);
 
-
+    List<Surveyer> findSurveyerByWorkspaceCode(String workspaceCode);
 }

@@ -34,11 +34,11 @@ public interface ISurveyPointService {
 
     /**
      * 删除测点信息
-     * @param ids
+     * @param codes
      * @param tableName
      * @return
      */
-    RespVO   delete(List<Long> ids, String tableName);
+    RespVO   delete(List<String> codes, String tableName);
 
 
     /**

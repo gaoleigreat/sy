@@ -39,16 +39,16 @@ public class SectionListener {
         if(section==null){
             return;
         }
-        String sectionId = section.getId();
-        if(StringUtils.isBlank(sectionId)){
+        String sectionCode = section.getCode();
+        if(StringUtils.isBlank(sectionCode)){
             return;
         }
         List<String> service = section.getService();
         if(service.contains(DictConstant.Scenes.CJFW)){
-            createCJFWTable(sectionId);
+            createCJFWTable(sectionCode);
         }
         if(service.contains(DictConstant.Scenes.GPFW)){
-            createGPFWTable(sectionId);
+            createGPFWTable(sectionCode);
         }
 
     }
@@ -64,23 +64,23 @@ public class SectionListener {
 
     /**
      * 创建沉降服务对应的表
-     * @param sectionId the section id
+     * @param sectionCode the section code
      */
-    private void createCJFWTable(String sectionId) {
+    private void createCJFWTable(String sectionCode) {
         // 创建测量点表
-        String surveyPointTableName = DictConstant.TableNamePrefix.SURVEY_POINT + sectionId;
+        String surveyPointTableName = DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode;
         tableCreateMapper.createSurveyPointTable(surveyPointTableName);
         log.info("create table {}  finished",surveyPointTableName);
         // 创建 成果数据表
-        String surveyResultTableName= DictConstant.TableNamePrefix.SURVEY_RESULT +sectionId;
+        String surveyResultTableName= DictConstant.TableNamePrefix.SURVEY_RESULT +sectionCode;
         tableCreateMapper.createSurveyResultTable(surveyResultTableName);
         log.info("create table {} finished",surveyResultTableName);
         //创建 原始数据表
-        String surveyOriginalTableName= DictConstant.TableNamePrefix.SURVEY_ORIGINAL +sectionId;
+        String surveyOriginalTableName= DictConstant.TableNamePrefix.SURVEY_ORIGINAL +sectionCode;
         tableCreateMapper.createSurveyOriginalTable(surveyOriginalTableName);
         log.info("create table {} finished",surveyOriginalTableName);
         // 创建  任务表
-        String surveyTaskTableName= DictConstant.TableNamePrefix.SURVEY_TASK +sectionId;
+        String surveyTaskTableName= DictConstant.TableNamePrefix.SURVEY_TASK +sectionCode;
         tableCreateMapper.createSurveyTaskTable(surveyTaskTableName);
         log.info("create table {} finished",surveyTaskTableName);
     }

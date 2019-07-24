@@ -52,7 +52,7 @@ public interface SurveyOriginalMapper extends Mapper<SurveyOriginal> {
      * 批量删除数据
      * @return
      */
-    Integer deleteBatch(@Param("ids") List<Long> ids, @Param("tableName") String tableName);
+    Integer deleteBatch(@Param("codes") List<String> codes, @Param("tableName") String tableName);
 
 
     /**

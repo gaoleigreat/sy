@@ -132,8 +132,16 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public Project queryByCode(String code) {
-        return projectRepository.findProjectByCodeAndValid(code, 0);
+    public ProjectVo queryByCode(String code) {
+        Project project = projectRepository.findProjectByCodeAndValid(code, 0);
+        return ProjectVo.builder()
+                .code(project.getCode())
+                .desc(project.getDesc())
+                .name(project.getName())
+                .id(project.getId())
+                .group(project.getGroup())
+                .address(project.getAddress())
+                .build();
     }
 
     @Override
@@ -151,12 +159,11 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public RespVO deleteProject(String projectId) {
-        Project project = projectRepository.findProjectByIdAndValid(projectId, 0);
+    public RespVO deleteProject(String code) {
+        Project project = projectRepository.findProjectByCodeAndValid(code, 0);
         project.setValid(1);
         projectRepository.save(project);
         //TODO 更新关联表数据状态
-
         return RespVOBuilder.success();
     }
 

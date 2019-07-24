@@ -23,25 +23,25 @@ public interface SurveyOriginalClient {
     /**
      * 新增原始数据
      * @param surveyOriginalVo
-     * @param sectionId
+     * @param sectionCode
      * @return
      */
-    @RequestMapping(value = "/create/{sectionId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/create/{sectionCode}", method = RequestMethod.POST)
     RespVO create(@RequestBody SurveyOriginalVo surveyOriginalVo,
-                  @PathVariable(value = "sectionId") String sectionId
+                  @PathVariable(value = "sectionCode") String sectionCode
     );
 
 
     /**
      * 查看原始数据
-     * @param sectionId
+     * @param sectionCode
      * @param pageIndex
      * @param pageSize
      * @return
      */
-    @RequestMapping(value = "/list/{sectionId}/{pageIndex}", method = RequestMethod.GET)
+    @RequestMapping(value = "/list/{sectionCode}/{pageIndex}", method = RequestMethod.GET)
     RespVO<RespDataVO<SurveyOriginalVo>> query(
-            @PathVariable(value = "sectionId") String sectionId,
+            @PathVariable(value = "sectionCode") String sectionCode,
             @PathVariable(value = "pageIndex") int pageIndex,
             @RequestParam("pageSize") int pageSize
     );
@@ -50,24 +50,24 @@ public interface SurveyOriginalClient {
     /**
      * 修改原始数据
      * @param surveyOriginalVo
-     * @param sectionId
+     * @param sectionCode
      * @return
      */
-    @RequestMapping(value = "/modify/{sectionId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/modify/{sectionCode}", method = RequestMethod.PUT)
     RespVO modify(@RequestBody SurveyOriginalVo surveyOriginalVo,
-                  @PathVariable(value = "sectionId") String sectionId
+                  @PathVariable(value = "sectionCode") String sectionCode
     );
 
 
     /**
      * 删除原始数据
-     * @param sectionId
+     * @param sectionCode
      * @param ids
      * @return
      */
-    @RequestMapping(value = "/delete/{sectionId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete/{sectionCode}", method = RequestMethod.DELETE)
     RespVO delete(
-            @PathVariable(value = "sectionId") String sectionId,
+            @PathVariable(value = "sectionCode") String sectionCode,
             @RequestParam("ids") List<Long> ids
     );
 
@@ -75,25 +75,25 @@ public interface SurveyOriginalClient {
     /**
      * 批量添加原始数据
      * @param surveyOriginalVos
-     * @param sectionId
+     * @param sectionCode
      * @return
      */
-    @RequestMapping(value = "/createBatch/{sectionId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/createBatch/{sectionCode}", method = RequestMethod.POST)
     RespVO createBatch(@RequestBody List<SurveyOriginalVo> surveyOriginalVos,
-                       @PathVariable(value = "sectionId") String sectionId);
+                       @PathVariable(value = "sectionCode") String sectionCode);
 
 
 
 
     /**
      * 查看熱無原始数据
-     * @param sectionId
+     * @param sectionCode
      * @param taskId
      * @return
      */
-    @RequestMapping(value = "/list/{sectionId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/list/{sectionCode}", method = RequestMethod.GET)
     RespVO<RespDataVO<SurveyOriginalVo>> queryByTaskId(
-            @PathVariable(value = "sectionId") String sectionId,
+            @PathVariable(value = "sectionCode") String sectionCode,
             @RequestParam("taskId") Long taskId
     );
 
@@ -105,32 +105,32 @@ public interface SurveyOriginalClient {
 class SurveyOriginalClientFallback implements SurveyOriginalClient{
 
     @Override
-    public RespVO create(SurveyOriginalVo surveyOriginalVo, String sectionId) {
+    public RespVO create(SurveyOriginalVo surveyOriginalVo, String sectionCode) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 
     @Override
-    public RespVO<RespDataVO<SurveyOriginalVo>> query(String sectionId, int pageIndex, int pageSize) {
+    public RespVO<RespDataVO<SurveyOriginalVo>> query(String sectionCode, int pageIndex, int pageSize) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 
     @Override
-    public RespVO modify(SurveyOriginalVo surveyOriginalVo, String sectionId) {
+    public RespVO modify(SurveyOriginalVo surveyOriginalVo, String sectionCode) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 
     @Override
-    public RespVO delete(String sectionId, List<Long> ids) {
+    public RespVO delete(String sectionCode, List<Long> ids) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 
     @Override
-    public RespVO createBatch(List<SurveyOriginalVo> surveyOriginalVos, String sectionId) {
+    public RespVO createBatch(List<SurveyOriginalVo> surveyOriginalVos, String sectionCode) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 
     @Override
-    public RespVO<RespDataVO<SurveyOriginalVo>> queryByTaskId(String sectionId, Long taskId) {
+    public RespVO<RespDataVO<SurveyOriginalVo>> queryByTaskId(String sectionCode, Long taskId) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 }

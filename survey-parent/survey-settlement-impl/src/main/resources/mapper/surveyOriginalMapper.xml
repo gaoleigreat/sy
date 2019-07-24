@@ -87,9 +87,9 @@
 
     <delete id="deleteBatch" parameterType="java.util.List">
         delete from ${tableName}
-        where id in
-        <foreach collection="ids" item="id" open="(" separator="," close=")">
-            #{id}
+        where code in
+        <foreach collection="codes" item="code" open="(" separator="," close=")">
+            #{code}
         </foreach>
     </delete>
 

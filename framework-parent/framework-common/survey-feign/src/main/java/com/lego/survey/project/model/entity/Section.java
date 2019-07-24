@@ -1,18 +1,21 @@
 package com.lego.survey.project.model.entity;
 
+import com.lego.survey.project.model.vo.SectionAddVo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
  * @author yanglf
- * @description  项目标段
+ * @description 项目标段
  * @since 2018/12/21
  **/
 @Data
@@ -89,6 +92,48 @@ public class Section {
     private String address;
 
 
+    public SectionAddVo loadAddVo() {
+        SectionAddVo addVo = SectionAddVo.builder().address(this.address)
+                .code(this.code)
+                .desc(this.desc)
+                .id(this.id)
+                .name(this.name)
+                .property(this.property)
+                .services(this.service).build();
+        OwnerProject ownerProject = this.ownerProject;
+        if (ownerProject != null) {
+            addVo.setProjectCode(ownerProject.getCode());
+        }
+        UpperGroup ownerGroup = this.ownerGroup;
+        if (ownerGroup != null) {
+            addVo.setGroupId(ownerGroup.getId());
+        }
+        return addVo;
+    }
 
-    
+
+    public  List<Workspace> loadWorkspace(){
+        List<Workspace> workspaces=new ArrayList<>();
+        List<OwnWorkspace> workSpaces = this.workSpace;
+        if (!CollectionUtils.isEmpty(workSpaces)) {
+            for (OwnWorkspace workSpace : workSpaces) {
+                Integer valid = workSpace.getValid();
+                String wId = workSpace.getId();
+                if (valid != 0 || !wId.equals(id)) {
+                    continue;
+                }
+                Workspace workspace = new Workspace();
+                workspace.setCode(workSpace.getCode());
+                workspace.setId(workSpace.getId());
+                workspace.setDesc(workSpace.getDesc());
+                workspace.setName(workSpace.getName());
+                workspace.setSurveyer(workSpace.getSurveyer());
+                workspace.setType(workSpace.getType());
+                workspaces.add(workspace);
+            }
+        }
+        return workspaces;
+    }
+
+
 }

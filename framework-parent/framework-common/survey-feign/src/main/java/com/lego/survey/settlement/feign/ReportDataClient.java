@@ -33,7 +33,7 @@ public interface ReportDataClient {
      * 查询沉降测量报告中需要插入的数据
      */
     @RequestMapping(value = "/query/settlementData", method = RequestMethod.GET)
-    RespVO<RespDataVO<SurveyReportDataVo>> queryData(@RequestParam( value = "sectionId") String sectionId,
+    RespVO<RespDataVO<SurveyReportDataVo>> queryData(@RequestParam( value = "sectionCode") String sectionCode,
                                                      @RequestParam(value = "taskId") Long taskId);
 }
 

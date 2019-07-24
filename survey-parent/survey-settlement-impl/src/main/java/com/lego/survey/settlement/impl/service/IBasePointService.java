@@ -32,10 +32,10 @@ public interface IBasePointService {
 
     /**
      * 删除基准点
-     * @param ids
+     * @param codes
      * @return
      */
-    RespVO delete(List<Long> ids);
+    RespVO delete(List<String> codes);
 
     /**
      * 修改基准点信息

@@ -82,14 +82,15 @@ public class SurveyTaskController {
     @ApiImplicitParams({
 
     })
-    @RequestMapping(value = "/modify/{sectionId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/modify/{sectionCode}", method = RequestMethod.PUT)
     public RespVO modify(@Validated @RequestBody SurveyTaskVo surveyTaskVo,
-                         @PathVariable(value = "sectionId") String sectionId,
+                         @PathVariable(value = "sectionCode") String sectionCode,
                          HttpServletRequest request) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         //TODO 校验权限
-        RespVO respVO = iSurveyTaskService.modify(surveyTaskVo.getSurveyTask(), DictConstant.TableNamePrefix.SURVEY_TASK + sectionId);
+        RespVO respVO = iSurveyTaskService.modify(surveyTaskVo.getSurveyTask(), DictConstant.TableNamePrefix.SURVEY_TASK + sectionCode);
         logSender.sendLogEvent(HttpUtils.getClientIp(request),userId,"修改任务:["+surveyTaskVo.getId()+"]");
         return respVO;
     }
@@ -99,16 +100,16 @@ public class SurveyTaskController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", required = true, example = "1", paramType = "path"),
             @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int", defaultValue = "10", example = "10", paramType = "query"),
-            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String",required = true, paramType = "path"),
+            @ApiImplicitParam(name = "sectionCode", value = "标段CODE", dataType = "String",required = true, paramType = "path"),
     })
     @RequestMapping(value = "/list/{sectionId}/{pageIndex}", method = RequestMethod.GET)
     public RespVO<PagedResult<SurveyTaskVo>> query(
-            @PathVariable(value = "sectionId") String sectionId,
+            @PathVariable(value = "sectionCode") String sectionCode,
             @PathVariable(value = "pageIndex") int pageIndex,
             @RequestParam(required = false, defaultValue = "10") int pageSize
     ) {
         // 验证用户正确性
-        PagedResult<SurveyTaskVo> surveyTasks = iSurveyTaskService.list(pageIndex, pageSize, DictConstant.TableNamePrefix.SURVEY_TASK + sectionId);
+        PagedResult<SurveyTaskVo> surveyTasks = iSurveyTaskService.list(pageIndex, pageSize, DictConstant.TableNamePrefix.SURVEY_TASK + sectionCode);
         return RespVOBuilder.success(surveyTasks);
     }
 
@@ -116,18 +117,18 @@ public class SurveyTaskController {
     @ApiOperation(value = "删除任务", httpMethod = "DELETE", notes = "删除任务")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "ids", value = "任务id", required = true,dataType = "long", paramType = "query"),
-            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String",required = true, paramType = "path"),
+            @ApiImplicitParam(name = "sectionCode", value = "标段CODE", dataType = "String",required = true, paramType = "path"),
     })
-    @RequestMapping(value = "/delete/{sectionId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete/{sectionCode}", method = RequestMethod.DELETE)
     public RespVO delete(
-            @PathVariable(value = "sectionId") String sectionId,
+            @PathVariable(value = "sectionCode") String sectionCode,
             @RequestParam List<Long> ids,
             HttpServletRequest request
     ) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         // 验证用户正确性
-        RespVO delete = iSurveyTaskService.delete(ids, DictConstant.TableNamePrefix.SURVEY_TASK + sectionId);
+        RespVO delete = iSurveyTaskService.delete(ids, DictConstant.TableNamePrefix.SURVEY_TASK + sectionCode);
        logSender.sendLogEvent(HttpUtils.getClientIp(request),userId,"删除任务:["+ JSONObject.toJSONString(ids) +"]");
         return delete;
     }

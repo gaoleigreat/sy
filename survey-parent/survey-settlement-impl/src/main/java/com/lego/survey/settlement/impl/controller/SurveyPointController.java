@@ -79,20 +79,21 @@ public class SurveyPointController {
     @ApiImplicitParams({
 
     })
-    @RequestMapping(value = "/create/{sectionId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/create/{sectionCode}", method = RequestMethod.POST)
     public RespVO create(@Validated @RequestBody SurveyPointVo surveyPointVo,
-                         @PathVariable(value = "sectionId") String sectionId,
+                         @PathVariable(value = "sectionCode") String sectionCode,
                          HttpServletRequest request) {
+        // TODO ID -> CODE
         String code = surveyPointVo.getCode();
         String name = surveyPointVo.getName();
-        SurveyPointVo surveyPoint = iSurveyPointService.querySurveyPointByNameOrCode(name, code, DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
+        SurveyPointVo surveyPoint = iSurveyPointService.querySurveyPointByNameOrCode(name, code, DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
         if (surveyPoint != null) {
             return RespVOBuilder.failure("测点信息已经存在");
         }
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         surveyPointVo.setId(SnowflakeIdUtils.createId());
-        RespVO respVO = iSurveyPointService.create(surveyPointVo, DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
+        RespVO respVO = iSurveyPointService.create(surveyPointVo, DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
         logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "添加测点:[" + surveyPointVo.getId() + "]");
         return respVO;
     }
@@ -102,14 +103,15 @@ public class SurveyPointController {
     @ApiImplicitParams({
 
     })
-    @RequestMapping(value = "/createBatch/{sectionId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/createBatch/{sectionCode}", method = RequestMethod.POST)
     public RespVO createBatch(@Validated @RequestBody List<SurveyPointVo> surveyPointVos,
-                              @PathVariable(value = "sectionId") String sectionId,
+                              @PathVariable(value = "sectionCode") String sectionCode,
                               HttpServletRequest request) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         //TODO 校验权限
-        RespVO respVO = iSurveyPointService.createBatch(surveyPointVos, DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
+        RespVO respVO = iSurveyPointService.createBatch(surveyPointVos, DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
         logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "批量添加测点");
         return respVO;
     }
@@ -119,14 +121,15 @@ public class SurveyPointController {
     @ApiImplicitParams({
 
     })
-    @RequestMapping(value = "/modify/{sectionId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/modify/{sectionCode}", method = RequestMethod.PUT)
     public RespVO modify(@Validated @RequestBody SurveyPointVo surveyPointVo,
-                         @PathVariable(value = "sectionId") String sectionId,
+                         @PathVariable(value = "sectionCode") String sectionCode,
                          HttpServletRequest request) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
-        String userId = authClient.getAuthVo(headerVo).getUserId();
+        String userId = headerVo.getUserId();
         //TODO 校验权限
-        RespVO respVO = iSurveyPointService.modify(surveyPointVo.getSurveyPoint(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
+        RespVO respVO = iSurveyPointService.modify(surveyPointVo.getSurveyPoint(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
         logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "修改测点:[" + surveyPointVo.getId() + "]");
         return respVO;
     }
@@ -135,23 +138,24 @@ public class SurveyPointController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", defaultValue = "1", example = "1", paramType = "path"),
             @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int", defaultValue = "10", example = "10", paramType = "query"),
-            @ApiImplicitParam(name = "workspaceId", value = "工区ID", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "workspaceCode", value = "工区code", dataType = "String", required = true, paramType = "query"),
             @ApiImplicitParam(name = "startTimestamp", value = "开始时间", dataType = "long", example = "1", paramType = "query"),
             @ApiImplicitParam(name = "endTimestamp", value = "结束时间", dataType = "long", example = "1", paramType = "query"),
 
     })
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public RespVO<RespDataVO<SurveyPointVo>> query(
-            @RequestParam(value = "workspaceId") String workspaceId,
+            @RequestParam(value = "workspaceCode") String workspaceCode,
             @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex,
             @RequestParam(required = false, defaultValue = "10") int pageSize,
             @RequestParam(required = false) Long startTimestamp,
             @RequestParam(required = false) Long endTimestamp,
             HttpServletRequest request
     ) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String deviceType = headerVo.getDeviceType();
-        RespVO<Section> sectionRespVO = sectionClient.queryByWorkspaceId(workspaceId);
+        RespVO<Section> sectionRespVO = sectionClient.queryByWorkspaceCode(workspaceCode);
         if (sectionRespVO.getRetCode() != RespConsts.SUCCESS_RESULT_CODE) {
             return RespVOBuilder.success(new ArrayList<>());
         }
@@ -159,7 +163,7 @@ public class SurveyPointController {
         if (section == null) {
             return RespVOBuilder.success(new ArrayList<>());
         }
-        String sectionId = section.getId();
+        String sectionCode = section.getCode();
         List<OwnWorkspace> workSpaces = section.getWorkSpace();
         if (workSpaces == null) {
             return RespVOBuilder.success(new ArrayList<>());
@@ -171,9 +175,8 @@ public class SurveyPointController {
             endDate = new Date(endTimestamp);
         }
         for (OwnWorkspace workSpace : workSpaces) {
-            if (workSpace.getId().equals(workspaceId)) {
-                String workspaceCode = workSpace.getCode();
-                List<SurveyPointVo> pointList = iSurveyPointService.list(pageIndex, pageSize, deviceType,workspaceCode, DictConstant.TableNamePrefix.SURVEY_POINT + sectionId, startDate, endDate);
+            if (workSpace.getCode().equals(workspaceCode)) {
+                List<SurveyPointVo> pointList = iSurveyPointService.list(pageIndex, pageSize, deviceType,workspaceCode, DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode, startDate, endDate);
                 return RespVOBuilder.success(pointList);
             }
         }
@@ -183,19 +186,20 @@ public class SurveyPointController {
 
     @ApiOperation(value = "删除测点", httpMethod = "DELETE", notes = "删除测点")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "测点id", dataType = "long", required = true, example = "1", paramType = "query"),
-            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", required = true, paramType = "path"),
+            @ApiImplicitParam(name = "codes", value = "测点code", dataType = "String", required = true, example = "1", paramType = "query"),
+            @ApiImplicitParam(name = "sectionCode", value = "标段code", dataType = "String", required = true, paramType = "path"),
     })
-    @RequestMapping(value = "/delete/{sectionId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete/{sectionCode}", method = RequestMethod.DELETE)
     public RespVO delete(
-            @PathVariable(value = "sectionId") String sectionId,
-            @RequestParam List<Long> ids,
+            @PathVariable(value = "sectionCode") String sectionCode,
+            @RequestParam List<String> codes,
             HttpServletRequest request
     ) {
+        // TODO ID ->CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
-        RespVO delete = iSurveyPointService.delete(ids, DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
-        logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "删除测点:[" + JSONObject.toJSONString(ids) + "]");
+        RespVO delete = iSurveyPointService.delete(codes, DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
+        logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "删除测点:[" + JSONObject.toJSONString(codes) + "]");
         return delete;
     }
 
@@ -208,12 +212,13 @@ public class SurveyPointController {
     })
     @RequestMapping(value = "/uploadBatch",method = RequestMethod.POST)
     public RespVO uploadPointResultExcel(@RequestPart(value = "fileName") String fileName,
-                                         @RequestParam() String sectionId){
+                                         @RequestParam() String sectionCode){
+        // TODO ID -> CODE
         if(StringUtils.isEmpty(fileName)){
             return RespVOBuilder.failure("文件名不能为空");
         }
         String filePath = FpFileUtil.getFilePath(fpFileRootPath,fileName);
-        surveyPointReadListener.setTableName(sectionId);
+        surveyPointReadListener.setTableName(sectionCode);
         excelService.readExcel(filePath,surveyPointReadListener, SurveyPointVo.class,1);
         return RespVOBuilder.success();
     }

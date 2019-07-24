@@ -26,36 +26,36 @@ public interface SurveyPointClient {
      * create survey point
      *
      * @param surveyPointVo
-     * @param sectionId
+     * @param sectionCode
      * @return
      */
-    @RequestMapping(value = "/create/{sectionId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/create/{sectionCode}", method = RequestMethod.POST)
     RespVO create(@Validated @RequestBody SurveyPointVo surveyPointVo,
-                  @PathVariable(value = "sectionId") String sectionId);
+                  @PathVariable(value = "sectionCode") String sectionCode);
 
 
     /**批量新增测点
      * @param surveyPointVos
-     * @param sectionId
+     * @param sectionCode
      * @return
      */
-    @RequestMapping(value = "/createBatch/{sectionId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/createBatch/{sectionCode}", method = RequestMethod.POST)
     RespVO createBatch(@RequestBody List<SurveyPointVo> surveyPointVos,
-                       @PathVariable(value = "sectionId") String sectionId
+                       @PathVariable(value = "sectionCode") String sectionCode
     );
 
 
     /**
      * list survey point
      *
-     * @param workspaceId
+     * @param workspaceCode
      * @param pageIndex
      * @param pageSize
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     RespVO<RespDataVO<SurveyPointVo>> list(
-            @RequestParam(value = "workspaceId") String workspaceId,
+            @RequestParam(value = "workspaceCode") String workspaceCode,
             @RequestParam(value = "pageIndex", required = false, defaultValue = "1") int pageIndex,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
             @RequestParam(required = false, value = "startTimestamp") Long startTimestamp,
@@ -67,26 +67,26 @@ public interface SurveyPointClient {
      * 修改测点信息
      *
      * @param surveyPointVo
-     * @param sectionId
+     * @param sectionCode
      * @return
      */
-    @RequestMapping(value = "/modify/{sectionId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/modify/{sectionCode}", method = RequestMethod.PUT)
     RespVO modify(@RequestBody SurveyPointVo surveyPointVo,
-                  @PathVariable(value = "sectionId") String sectionId
+                  @PathVariable(value = "sectionCode") String sectionCode
     );
 
 
     /**
      * 删除测点信息
      *
-     * @param sectionId
-     * @param ids
+     * @param sectionCode
+     * @param codes
      * @return
      */
-    @RequestMapping(value = "/delete/{sectionId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete/{sectionCode}", method = RequestMethod.DELETE)
     RespVO delete(
-            @PathVariable(value = "sectionId") String sectionId,
-            @RequestParam("ids") List<Long> ids
+            @PathVariable(value = "sectionCode") String sectionCode,
+            @RequestParam("codes") List<String> codes
     );
 
 }
@@ -95,27 +95,27 @@ public interface SurveyPointClient {
 class SurveyPointClientFallback implements SurveyPointClient{
 
     @Override
-    public RespVO create(SurveyPointVo surveyPointVo, String sectionId) {
+    public RespVO create(SurveyPointVo surveyPointVo, String sectionCode) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 
     @Override
-    public RespVO createBatch(List<SurveyPointVo> surveyPointVos, String sectionId) {
+    public RespVO createBatch(List<SurveyPointVo> surveyPointVos, String sectionCode) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 
     @Override
-    public RespVO<RespDataVO<SurveyPointVo>> list(String workspaceId, int pageIndex, int pageSize, Long startTimestamp, Long endTimestamp) {
+    public RespVO<RespDataVO<SurveyPointVo>> list(String workspaceCode, int pageIndex, int pageSize, Long startTimestamp, Long endTimestamp) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 
     @Override
-    public RespVO modify(SurveyPointVo surveyPointVo, String sectionId) {
+    public RespVO modify(SurveyPointVo surveyPointVo, String sectionCode) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 
     @Override
-    public RespVO delete(String sectionId, List<Long> ids) {
+    public RespVO delete(String sectionCode, List<String> codes) {
         return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
     }
 }

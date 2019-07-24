@@ -24,10 +24,10 @@ public interface ISurveyOriginalService {
     /**
      * 通过taskid 和tableName查询测点列表
      * @param taskId
-     * @param tableName
+     * @param sectionCode
      * @return  query result
      */
-    List<SurveyOriginalVo>  list(Long taskId, String tableName);
+    List<SurveyOriginalVo>  list(Long taskId, String sectionCode);
 
 
     /**
@@ -49,11 +49,11 @@ public interface ISurveyOriginalService {
 
     /**
      * 删除原始数据
-     * @param ids
+     * @param codes
      * @param tableName
      * @return
      */
-    RespVO delete(List<Long> ids, String tableName);
+    RespVO delete(List<String> codes, String tableName);
 
 
     /**

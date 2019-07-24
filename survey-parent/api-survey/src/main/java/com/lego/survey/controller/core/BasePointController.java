@@ -70,11 +70,11 @@ public class BasePointController {
 
     @ApiOperation(value = "删除基准点列表", httpMethod = "DELETE", notes = "删除基准点列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "删除的基准点id集合", dataType = "long",example = "1",required = true, paramType = "query",allowMultiple = true),
+            @ApiImplicitParam(name = "codes", value = "删除的基准点id集合", dataType = "String",example = "1",required = true, paramType = "query",allowMultiple = true),
     })
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public RespVO delete(HttpServletRequest request,
-                         @RequestParam List<Long> ids) {
-        return basePointClient.delete(ids);
+                         @RequestParam List<String> codes) {
+        return basePointClient.delete(codes);
     }
 }

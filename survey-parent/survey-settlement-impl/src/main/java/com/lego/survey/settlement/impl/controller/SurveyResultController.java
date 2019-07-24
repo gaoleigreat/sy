@@ -90,23 +90,23 @@ public class SurveyResultController {
     private ISurveyPointService surveyPointService;
 
 
-
     @ApiOperation(value = "添加成果数据", notes = "添加成果数据", httpMethod = "POST")
     @ApiImplicitParams({
 
     })
-    @RequestMapping(value = "/create/{sectionId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/create/{sectionCode}", method = RequestMethod.POST)
     public RespVO create(@Validated @RequestBody SurveyResultVo surveyResultVo,
-                         @PathVariable(value = "sectionId") String sectionId,
+                         @PathVariable(value = "sectionCode") String sectionCode,
                          HttpServletRequest request) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
-        String userId = authClient.getAuthVo(headerVo).getUserId();
+        String userId = headerVo.getUserId();
         if (surveyResultVo.getId() == null) {
             surveyResultVo.setId(SnowflakeIdUtils.createId());
         }
-        RespVO respVO = iSurveyResultService.create(surveyResultVo.getSurveyResult(), DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId);
+        RespVO respVO = iSurveyResultService.create(surveyResultVo.getSurveyResult(), DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode);
         logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "新增成果数据:[" + surveyResultVo.getSurveyResult().getId() + "]");
-        surveyPointResultSource.uploadResult().send(MessageBuilder.withPayload(surveyResultVo.getSurveyResult()).setHeader("type", 1).setHeader("sectionId", sectionId).build());
+        surveyPointResultSource.uploadResult().send(MessageBuilder.withPayload(surveyResultVo.getSurveyResult()).setHeader("type", 1).setHeader("sectionCode", sectionCode).build());
         return respVO;
     }
 
@@ -118,7 +118,7 @@ public class SurveyResultController {
     @RequestMapping(value = "/uploadBatch", method = RequestMethod.POST)
     public RespVO uploadBatch(@Validated @RequestBody List<SurveyResult> surveyResults,
                               HttpServletRequest request) {
-        if(!CollectionUtils.isEmpty(surveyResults)){
+        if (!CollectionUtils.isEmpty(surveyResults)) {
             surveyResults.forEach(this::setDefaultValue);
         }
         return saveBatch(surveyResults, request);
@@ -159,7 +159,7 @@ public class SurveyResultController {
 
     private RespVO saveBatch(List<SurveyResult> surveyResults, HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
-        String userId = authClient.getAuthVo(headerVo).getUserId();
+        String userId = headerVo.getUserId();
         //TODO 校验权限
         if (surveyResults == null || surveyResults.size() <= 0) {
             return RespVOBuilder.failure("上传失败");
@@ -182,14 +182,15 @@ public class SurveyResultController {
     @ApiImplicitParams({
 
     })
-    @RequestMapping(value = "/modify/{sectionId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/modify/{sectionCode}", method = RequestMethod.PUT)
     public RespVO modify(@Validated @RequestBody SurveyResultVo surveyResultVo,
-                         @PathVariable(value = "sectionId") String sectionId,
+                         @PathVariable(value = "sectionCode") String sectionCode,
                          HttpServletRequest request) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
-        String userId = authClient.getAuthVo(headerVo).getUserId();
+        String userId = headerVo.getUserId();
         //TODO 校验权限
-        RespVO respVO = iSurveyResultService.modify(surveyResultVo.getSurveyResult(), DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId);
+        RespVO respVO = iSurveyResultService.modify(surveyResultVo.getSurveyResult(), DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode);
         logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "修改成果数据:[" + surveyResultVo.getId() + "]");
         return respVO;
     }
@@ -199,7 +200,7 @@ public class SurveyResultController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", defaultValue = "1", example = "1", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int", defaultValue = "10", example = "10", paramType = "query"),
-            @ApiImplicitParam(name = "workspaceId", value = "工区ID", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "workspaceCode", value = "工区code", dataType = "String", required = true, paramType = "query"),
             @ApiImplicitParam(name = "startTimestamp", value = "开始时间戳", dataType = "Long", required = true, paramType = "query"),
             @ApiImplicitParam(name = "endTimestamp", value = "结束时间戳", dataType = "Long", required = true, paramType = "query"),
 
@@ -208,14 +209,14 @@ public class SurveyResultController {
     public RespVO list(
             @RequestParam(required = false, defaultValue = "1") int pageIndex,
             @RequestParam(required = false, defaultValue = "10") int pageSize,
-            @RequestParam(value = "workspaceId") String workspaceId,
+            @RequestParam(value = "workspaceCode") String workspaceCode,
             Long startTimestamp,
             Long endTimestamp,
             HttpServletRequest request
     ) {
-        // 验证用户正确性
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
-        RespVO<Section> sectionRespVO = sectionClient.queryByWorkspaceId(workspaceId);
+        RespVO<Section> sectionRespVO = sectionClient.queryByWorkspaceId(workspaceCode);
         if (sectionRespVO.getRetCode() != RespConsts.SUCCESS_RESULT_CODE) {
             return RespVOBuilder.success(new ArrayList<>());
         }
@@ -225,8 +226,7 @@ public class SurveyResultController {
         }
         List<OwnWorkspace> workSpaces = info.getWorkSpace();
         for (OwnWorkspace workSpace : workSpaces) {
-            if (workSpace.getId().equals(workspaceId)) {
-                String code = workSpace.getCode();
+            if (workSpace.getCode().equals(workspaceCode)) {
                 String deviceType = headerVo.getDeviceType();
                 Date startDate = null;
                 Date endDate = null;
@@ -234,7 +234,7 @@ public class SurveyResultController {
                     startDate = new Date(startTimestamp);
                     endDate = new Date(endTimestamp);
                 }
-                 return iSurveyResultService.list(pageIndex, pageSize, code, startDate, endDate, deviceType, DictConstant.TableNamePrefix.SURVEY_RESULT + info.getId());
+                return iSurveyResultService.list(pageIndex, pageSize, workspaceCode, startDate, endDate, deviceType, DictConstant.TableNamePrefix.SURVEY_RESULT + info.getId());
             }
 
         }
@@ -245,42 +245,42 @@ public class SurveyResultController {
 
     @ApiOperation(value = "删除成果数据", httpMethod = "DELETE", notes = "删除成果数据")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "成果数据id", dataType = "long", required = true, paramType = "path"),
-            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", required = true, paramType = "path"),
+            @ApiImplicitParam(name = "ids", value = "成果数据id", dataType = "Long", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "sectionCode", value = "标段code", dataType = "String", required = true, paramType = "path"),
     })
-    @RequestMapping(value = "/delete/{sectionId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete/{sectionCode}", method = RequestMethod.DELETE)
     public RespVO delete(
-            @PathVariable(value = "sectionId") String sectionId,
+            @PathVariable(value = "sectionCode") String sectionCode,
             @RequestParam List<Long> ids,
             HttpServletRequest request
     ) {
+        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         // 验证用户正确性
-        RespVO delete = iSurveyResultService.delete(ids, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId);
+        RespVO delete = iSurveyResultService.delete(ids, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode);
         logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "删除成果数据:[" + JSONObject.toJSONString(ids) + "]");
         return delete;
     }
-
 
 
     @ApiOperation(value = "成果数据列表", httpMethod = "GET", notes = "成果数据列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", required = true, example = "1", paramType = "path"),
             @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int", defaultValue = "10", example = "10", paramType = "query"),
-            @ApiImplicitParam(name = "type", value = "0-全部;1-超限", dataType = "int",defaultValue = "0", paramType = "query"),
-            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", paramType = "query",required = true),
-            @ApiImplicitParam(name = "workspaceId", value = "工区ID", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "type", value = "0-全部;1-超限", dataType = "int", defaultValue = "0", paramType = "query"),
+            @ApiImplicitParam(name = "sectionCode", value = "标段CODE", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(name = "workspaceCode", value = "工区CODE", dataType = "String", paramType = "query"),
 
     })
     @RequestMapping(value = "/overrunList/{pageIndex}", method = RequestMethod.GET)
-    public  RespVO<PagedResult<OverrunListVo>>   queryOverrunList(@PathVariable(value = "pageIndex") int pageIndex,
-                                                                  @RequestParam(required = false, defaultValue = "10") Integer pageSize,
-                                                                  @RequestParam(required = false,defaultValue = "0") Integer type,
-                                                                  @RequestParam String sectionId,
-                                                                  @RequestParam(required = false) String workspaceId){
-
-        PagedResult<OverrunListVo> listVoPagedResult= iSurveyResultService.queryOverrunList(pageIndex,pageSize,sectionId,workspaceId,type);
+    public RespVO<PagedResult<OverrunListVo>> queryOverrunList(@PathVariable(value = "pageIndex") int pageIndex,
+                                                               @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                                                               @RequestParam(required = false, defaultValue = "0") Integer type,
+                                                               @RequestParam String sectionCode,
+                                                               @RequestParam(required = false) String workspaceCode) {
+        // TODO ID -> CODE
+        PagedResult<OverrunListVo> listVoPagedResult = iSurveyResultService.queryOverrunList(pageIndex, pageSize, sectionCode, workspaceCode, type);
         return RespVOBuilder.success(listVoPagedResult);
     }
 
@@ -289,70 +289,66 @@ public class SurveyResultController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", required = true, example = "1", paramType = "path"),
             @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int", defaultValue = "10", example = "10", paramType = "query"),
-            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", paramType = "query",required = true),
-            @ApiImplicitParam(name = "workspaceId", value = "工区ID", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "pointCode", value = "测点code", dataType = "String", paramType = "query",required = true),
+            @ApiImplicitParam(name = "sectionCode", value = "标段CODE", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(name = "pointCode", value = "测点code", dataType = "String", paramType = "query", required = true),
     })
     @RequestMapping(value = "/overrunDetails/{pageIndex}", method = RequestMethod.GET)
-    public  RespVO<PagedResult<OverrunListVo>>   queryOverrunDetails(@PathVariable(value = "pageIndex") int pageIndex,
+    public RespVO<PagedResult<OverrunListVo>> queryOverrunDetails(@PathVariable(value = "pageIndex") int pageIndex,
                                                                   @RequestParam(required = false, defaultValue = "10") Integer pageSize,
-                                                                  @RequestParam(required = false,defaultValue = "0") Integer type,
-                                                                  @RequestParam String sectionId,
-                                                                  @RequestParam(required = false) String workspaceId,
-                                                                  @RequestParam String pointCode){
-
-        PagedResult<OverrunListVo> listVoPagedResult= iSurveyResultService.queryOverrunDetails(pageIndex,pageSize,sectionId,pointCode,workspaceId,type);
+                                                                  @RequestParam(required = false, defaultValue = "0") Integer type,
+                                                                  @RequestParam String sectionCode,
+                                                                  @RequestParam String pointCode) {
+        // TODO ID -> CODE
+        PagedResult<OverrunListVo> listVoPagedResult = iSurveyResultService.queryOverrunDetails(pageIndex, pageSize, sectionCode, pointCode, type);
         return RespVOBuilder.success(listVoPagedResult);
     }
 
 
-
-
-
-
     @ApiOperation(value = "通过原始数据查询成果数据", httpMethod = "GET", notes = "通过原始数据查询成果数据")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", paramType = "query",required = true),
+            @ApiImplicitParam(name = "sectionCode", value = "标段CODE", dataType = "String", paramType = "query", required = true),
             @ApiImplicitParam(name = "originalIds", value = "原始数据id", dataType = "List", paramType = "query"),
     })
     @RequestMapping(value = "/query/list", method = RequestMethod.GET)
-    public RespVO<RespDataVO<SurveyResult>> query(@RequestParam String sectionId,
-                                                    @RequestParam List<Long> originalIds){
-        List<SurveyResult>  surveyResults= iSurveyResultService.queryResult(sectionId, originalIds);
+    public RespVO<RespDataVO<SurveyResult>> query(@RequestParam String sectionCode,
+                                                  @RequestParam List<Long> originalIds) {
+        // TODO ID -> CODE
+        List<SurveyResult> surveyResults = iSurveyResultService.queryResult(sectionCode, originalIds);
         return RespVOBuilder.success(surveyResults);
     }
 
 
     @ApiOperation(value = "查询测量点的测量历史数据", httpMethod = "GET", notes = "通过原始数据查询成果数据")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "sectionId", value = "标段ID", dataType = "String", paramType = "query",required = true),
-            @ApiImplicitParam(name = "pointCode", value = "测点Id", dataType = "String", paramType = "query",required = true),
+            @ApiImplicitParam(name = "sectionCode", value = "标段CODE", dataType = "String", paramType = "query", required = true),
+            @ApiImplicitParam(name = "pointCode", value = "测点Id", dataType = "String", paramType = "query", required = true),
     })
     @RequestMapping(value = "/query/pointData", method = RequestMethod.GET)
-    public RespVO<RespDataVO<SurveyPontResultVo>> queryPontData(@RequestParam String sectionId,
-                                                  @RequestParam String pointCode){
-        List<SurveyPontResultVo>  surveyPontResultVos= iSurveyResultService.queryPontResult(sectionId, pointCode);
+    public RespVO<RespDataVO<SurveyPontResultVo>> queryPontData(@RequestParam String sectionCode,
+                                                                @RequestParam String pointCode) {
+        // TODO ID -> CODE
+        List<SurveyPontResultVo> surveyPontResultVos = iSurveyResultService.queryPontResult(sectionCode, pointCode);
         return RespVOBuilder.success(surveyPontResultVos);
     }
 
 
     @ApiOperation(value = "生成成果报表", notes = "生成测量成果报表", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "sectionId", value = "sectionId", dataType = "String", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "taskId", value = "taskId", dataType = "Long",  paramType = "query"),
+            @ApiImplicitParam(name = "sectionCode", value = "sectionCode", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "taskId", value = "taskId", dataType = "Long", paramType = "query"),
     })
     @RequestMapping(value = "/generateDataExcel", method = RequestMethod.GET)
-    public RespVO generateExcel( HttpServletResponse response,@RequestParam String sectionId,@RequestParam Long taskId) throws Exception {
+    public RespVO generateExcel(HttpServletResponse response, @RequestParam String sectionCode, @RequestParam Long taskId) throws Exception {
         InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("template.xlsx");
         XSSFWorkbook workBook = new XSSFWorkbook(inputStream);
         // 给sheet命名
 
         String fileName = "test" + System.currentTimeMillis() + ".xlsx";
         response.setContentType("application/force-download");
-        List<SurveyReportDataVo> surveyReportDataVoList =  queryData(sectionId,taskId);
+        List<SurveyReportDataVo> surveyReportDataVoList = queryData(sectionCode, taskId);
         Set<String> typeSet = surveyReportDataVoList.stream().map(SurveyReportDataVo::getPointType).collect(Collectors.toSet());
-        for (String type:typeSet) {
-            List<SurveyReportDataVo> list = surveyReportDataVoList.stream().filter(o ->o.getPointType().equals(type)).collect(Collectors.toList());
+        for (String type : typeSet) {
+            List<SurveyReportDataVo> list = surveyReportDataVoList.stream().filter(o -> o.getPointType().equals(type)).collect(Collectors.toList());
             SurveyReportDataVo surveyReportDataVo = list.get(0);
             SurveyReportVo surveyReportVo = getSurveyReportVo(surveyReportDataVo.getWorkspaceCode());
             surveyReportVo.setSurveyer(surveyReportDataVo.getSurveyer());
@@ -360,15 +356,15 @@ public class SurveyResultController {
             surveyReportVo.setPreSurveyTime(surveyReportDataVo.getPreSurveyTime());
             surveyReportVo.setSurveyTime(surveyReportDataVo.getSurveyTime());
             surveyReportVo.setOnceLowerLimit(surveyReportDataVo.getOnceLowerLimit());
-            surveyReportVo.setDocname(type+"沉降检测表");
+            surveyReportVo.setDocname(type + "沉降检测表");
             surveyReportVo.setPontType(type);
-            XSSFSheet sheet = workBook.cloneSheet(0,type);
+            XSSFSheet sheet = workBook.cloneSheet(0, type);
             sheet.getRow(5).getCell(1).setCellValue(surveyReportVo.getDocname());
             sheet.getRow(6).getCell(1).setCellValue(surveyReportVo.getDocname());
             sheet.getRow(7).getCell(1).setCellValue(surveyReportVo.getDocname());
-            for (int j =0; j<list.size();j++) {
-                sheet.shiftRows(11+j, sheet.getLastRowNum(), 1, true, false);
-                XSSFRow row =  sheet.getRow(11+j)==null?sheet.createRow(11+j):sheet.getRow(11+j);
+            for (int j = 0; j < list.size(); j++) {
+                sheet.shiftRows(11 + j, sheet.getLastRowNum(), 1, true, false);
+                XSSFRow row = sheet.getRow(11 + j) == null ? sheet.createRow(11 + j) : sheet.getRow(11 + j);
                 row.setRowStyle(sheet.getRow(11).getRowStyle());
 
                 row.createCell(0).setCellValue(j);
@@ -423,17 +419,17 @@ public class SurveyResultController {
         return surveyReportVo;
     }
 
-    public List<SurveyReportDataVo> queryData(@RequestParam String sectionId,
-                                                            @RequestParam Long taskId
+    public List<SurveyReportDataVo> queryData(@RequestParam String sectionCode,
+                                              @RequestParam Long taskId
     ) {
 
 
         //获取原始数据
-        List<SurveyOriginalVo> originalVos = surveyOriginalService.list(taskId, sectionId);
+        List<SurveyOriginalVo> originalVos = surveyOriginalService.list(taskId, sectionCode);
         //获取原始数据ID
         List<Long> originalIds = originalVos.stream().map(SurveyOriginalVo::getId).collect(Collectors.toList());
         //获取结果数据
-        List<SurveyResult> surveyResults = surveyResultService.queryResult(sectionId, originalIds);
+        List<SurveyResult> surveyResults = surveyResultService.queryResult(sectionCode, originalIds);
 
         //测量结果
         List<SurveyReportDataVo> surveyReportDataVos = new ArrayList<>();
@@ -442,11 +438,11 @@ public class SurveyResultController {
         for (SurveyReportDataVo surveyReportDataVo : surveyReportDataVos) {
 
             //上次测量结果
-            List<SurveyResult> tempResults = surveyResultService.queryPreResult(surveyReportDataVo.getSurveyTime(), DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, 1, surveyReportDataVo.getPointCode());
+            List<SurveyResult> tempResults = surveyResultService.queryPreResult(surveyReportDataVo.getSurveyTime(), DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 1, surveyReportDataVo.getPointCode());
             //第一次测量结果
-            List<SurveyResult> intResults = surveyResultService.queryPreResult(null, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionId, 1, surveyReportDataVo.getPointCode());
+            List<SurveyResult> intResults = surveyResultService.queryPreResult(null, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 1, surveyReportDataVo.getPointCode());
             //点初始值
-            SurveyPointVo surveyPointVo = surveyPointService.querySurveyPointByCode(surveyReportDataVo.getPointCode(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionId);
+            SurveyPointVo surveyPointVo = surveyPointService.querySurveyPointByCode(surveyReportDataVo.getPointCode(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
             surveyReportDataVo.setPointType(surveyPointVo.getType());
             surveyReportDataVo.setInitElevation(surveyPointVo.getElevation());
             surveyReportDataVo.setOnceLowerLimit(surveyPointVo.getOnceLowerLimit());

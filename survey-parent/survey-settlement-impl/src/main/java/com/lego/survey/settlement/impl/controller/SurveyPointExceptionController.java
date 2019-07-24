@@ -68,17 +68,13 @@ public class SurveyPointExceptionController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", required = true, example = "1", paramType = "path"),
             @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int", defaultValue = "10", example = "10", paramType = "query"),
-            @ApiImplicitParam(name = "sectionId", value = "标段id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "sectionCode", value = "标段编号", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "pointId", value = "测点id", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "pointCode", value = "测点编号", dataType = "String", paramType = "query"),
     })
     @RequestMapping(value = "/list/{pageIndex}", method = RequestMethod.GET)
     public RespVO<RespDataVO<SurveyPointExceptionVo>> query(@PathVariable(value = "pageIndex") int pageIndex,
                                                           @RequestParam(required = false, defaultValue = "10") int pageSize,
-                                                          @RequestParam(required = false) String sectionId,
                                                           @RequestParam(required = false) String sectionCode,
-                                                          @RequestParam(required = false) String pointId,
                                                           @RequestParam(required = false) String pointCode) {
         // 验证用户正确性
         //根据用户信息生成用户 token
@@ -95,7 +91,7 @@ public class SurveyPointExceptionController {
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public RespVO delete(@RequestParam Long id,HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
-        String userId = authClient.getAuthVo(headerVo).getUserId();
+        String userId = headerVo.getUserId();
         RespVO respVO = iSurveyPointExceptionService.delete(id);
         logSender.sendLogEvent(HttpUtils.getClientIp(request),userId,"删除异常报告信息:["+id+"]");
         return respVO;

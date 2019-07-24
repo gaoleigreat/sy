@@ -28,8 +28,8 @@ public class SectionAddVo {
     private String name;
     @ApiModelProperty("标段编号")
     private String code;
-    @ApiModelProperty("工程ID")
-    private String projectId;
+    @ApiModelProperty("工程code")
+    private String projectCode;
     @ApiModelProperty("标段地址")
     private String address;
     @ApiModelProperty("介绍")

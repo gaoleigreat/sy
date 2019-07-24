@@ -37,16 +37,15 @@ public interface IWorkspaceService {
      *
      * @return the resp vo
      */
-    RespVO  deleteWorkSpace(String workSpaceId);
+    RespVO  deleteWorkSpace(String code);
 
 
     /**
      * 根据工程id和标段id获取工区信息
-     * @param projectId
-     * @param sectionId
+     * @param sectionCode
      * @return
      */
-    RespVO<RespDataVO<Workspace>>  queryByProjectIdAndSectionId(String projectId, String sectionId);
+    RespVO<RespDataVO<Workspace>>  queryByProjectIdAndSectionId( String sectionCode);
 
     /**
      * 根据ID获取工区信息
@@ -60,4 +59,6 @@ public interface IWorkspaceService {
      * @return
      */
     List<OwnWorkspace> findAll(List<String> sectionIds);
+
+    Workspace queryByCode(String code);
 }
