@@ -87,7 +87,7 @@ public class FileController {
     }
 
 
-    @ApiOperation(value = "app文件下载", httpMethod = "POST")
+    @ApiOperation(value = "app文件下载", httpMethod = "GET")
     @ApiImplicitParams({
     })
     @RequestMapping(value="/download/{groupName}/**", method = RequestMethod.GET)

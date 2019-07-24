@@ -3,11 +3,14 @@ package com.lego.survey.settlement.impl.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lego.survey.auth.feign.AuthClient;
+import com.lego.survey.base.utils.FpFileUtil;
 import com.lego.survey.event.settlement.SurveyPointResultSource;
+import com.lego.survey.lib.excel.ExcelService;
 import com.lego.survey.project.feign.SectionClient;
 import com.lego.survey.project.model.entity.OwnWorkspace;
 import com.lego.survey.project.model.entity.Section;
 import com.lego.survey.settlement.feign.ReportDataClient;
+import com.lego.survey.settlement.impl.listener.SurveyResultReadListener;
 import com.lego.survey.settlement.impl.service.ISurveyOriginalService;
 import com.lego.survey.settlement.impl.service.ISurveyPointService;
 import com.lego.survey.settlement.impl.service.ISurveyResultService;
@@ -32,11 +35,13 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,13 +83,20 @@ public class SurveyResultController {
 
     @Autowired
     private MongoTemplate mongoTemplate;
-    @Autowired
-    private ReportDataClient reportDataClient;
+
+    @Value("${fpfile.path}")
+    private String fpFileRootPath;
 
     @Autowired
     private ISurveyOriginalService surveyOriginalService;
     @Autowired
     private ISurveyResultService surveyResultService;
+
+    @Autowired
+    private ExcelService excelService;
+
+    @Autowired
+    private SurveyResultReadListener surveyPointReadListener;
 
     @Autowired
     private ISurveyPointService surveyPointService;
@@ -369,20 +381,27 @@ public class SurveyResultController {
                 row.setRowStyle(sheet.getRow(11).getRowStyle());
 
                 row.createCell(0).setCellValue(j);
-                if (null !=list.get(j).getPointCode())
-                row.createCell(1).setCellValue(list.get(j).getPointCode());
-                if (null !=list.get(j).getInitElevation())
-                row.createCell(2).setCellValue(list.get(j).getInitElevation());
-                if (null !=list.get(j).getPreElevation())
-                row.createCell(3).setCellValue(list.get(j).getPreElevation());
-                if (null !=list.get(j).getCurElevation())
-                row.createCell(4).setCellValue(list.get(j).getCurElevation());
-                if (null !=list.get(j).getCurOffsetValue())
-                row.createCell(5).setCellValue(list.get(j).getCurOffsetValue());
-                if (null !=list.get(j).getCurSpeed())
-                row.createCell(6).setCellValue(list.get(j).getCurSpeed());
-                if (null !=list.get(j).getCurTotalOffsetValue())
-                row.createCell(7).setCellValue(list.get(j).getCurTotalOffsetValue());
+                if (null !=list.get(j).getPointCode()) {
+                    row.createCell(1).setCellValue(list.get(j).getPointCode());
+                }
+                if (null !=list.get(j).getInitElevation()) {
+                    row.createCell(2).setCellValue(list.get(j).getInitElevation());
+                }
+                if (null !=list.get(j).getPreElevation()) {
+                    row.createCell(3).setCellValue(list.get(j).getPreElevation());
+                }
+                if (null !=list.get(j).getCurElevation()) {
+                    row.createCell(4).setCellValue(list.get(j).getCurElevation());
+                }
+                if (null !=list.get(j).getCurOffsetValue()) {
+                    row.createCell(5).setCellValue(list.get(j).getCurOffsetValue());
+                }
+                if (null !=list.get(j).getCurSpeed()) {
+                    row.createCell(6).setCellValue(list.get(j).getCurSpeed());
+                }
+                if (null !=list.get(j).getCurTotalOffsetValue()) {
+                    row.createCell(7).setCellValue(list.get(j).getCurTotalOffsetValue());
+                }
             }
         }
         // 设置文件名
@@ -469,4 +488,28 @@ public class SurveyResultController {
         }
         return surveyReportDataVos;
     }
+
+
+
+
+    @ApiOperation(value = "Excel批量上传成功数据", notes = "Excel批量上传成功数据", httpMethod = "POST")
+    @ApiImplicitParams({
+
+    })
+    @RequestMapping(value = "/uploadBatch",method = RequestMethod.POST)
+    public RespVO uploadPointResultExcel(@RequestPart(value = "fileName") String fileName,
+                                         @RequestParam() String sectionCode){
+        // TODO ID -> CODE
+        if(StringUtils.isEmpty(fileName)){
+            return RespVOBuilder.failure("文件名不能为空");
+        }
+        String filePath = FpFileUtil.getFilePath(fpFileRootPath,fileName);
+        surveyPointReadListener.setTableName(sectionCode);
+        excelService.readExcel(filePath,surveyPointReadListener, SurveyResultVo.class,1);
+        return RespVOBuilder.success();
+    }
+
+
+
+
 }
