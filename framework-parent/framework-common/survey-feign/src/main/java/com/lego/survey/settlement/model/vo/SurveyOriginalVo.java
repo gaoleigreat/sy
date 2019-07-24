@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.json.JSONArray;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
@@ -66,7 +65,7 @@ public class SurveyOriginalVo {
 
     @JsonIgnore
     public SurveyOriginalVo loadSurveyOriginalVo(SurveyOriginal surveyOriginal) {
-        SurveyOriginalVo originalVo = SurveyOriginalVo.builder()
+        return SurveyOriginalVo.builder()
                 .bpCode(surveyOriginal.getBpCode())
                 .bpType(surveyOriginal.getBpType())
                 .fpCode(surveyOriginal.getFpCode())
@@ -75,12 +74,9 @@ public class SurveyOriginalVo {
                 .index(surveyOriginal.getIndex())
                 .taskId(surveyOriginal.getTaskId())
                 .datas(surveyOriginal.getDatas())
-                .build();
-        String datas = originalVo.getDatas();
-        JSONArray array = new JSONArray(datas);
-        List<OriginalDataVo> originalDataVos = JSONObject.parseArray(JSONObject.toJSONString(array), OriginalDataVo.class);
-        originalVo.setSurveyDatas(originalDataVos);
-        return originalVo;
+             //   .surveyDatas(JSONObject.parseArray(StringEscapeUtils.unescapeJava(surveyOriginal.getDatas()), OriginalDataVo.class))
+                        //.datas(JSONObject.parseArray(surveyOriginal.getDatas(),OriginalDataVo.class))
+                 .build();
     }
 
 

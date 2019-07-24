@@ -264,6 +264,7 @@ public class SurveyResultController {
     }
 
 
+
     @ApiOperation(value = "成果数据列表", httpMethod = "GET", notes = "成果数据列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", required = true, example = "1", paramType = "path"),
@@ -293,7 +294,7 @@ public class SurveyResultController {
             @ApiImplicitParam(name = "pointCode", value = "测点code", dataType = "String", paramType = "query", required = true),
     })
     @RequestMapping(value = "/overrunDetails/{pageIndex}", method = RequestMethod.GET)
-    public RespVO<PagedResult<OverrunListVo>> queryOverrunDetails(@PathVariable(value = "pageIndex") int pageIndex,
+    public  RespVO<PagedResult<OverrunListVo>>   queryOverrunDetails(@PathVariable(value = "pageIndex") int pageIndex,
                                                                   @RequestParam(required = false, defaultValue = "10") Integer pageSize,
                                                                   @RequestParam(required = false, defaultValue = "0") Integer type,
                                                                   @RequestParam String sectionCode,
@@ -356,31 +357,40 @@ public class SurveyResultController {
             surveyReportVo.setPreSurveyTime(surveyReportDataVo.getPreSurveyTime());
             surveyReportVo.setSurveyTime(surveyReportDataVo.getSurveyTime());
             surveyReportVo.setOnceLowerLimit(surveyReportDataVo.getOnceLowerLimit());
-            surveyReportVo.setDocname(type + "沉降检测表");
+            surveyReportVo.setDocname(type+"沉降检测表");
             surveyReportVo.setPontType(type);
-            XSSFSheet sheet = workBook.cloneSheet(0, type);
+            XSSFSheet sheet = workBook.cloneSheet(0,type);
             sheet.getRow(5).getCell(1).setCellValue(surveyReportVo.getDocname());
             sheet.getRow(6).getCell(1).setCellValue(surveyReportVo.getDocname());
             sheet.getRow(7).getCell(1).setCellValue(surveyReportVo.getDocname());
-            for (int j = 0; j < list.size(); j++) {
-                sheet.shiftRows(11 + j, sheet.getLastRowNum(), 1, true, false);
-                XSSFRow row = sheet.getRow(11 + j) == null ? sheet.createRow(11 + j) : sheet.getRow(11 + j);
+            for (int j =0; j<list.size();j++) {
+                sheet.shiftRows(11+j, sheet.getLastRowNum(), 1, true, false);
+                XSSFRow row =  sheet.getRow(11+j)==null?sheet.createRow(11+j):sheet.getRow(11+j);
                 row.setRowStyle(sheet.getRow(11).getRowStyle());
 
                 row.createCell(0).setCellValue(j);
+                if (null !=list.get(j).getPointCode())
                 row.createCell(1).setCellValue(list.get(j).getPointCode());
+                if (null !=list.get(j).getInitElevation())
                 row.createCell(2).setCellValue(list.get(j).getInitElevation());
+                if (null !=list.get(j).getPreElevation())
                 row.createCell(3).setCellValue(list.get(j).getPreElevation());
+                if (null !=list.get(j).getCurElevation())
                 row.createCell(4).setCellValue(list.get(j).getCurElevation());
+                if (null !=list.get(j).getCurOffsetValue())
                 row.createCell(5).setCellValue(list.get(j).getCurOffsetValue());
+                if (null !=list.get(j).getCurSpeed())
                 row.createCell(6).setCellValue(list.get(j).getCurSpeed());
+                if (null !=list.get(j).getCurTotalOffsetValue())
                 row.createCell(7).setCellValue(list.get(j).getCurTotalOffsetValue());
             }
         }
         // 设置文件名
         response.addHeader("Content-Disposition", "attachment;fileName=" + java.net.URLEncoder.encode(fileName, "UTF-8"));
         OutputStream out = response.getOutputStream();
-        workBook.removeSheetAt(0);
+        if (typeSet.size() > 0) {
+            workBook.removeSheetAt(0);
+        }
         // 移除workbook中的模板sheet
         workBook.write(out);
 
@@ -411,11 +421,6 @@ public class SurveyResultController {
             }
         }
 
-        //设置制造员
-      /*  String token = httpServletRequest.getHeader("token");
-
-        String userName = userClient.queryUserByToken(token).getInfo().getName();
-        surveyReportVo.setMaker(userName);*/
         return surveyReportVo;
     }
 
