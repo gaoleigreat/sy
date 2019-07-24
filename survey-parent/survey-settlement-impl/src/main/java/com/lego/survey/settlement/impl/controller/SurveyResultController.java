@@ -28,15 +28,18 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.util.RegionUtil;
+import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,6 +49,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -357,29 +361,91 @@ public class SurveyResultController {
             surveyReportVo.setDocname(type + "沉降检测表");
             surveyReportVo.setPontType(type);
             XSSFSheet sheet = workBook.cloneSheet(0, type);
-            sheet.getRow(5).getCell(1).setCellValue(surveyReportVo.getDocname());
-            sheet.getRow(6).getCell(1).setCellValue(surveyReportVo.getDocname());
-            sheet.getRow(7).getCell(1).setCellValue(surveyReportVo.getDocname());
+            sheet.getRow(5).getCell(2).setCellValue(surveyReportVo.getTitle() == null ? "" : surveyReportVo.getTitle());
+            sheet.getRow(6).getCell(2).setCellValue(surveyReportVo.getAddress() == null ? "" : surveyReportVo.getAddress());
+            sheet.getRow(7).getCell(2).setCellValue(surveyReportVo.getSurveyer() == null ? "" : surveyReportVo.getSurveyer());
+            sheet.getRow(8).getCell(2).setCellValue(surveyReportVo.getMaker() == null ? "" : surveyReportVo.getMaker());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+            String intdataStr = "";
+            if (surveyReportVo.getInitSurveyTime() != null) {
+                intdataStr = sdf.format(surveyReportVo.getInitSurveyTime());
+            }
+            String dataStr = "";
+            if (surveyReportVo.getSurveyTime() != null) {
+                dataStr = sdf.format(surveyReportVo.getSurveyTime());
+            }
+            String predataStr = "";
+            if (surveyReportVo.getPreSurveyTime() != null) {
+                predataStr = sdf.format(surveyReportVo.getPreSurveyTime());
+            }
+            if (StringUtils.isEmpty(intdataStr)) {
+                intdataStr = predataStr;
+            }
+
+            if (StringUtils.isEmpty(predataStr)) {
+                predataStr = intdataStr;
+            }
+            sheet.getRow(9).getCell(2).setCellValue(dataStr);
+            sheet.getRow(9).getCell(4).setCellValue(predataStr);
+            sheet.getRow(9).getCell(6).setCellValue(intdataStr);
+            sheet.getRow(9).getCell(8).setCellValue(surveyReportVo.getOnceLowerLimit());
+
             for (int j = 0; j < list.size(); j++) {
                 sheet.shiftRows(11 + j, sheet.getLastRowNum(), 1, true, false);
                 XSSFRow row = sheet.getRow(11 + j) == null ? sheet.createRow(11 + j) : sheet.getRow(11 + j);
-                row.setRowStyle(sheet.getRow(11).getRowStyle());
+                row.setRowStyle(sheet.getRow(10).getRowStyle());
+                sheet.getRow(10).getCell(0).getCellStyle();
 
-                row.createCell(0).setCellValue(j);
-                if (null !=list.get(j).getPointCode())
-                row.createCell(1).setCellValue(list.get(j).getPointCode());
-                if (null !=list.get(j).getInitElevation())
-                row.createCell(2).setCellValue(list.get(j).getInitElevation());
-                if (null !=list.get(j).getPreElevation())
-                row.createCell(3).setCellValue(list.get(j).getPreElevation());
-                if (null !=list.get(j).getCurElevation())
-                row.createCell(4).setCellValue(list.get(j).getCurElevation());
-                if (null !=list.get(j).getCurOffsetValue())
-                row.createCell(5).setCellValue(list.get(j).getCurOffsetValue());
-                if (null !=list.get(j).getCurSpeed())
-                row.createCell(6).setCellValue(list.get(j).getCurSpeed());
-                if (null !=list.get(j).getCurTotalOffsetValue())
-                row.createCell(7).setCellValue(list.get(j).getCurTotalOffsetValue());
+                row.createCell(0).setCellValue(j + 1);
+                CellStyle style = workBook.createCellStyle();
+                style.setBorderBottom(BorderStyle.THIN);
+                style.setBorderTop(BorderStyle.THIN);
+                style.setBorderLeft(BorderStyle.THIN);
+                style.setBorderRight(BorderStyle.THIN);
+               style = sheet.getRow(10).getCell(0).getCellStyle();
+                row.createCell(1);
+                row.getCell(1).setCellStyle(style);
+                if (null != list.get(j).getPointCode()) {
+                    row.getCell(1).setCellValue(list.get(j).getPointCode());
+                }
+
+                row.createCell(2);
+                row.getCell(2).setCellStyle(style);
+                if (null != list.get(j).getInitElevation()) {
+                    row.createCell(2).setCellValue(list.get(j).getInitElevation());
+                }
+
+                row.createCell(3);
+                row.getCell(3).setCellStyle(style);
+                if (null != list.get(j).getPreElevation()) {
+                    row.createCell(3).setCellValue(list.get(j).getPreElevation());
+                }
+
+                row.createCell(4);
+                row.getCell(4).setCellStyle(style);
+                if (null != list.get(j).getCurElevation()) {
+                    row.createCell(4).setCellValue(list.get(j).getCurElevation());
+                }
+
+                row.createCell(5);
+                row.getCell(5).setCellStyle(style);
+                if (null != list.get(j).getCurOffsetValue()) {
+                    row.createCell(5).setCellValue(list.get(j).getCurOffsetValue());
+                }
+
+                row.createCell(6);
+                row.getCell(6).setCellStyle(style);
+                if (null != list.get(j).getCurSpeed()) {
+                    row.createCell(6).setCellValue(list.get(j).getCurSpeed());
+                }
+
+                row.createCell(7);
+                row.getCell(7).setCellStyle(style);
+                if (null != list.get(j).getCurTotalOffsetValue()) {
+                    row.createCell(7).setCellValue(list.get(j).getCurTotalOffsetValue());
+                }
+                row.createCell(8);
+                row.getCell(8).setCellStyle(style);
             }
         }
         // 设置文件名
@@ -466,4 +532,6 @@ public class SurveyResultController {
         }
         return surveyReportDataVos;
     }
+
+
 }
