@@ -16,8 +16,8 @@
             limits         VARCHAR(500) NOT NULL COMMENT 'data type singleSettlementLowerLimit,singleSettlementLimit,lowerLimitOfCumulativeSettlement,cumulativeSettlementLimit,lowerSedimentationRate,settlingRateUpperLimit',
             status         TINYINT      NOT NULL DEFAULT 1 COMMENT 'Status: 1: Normal 2: New 3: Stop Test 4: Destruction',
             workspace_code VARCHAR(20)  NOT NULL COMMENT 'workAreaCode',
-            create_time    TIMESTAMP COMMENT 'creationTime',
-            update_time    TIMESTAMP COMMENT 'updateTime',
+            create_time    TIMESTAMP  NULL DEFAULT NULL  COMMENT 'creationTime',
+            update_time    TIMESTAMP NULL DEFAULT NULL COMMENT 'updateTime',
             comment        VARCHAR(20) COMMENT 'remark'
         ) ENGINE = InnoDB
           DEFAULT CHARSET = utf8
@@ -37,7 +37,7 @@
             grid_y                DOUBLE(255, 5) COMMENT 'initialPlaneY',
             elevation             DOUBLE(255, 5) COMMENT 'initialElevation',
             status                TINYINT     NOT NULL DEFAULT 1 COMMENT 'Status: 1: Normal 2: New 3: Stop Test 4: Destruction',
-            upload_time           TIMESTAMP COMMENT 'uploadTime',
+            upload_time           TIMESTAMP NULL DEFAULT NULL COMMENT 'uploadTime',
             original_id           BIGINT COMMENT 'rawDataID',
             single_ettlement      DOUBLE(255, 5) COMMENT '单次沉降量',
             cumulative_settlement DOUBLE(255, 5) COMMENT '累积沉降量',
@@ -57,7 +57,7 @@
             datas       VARCHAR(255) NOT NULL COMMENT 'rawMeasurementDataJSONArray',
             `index`     TINYINT      NOT NULL COMMENT 'indexValueInTheTask',
             task_id     BIGINT       NOT NULL COMMENT 'taskID',
-            upload_time TIMESTAMP COMMENT 'uploadTime'
+            upload_time TIMESTAMP NULL DEFAULT NULL COMMENT 'uploadTime'
         ) ENGINE = InnoDB
           DEFAULT CHARSET = utf8
     </update>
@@ -72,8 +72,8 @@
             line_way     TINYINT               DEFAULT 0 COMMENT 'Way of travel 0 Free line 1 Closed line 2 Attached line 3 Round trip',
             adjustment   TINYINT               DEFAULT 0 COMMENT 'Whether the adjustment is 1 - adjustment, 0 - no adjustment',
             create_time  TIMESTAMP    NOT NULL COMMENT 'taskCreationTime',
-            end_time     TIMESTAMP    NOT NULL COMMENT 'missionEndTime',
-            upload_time  TIMESTAMP COMMENT 'uploadTime'
+            end_time     TIMESTAMP    NULL DEFAULT NULL COMMENT 'missionEndTime',
+            upload_time  TIMESTAMP NULL DEFAULT NULL COMMENT 'uploadTime'
         ) ENGINE = innodb
           DEFAULT CHARSET = utf8
     </update>

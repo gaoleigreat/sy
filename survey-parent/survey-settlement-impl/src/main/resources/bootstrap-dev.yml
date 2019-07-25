@@ -12,9 +12,9 @@ spring:
     stream:
       bindings:
         input_section_create:
-          destination: createSection     #  rabbit exchange  kafka topic
+          destination: createSection     #发送消息的exchange名称
           content-type: application/json
-          group: ${spring.application.name}
+          group: ${spring.application.name}  #需要保证与destination 不一样，否则死信队列路由标准代码有BUG
         output_log:
           destination: printLog
           content-type: application/json
@@ -25,3 +25,22 @@ spring:
           destination: uploadResult
           content-type: application/json
           group: ${spring.application.name}
+      default:
+        consumer:
+          maxAttempts: 3  # 最大重试次数  默认3
+      rabbit:
+        bindings:
+          input:
+            consumer:
+              autoBindDlq: true #启用死信队列，默认会生成一个DLX EXCHANGE，当消息重复消费失败后
+              #死信队列配置，可不给值
+              #dlqTtl: 5000 #死信队列 消息存放时间 ，最好不要设置不然消息将会丢弃
+              dlqDeadLetterExchange: XXX.DLX  #如果该列声明，那么deadLetterExchange也要声明，这个保持一致
+              deadLetterExchange: XXX.DLX #与dlqDeadLetterExchange保持一致
+              deadLetterQueueName: XXX.dlq #死信队列名称，可不给值，默认prefix+destination.dlq
+              #死信队列配置，可不给值
+              republishToDlq: true #该值为false如果设置了死信队列，消息对原封不动的发送到死信队列，如果为true，则消息对带上错误信息发送至死信队列
+              requeueRejected: true #默认false，只能抛AmqpRejectAndDontRequeueException消息才能到死信队列，如果为true，所有错误消息都会抛到死信队列
+              #prefix: feign-test2 #声明exchange、queue前缀
+              #bindingRoutingKey: feign-test.destination 默认为#，如果是动态binding模式，producer发送的routingKey 默认为destination
+
