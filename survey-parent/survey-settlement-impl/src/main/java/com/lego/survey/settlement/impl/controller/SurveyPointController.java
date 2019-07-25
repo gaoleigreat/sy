@@ -211,7 +211,7 @@ public class SurveyPointController {
 
     })
     @RequestMapping(value = "/uploadBatch",method = RequestMethod.POST)
-    public RespVO uploadPointResultExcel(@RequestPart(value = "fileName") String fileName,
+    public RespVO uploadPointResultExcel(@RequestParam(value = "fileName") String fileName,
                                          @RequestParam() String sectionCode){
         // TODO ID -> CODE
         if(StringUtils.isEmpty(fileName)){

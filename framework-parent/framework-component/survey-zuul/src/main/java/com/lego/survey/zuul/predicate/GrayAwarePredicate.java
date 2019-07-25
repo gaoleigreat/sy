@@ -71,12 +71,18 @@ public class GrayAwarePredicate extends AbstractServerPredicate {
 
         try {
             if (!CollectionUtils.isEmpty(targetServers)) {
-                return Optional.of(targetServers.get(this.incrementAndGetModule(targetServers.size())));
+                Optional<Server> serverOptional = Optional.of(targetServers.get(this.incrementAndGetModule(targetServers.size())));
+                String hostPort = serverOptional.get().getHostPort();
+                log.info("zuul choose server:[{}]", hostPort);
+                return serverOptional;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return Optional.of(eligibleServers.get(0));
+        Optional<Server> serverOptional = Optional.of(eligibleServers.get(0));
+        String hostPort = serverOptional.get().getHostPort();
+        log.info("zuul choose server:[{}]", hostPort);
+        return serverOptional;
     }
 
 

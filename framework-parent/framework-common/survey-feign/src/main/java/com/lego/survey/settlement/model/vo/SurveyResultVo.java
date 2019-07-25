@@ -23,32 +23,31 @@ import java.util.Date;
 @AllArgsConstructor
 public class SurveyResultVo extends BaseRowModel {
     @ApiModelProperty("测量结果id")
-    @ExcelProperty(value = "成功ID", index = 0)
     private Long id;
     @ApiModelProperty("测点名称")
-    @ExcelProperty(value = "测点名称", index = 1)
+    @ExcelProperty(value = "测点名称", index = 0)
     private String pointName;
     @ApiModelProperty("测量结果编号")
-    @ExcelProperty(value = "测点编码", index = 2)
+    @ExcelProperty(value = "测点编码", index = 1)
     private String pointCode;
     @ApiModelProperty("测量时间")
-    @ExcelProperty(value = "测量时间", index = 3, format = "yyyy/MM/dd")
+    @ExcelProperty(value = "测量时间", index = 2, format = "yyyy/MM/dd")
     private Date surveyTime;
     @ApiModelProperty("测量值")
-    @ExcelProperty(value = "测量值", index = 4)
+    @ExcelProperty(value = "测量值", index = 3)
     private Double value;
     @ApiModelProperty("所属工区")
-    @ExcelProperty(value = "工区编码", index = 5)
+    @ExcelProperty(value = "工区编码", index = 4)
     private String workspaceCode;
     @ApiModelProperty("测量员姓名")
-    @ExcelProperty(value = "测量员名称", index = 6)
+    @ExcelProperty(value = "测量员名称", index = 5)
     private String surveyer;
     @ApiModelProperty("上传时间")
-    @ExcelProperty(value = "上传时间", index = 7)
     private Date uploadTime;
     @ApiModelProperty("状态(1-正常，2-停测，3-损坏，4-新建)")
-    @ExcelProperty(value = "状态(1-正常，2-停测，3-损坏，4-新建)", index = 8)
+    @ExcelProperty(value = "状态(1-正常，2-停测，3-损坏，4-新建)", index = 6)
     private Integer status;
+    @ExcelProperty(value = "原始数据ID",index = 7)
     @ApiModelProperty("原始数据ID")
     private Long originalId;
 

@@ -19,6 +19,8 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
+
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.List;
 
@@ -80,6 +82,7 @@ public class SurveyPointResultListener {
         Date surveyTime = surveyResult.getSurveyTime();
         Date uploadTime = surveyResult.getUploadTime();
         Double currElevation = surveyResult.getElevation();
+        String pointCode = surveyResult.getPointCode();
         double preElevation = 0;
         double onceSettlement = 0;
         double preSettlement = 0;
@@ -90,7 +93,7 @@ public class SurveyPointResultListener {
         double settlementRate = 0;
         double preSettlementRate = 0;
         boolean settlementRateIsOver = false;
-        List<SurveyResult> preResults = iSurveyResultService.queryPreResult(surveyTime,DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 2,null);
+        List<SurveyResult> preResults = iSurveyResultService.queryPreResult(surveyTime,DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 2,pointCode);
         if (preResults != null && preResults.size() > 0) {
             SurveyResult preResult = preResults.get(0);
             preElevation = preResult.getElevation();

@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.MediaType;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -475,7 +476,7 @@ public class SurveyResultController {
 
     })
     @RequestMapping(value = "/uploadPointResultExcel", method = RequestMethod.POST)
-    public RespVO uploadPointResultExcel(@RequestPart(value = "fileName") String fileName,
+    public RespVO uploadPointResultExcel(@RequestParam(value = "fileName") String fileName,
                                          @RequestParam() String sectionCode) {
         // TODO ID -> CODE
         if (StringUtils.isEmpty(fileName)) {

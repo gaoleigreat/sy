@@ -7,6 +7,9 @@ spring:
       label: master
       username: admin
       password: admin123
+    #nacos:
+    #  discovery:
+    #    server-addr: localhost:8848
   security:
     user:
       name: ${define.user.name}
