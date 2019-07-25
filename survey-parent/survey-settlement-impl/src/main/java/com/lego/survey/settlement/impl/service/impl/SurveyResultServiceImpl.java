@@ -1,5 +1,7 @@
 package com.lego.survey.settlement.impl.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -7,13 +9,11 @@ import com.lego.survey.base.exception.ExceptionBuilder;
 import com.lego.survey.project.feign.WorkspaceClient;
 import com.lego.survey.project.model.entity.Workspace;
 import com.lego.survey.settlement.impl.mapper.*;
+import com.lego.survey.settlement.impl.service.ISurveyOriginalService;
 import com.lego.survey.settlement.impl.service.ISurveyPointService;
 import com.lego.survey.settlement.impl.service.ISurveyResultService;
 import com.lego.survey.settlement.model.entity.*;
-import com.lego.survey.settlement.model.vo.OverrunListVo;
-import com.lego.survey.settlement.model.vo.SurveyPointVo;
-import com.lego.survey.settlement.model.vo.SurveyPontResultVo;
-import com.lego.survey.settlement.model.vo.SurveyResultVo;
+import com.lego.survey.settlement.model.vo.*;
 import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.consts.HttpConsts;
 import com.survey.lib.common.consts.RespConsts;
@@ -24,11 +24,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author yanglf
@@ -58,6 +62,15 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
 
     @Autowired
     private SurveyOriginalMapper surveyOriginalMapper;
+
+    @Autowired
+    private ISurveyOriginalService surveyOriginalService;
+    @Autowired
+    private ISurveyPointService surveyPointService;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
 
     @Override
     public RespVO list(int pageIndex, int pageSize, String workspaceCode, Date startDate, Date endDate, String deviceType, String tableName) {
@@ -340,5 +353,73 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
         voPagedResult.setResultList(overrunListVos);
         return voPagedResult;
     }
+
+    @Override
+    public List<SurveyReportDataVo> querySurveyReportData(String sectionCode, Long taskId) {
+
+        //获取原始数据
+        List<SurveyOriginalVo> originalVos = surveyOriginalService.list(taskId, sectionCode);
+        //获取原始数据ID
+        List<Long> originalIds = originalVos.stream().map(SurveyOriginalVo::getId).collect(Collectors.toList());
+        //获取结果数据
+        List<SurveyResult> surveyResults = queryResult(sectionCode, originalIds);
+
+        //测量结果
+        List<SurveyReportDataVo> surveyReportDataVos = new ArrayList<>();
+        surveyResults.forEach(surveyResult -> surveyReportDataVos.add(SurveyReportDataVo.builder().build().loadSurveyReportDataVo(surveyResult)));
+
+        for (SurveyReportDataVo surveyReportDataVo : surveyReportDataVos) {
+
+            //上次测量结果
+            List<SurveyResult> tempResults = queryPreResult(surveyReportDataVo.getSurveyTime(), DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 1, surveyReportDataVo.getPointCode());
+            //第一次测量结果
+            List<SurveyResult> intResults = queryPreResult(null, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 1, surveyReportDataVo.getPointCode());
+            //点初始值
+            SurveyPointVo surveyPointVo = surveyPointService.querySurveyPointByCode(surveyReportDataVo.getPointCode(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
+            surveyReportDataVo.setPointType(surveyPointVo.getType());
+            surveyReportDataVo.setInitElevation(surveyPointVo.getElevation());
+            surveyReportDataVo.setOnceLowerLimit(surveyPointVo.getOnceLowerLimit());
+            surveyReportDataVo.setOnceUpperLimit(surveyPointVo.getOnceUpperLimit());
+            surveyReportDataVo.setSpeedLowerLimit(surveyPointVo.getSpeedLowerLimit());
+            surveyReportDataVo.setSpeedUpperLimit(surveyPointVo.getSpeedUpperLimit());
+            surveyReportDataVo.setTotalLowerLimit(surveyPointVo.getTotalLowerLimit());
+            surveyReportDataVo.setTotalUpperLimit(surveyPointVo.getTotalUpperLimit());
+
+
+            if (!CollectionUtils.isEmpty(intResults) && intResults.size() > 1) {
+                surveyReportDataVo.setInitSurveyTime(intResults.get(intResults.size() - 1).getSurveyTime());
+            }
+            if (!CollectionUtils.isEmpty(tempResults)) {
+                surveyReportDataVo.setPreElevation(tempResults.get(0).getElevation());
+                surveyReportDataVo.setPreSurveyTime(tempResults.get(0).getSurveyTime());
+            }
+
+        }
+        return surveyReportDataVos;
+    }
+@Override
+public SurveyReportVo getSurveyReportVo(String workspaceCode) {
+    SurveyReportVo surveyReportVo = new SurveyReportVo();
+
+    //用来封装所有条件的对象
+    Query query = new Query();
+    //用来构建条件
+    Criteria criteria = new Criteria();
+    criteria.and("workSpace").elemMatch(new Criteria().and("code").is(workspaceCode));
+    query.addCriteria(criteria);
+    JSONObject jsonObject = mongoTemplate.findOne(query, JSONObject.class, "section");
+    // 标段名
+    surveyReportVo.setTitle(jsonObject.getString("name"));
+
+    //设置地址
+    JSONArray jsonArray = jsonObject.getJSONArray("workSpace");
+    for (int i = 0; i < jsonArray.size(); i++) {
+        if (jsonArray.getJSONObject(i).getString("code").equals(workspaceCode)) {
+            surveyReportVo.setAddress(jsonArray.getJSONObject(i).getString("name"));
+        }
+    }
+
+    return surveyReportVo;
+}
 
 }

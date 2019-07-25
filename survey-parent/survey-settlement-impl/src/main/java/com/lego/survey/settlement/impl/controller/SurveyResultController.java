@@ -83,26 +83,19 @@ public class SurveyResultController {
     @Autowired
     private SectionClient sectionClient;
 
-
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private ISurveyResultService surveyResultService;
+
 
     @Value("${fpfile.path}")
     private String fpFileRootPath;
 
-    @Autowired
-    private ISurveyOriginalService surveyOriginalService;
-    @Autowired
-    private ISurveyResultService surveyResultService;
 
     @Autowired
     private ExcelService excelService;
 
     @Autowired
     private SurveyResultReadListener surveyPointReadListener;
-
-    @Autowired
-    private ISurveyPointService surveyPointService;
 
 
     @ApiOperation(value = "添加成果数据", notes = "添加成果数据", httpMethod = "POST")
@@ -279,7 +272,6 @@ public class SurveyResultController {
     }
 
 
-
     @ApiOperation(value = "成果数据列表", httpMethod = "GET", notes = "成果数据列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", required = true, example = "1", paramType = "path"),
@@ -309,11 +301,11 @@ public class SurveyResultController {
             @ApiImplicitParam(name = "pointCode", value = "测点code", dataType = "String", paramType = "query", required = true),
     })
     @RequestMapping(value = "/overrunDetails/{pageIndex}", method = RequestMethod.GET)
-    public  RespVO<PagedResult<OverrunListVo>>   queryOverrunDetails(@PathVariable(value = "pageIndex") int pageIndex,
-                                                                     @RequestParam(required = false, defaultValue = "10") Integer pageSize,
-                                                                     @RequestParam(required = false, defaultValue = "0") Integer type,
-                                                                     @RequestParam String sectionCode,
-                                                                     @RequestParam String pointCode) {
+    public RespVO<PagedResult<OverrunListVo>> queryOverrunDetails(@PathVariable(value = "pageIndex") int pageIndex,
+                                                                  @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                                                                  @RequestParam(required = false, defaultValue = "0") Integer type,
+                                                                  @RequestParam String sectionCode,
+                                                                  @RequestParam String pointCode) {
         // TODO ID -> CODE
         PagedResult<OverrunListVo> listVoPagedResult = iSurveyResultService.queryOverrunDetails(pageIndex, pageSize, sectionCode, pointCode, type);
         return RespVOBuilder.success(listVoPagedResult);
@@ -361,12 +353,12 @@ public class SurveyResultController {
 
         String fileName = "测量成果报表" + System.currentTimeMillis() + ".xlsx";
         response.setContentType("application/force-download");
-        List<SurveyReportDataVo> surveyReportDataVoList = queryData(sectionCode, taskId);
+        List<SurveyReportDataVo> surveyReportDataVoList = surveyResultService.querySurveyReportData(sectionCode, taskId);
         Set<String> typeSet = surveyReportDataVoList.stream().map(SurveyReportDataVo::getPointType).collect(Collectors.toSet());
         for (String type : typeSet) {
             List<SurveyReportDataVo> list = surveyReportDataVoList.stream().filter(o -> o.getPointType().equals(type)).collect(Collectors.toList());
             SurveyReportDataVo surveyReportDataVo = list.get(0);
-            SurveyReportVo surveyReportVo = getSurveyReportVo(surveyReportDataVo.getWorkspaceCode());
+            SurveyReportVo surveyReportVo = surveyResultService.getSurveyReportVo(surveyReportDataVo.getWorkspaceCode());
             surveyReportVo.setSurveyer(surveyReportDataVo.getSurveyer());
             surveyReportVo.setInitSurveyTime(surveyReportDataVo.getInitSurveyTime());
             surveyReportVo.setPreSurveyTime(surveyReportDataVo.getPreSurveyTime());
@@ -478,97 +470,22 @@ public class SurveyResultController {
     }
 
 
-    public SurveyReportVo getSurveyReportVo(String workspaceCode) {
-        SurveyReportVo surveyReportVo = new SurveyReportVo();
-
-        //用来封装所有条件的对象
-        Query query = new Query();
-        //用来构建条件
-        Criteria criteria = new Criteria();
-        criteria.and("workSpace").elemMatch(new Criteria().and("code").is(workspaceCode));
-        query.addCriteria(criteria);
-        JSONObject jsonObject = mongoTemplate.findOne(query, JSONObject.class, "section");
-        // 标段名
-        surveyReportVo.setTitle(jsonObject.getString("name"));
-
-        //设置地址
-        JSONArray jsonArray = jsonObject.getJSONArray("workSpace");
-        for (int i = 0; i < jsonArray.size(); i++) {
-            if (jsonArray.getJSONObject(i).getString("code").equals(workspaceCode)) {
-                surveyReportVo.setAddress(jsonArray.getJSONObject(i).getString("name"));
-            }
-        }
-
-        return surveyReportVo;
-    }
-
-    public List<SurveyReportDataVo> queryData(@RequestParam String sectionCode,
-                                              @RequestParam Long taskId
-    ) {
-
-
-        //获取原始数据
-        List<SurveyOriginalVo> originalVos = surveyOriginalService.list(taskId, sectionCode);
-        //获取原始数据ID
-        List<Long> originalIds = originalVos.stream().map(SurveyOriginalVo::getId).collect(Collectors.toList());
-        //获取结果数据
-        List<SurveyResult> surveyResults = surveyResultService.queryResult(sectionCode, originalIds);
-
-        //测量结果
-        List<SurveyReportDataVo> surveyReportDataVos = new ArrayList<>();
-        surveyResults.forEach(surveyResult -> surveyReportDataVos.add(SurveyReportDataVo.builder().build().loadSurveyReportDataVo(surveyResult)));
-
-        for (SurveyReportDataVo surveyReportDataVo : surveyReportDataVos) {
-
-            //上次测量结果
-            List<SurveyResult> tempResults = surveyResultService.queryPreResult(surveyReportDataVo.getSurveyTime(), DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 1, surveyReportDataVo.getPointCode());
-            //第一次测量结果
-            List<SurveyResult> intResults = surveyResultService.queryPreResult(null, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 1, surveyReportDataVo.getPointCode());
-            //点初始值
-            SurveyPointVo surveyPointVo = surveyPointService.querySurveyPointByCode(surveyReportDataVo.getPointCode(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
-            surveyReportDataVo.setPointType(surveyPointVo.getType());
-            surveyReportDataVo.setInitElevation(surveyPointVo.getElevation());
-            surveyReportDataVo.setOnceLowerLimit(surveyPointVo.getOnceLowerLimit());
-            surveyReportDataVo.setOnceUpperLimit(surveyPointVo.getOnceUpperLimit());
-            surveyReportDataVo.setSpeedLowerLimit(surveyPointVo.getSpeedLowerLimit());
-            surveyReportDataVo.setSpeedUpperLimit(surveyPointVo.getSpeedUpperLimit());
-            surveyReportDataVo.setTotalLowerLimit(surveyPointVo.getTotalLowerLimit());
-            surveyReportDataVo.setTotalUpperLimit(surveyPointVo.getTotalUpperLimit());
-
-
-            if (!CollectionUtils.isEmpty(intResults) && intResults.size() > 1) {
-                surveyReportDataVo.setInitSurveyTime(intResults.get(intResults.size() - 1).getSurveyTime());
-            }
-            if (!CollectionUtils.isEmpty(tempResults)) {
-                surveyReportDataVo.setPreElevation(tempResults.get(0).getElevation());
-                surveyReportDataVo.setPreSurveyTime(tempResults.get(0).getSurveyTime());
-            }
-
-        }
-        return surveyReportDataVos;
-    }
-
-
-
-
     @ApiOperation(value = "Excel批量上传成功数据", notes = "Excel批量上传成功数据", httpMethod = "POST")
     @ApiImplicitParams({
 
     })
-    @RequestMapping(value = "/uploadPointResultExcel",method = RequestMethod.POST)
+    @RequestMapping(value = "/uploadPointResultExcel", method = RequestMethod.POST)
     public RespVO uploadPointResultExcel(@RequestPart(value = "fileName") String fileName,
-                                         @RequestParam() String sectionCode){
+                                         @RequestParam() String sectionCode) {
         // TODO ID -> CODE
-        if(StringUtils.isEmpty(fileName)){
+        if (StringUtils.isEmpty(fileName)) {
             return RespVOBuilder.failure("文件名不能为空");
         }
-        String filePath = FpFileUtil.getFilePath(fpFileRootPath,fileName);
+        String filePath = FpFileUtil.getFilePath(fpFileRootPath, fileName);
         surveyPointReadListener.setTableName(sectionCode);
-        excelService.readExcel(filePath,surveyPointReadListener, SurveyResultVo.class,1);
+        excelService.readExcel(filePath, surveyPointReadListener, SurveyResultVo.class, 1);
         return RespVOBuilder.success();
     }
-
-
 
 
 }

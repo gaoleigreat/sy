@@ -1,8 +1,6 @@
 package com.lego.survey.settlement.impl.service;
 import com.lego.survey.settlement.model.entity.SurveyResult;
-import com.lego.survey.settlement.model.vo.OverrunListVo;
-import com.lego.survey.settlement.model.vo.SurveyPontResultVo;
-import com.lego.survey.settlement.model.vo.SurveyResultVo;
+import com.lego.survey.settlement.model.vo.*;
 import com.survey.lib.common.page.PagedResult;
 import com.survey.lib.common.vo.RespVO;
 
@@ -117,4 +115,20 @@ public interface ISurveyResultService {
      * @return
      */
     PagedResult<OverrunListVo> queryOverrunDetails(int pageIndex, Integer pageSize, String sectionCode, String pointCode ,Integer type);
+
+
+    /**
+     * 查询导出excel报表动态插入的数据
+     * @param sectionCode
+     * @param taskId
+     * @return
+     */
+    List<SurveyReportDataVo> querySurveyReportData(String sectionCode, Long taskId);
+
+    /**
+     * 查询导出excel报表项目信息数据
+     * @param workspaceCode
+     * @return
+     */
+    SurveyReportVo getSurveyReportVo(String workspaceCode);
 }
