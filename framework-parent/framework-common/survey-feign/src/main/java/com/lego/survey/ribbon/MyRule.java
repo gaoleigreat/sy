@@ -24,6 +24,8 @@ public class MyRule extends AbstractLoadBalancerRule {
 
     private String[] localhost = {"192.168.101.103"};
 
+    private String[] blackInstances = {"192.168.101.103:48090"};
+
     @Override
     public void initWithNiwsConfig(IClientConfig iClientConfig) {
 
@@ -43,7 +45,7 @@ public class MyRule extends AbstractLoadBalancerRule {
         // 获取全部服务
         List<Server> allServers = loadBalancer.getAllServers();
         // 非法服务剔除
-        List<Server> chooseServer = getChooseServer(upList, localhost);
+        List<Server> chooseServer = getChooseServer(upList, localhost, blackInstances,loadBalancer);
         total++;
         currentIndex++;
         if (currentIndex >= chooseServer.size()) {
@@ -54,15 +56,19 @@ public class MyRule extends AbstractLoadBalancerRule {
         return server;
     }
 
-    private List<Server> getChooseServer(List<Server> upList, String[] localhost) {
+    private List<Server> getChooseServer(List<Server> upList, String[] localhost, String[] blackInstances, ILoadBalancer loadBalancer) {
         List<Server> availableServers = new ArrayList<>();
         if (!CollectionUtils.isEmpty(upList)) {
             for (Server server : upList) {
                 String host = server.getHost();
+               /* if(ArrayUtils.contains(blackInstances,host)){
+                    loadBalancer.markServerDown(server);
+                    continue;
+                }*/
                 if (!ArrayUtils.contains(localhost, host)) {
                     continue;
                 }
-                if(server.isAlive()){
+                if (server.isAlive()) {
                     availableServers.add(server);
                 }
             }
