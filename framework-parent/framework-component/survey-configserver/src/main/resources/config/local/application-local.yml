@@ -22,7 +22,7 @@ eureka:
     register-with-eureka: true
     registry-fetch-interval-seconds: 5
     serviceUrl:
-      defaultZone: http://${define.user.name}:${define.user.password}@localhost:48010/eureka/
+      defaultZone: http://${define.user.name}:${define.user.password}@192.168.101.103:48010/eureka/
   instance:
     prefer-ip-address: true
     instance-id: ${spring.cloud.client.ip-address}:${server.port}
@@ -44,15 +44,15 @@ spring:
       override-system-properties: false    # 是否覆盖Java运行时参数
   data:
     mongodb:
-      host: 114.116.6.53
+      host: 192.168.101.103
       port: 27017
-      database: survey_dev
+      database: survey
       #username: admin
       #password: '{cipher}a1d30c1325f1b0cd2e4619bff2be57bc32ae0413c0ce1fee07153b60bfa3a782'
   redis:
-    host: 114.116.6.53
+    host: 192.168.101.103
     port: 6379
-    password: Legaoyun@2018
+    password: admin123
     database: 0
     jedis:
       pool:
@@ -62,10 +62,10 @@ spring:
         min-idle: 0
     timeout: 10000
   rabbitmq:
-    host: 114.116.44.104
+    host: 192.168.101.103
     port: 5672
     username: admin
-    password: legaoyun@2018
+    password: admin123
   zipkin:
     base-url: http://114.116.44.104:9411
   jackson:

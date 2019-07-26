@@ -2,11 +2,11 @@ spring:
   cloud:
     config:
       #fail-fast: true
-      uri: http://localhost:48020
+      uri: http://192.168.101.103:48020
       profile: local
       label: master
       username: admin
-      password: admin123
+      password: admin123456
   security:
     user:
       name: ${define.user.name}

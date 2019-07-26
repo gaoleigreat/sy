@@ -7,7 +7,7 @@ spring:
   cloud:
     config:
       #fail-fast: true
-      uri: http://localhost:48020
+      uri: http://192.168.101.103:48020
       profile: local
       label: master
       username: admin
@@ -23,6 +23,6 @@ eureka:
     fetch-registry: true
     register-with-eureka: false
     service-url:
-      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@localhost:48010/eureka/
+      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@192.168.101.103:48010/eureka/
     backup-registry-impl: com.lego.survey.eureka.config.BackupServerRegistry
     filter-only-up-instances: true
