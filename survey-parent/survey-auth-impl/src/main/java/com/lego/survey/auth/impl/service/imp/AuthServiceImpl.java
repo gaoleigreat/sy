@@ -7,6 +7,7 @@ import com.lego.survey.auth.impl.service.IResourcesService;
 import com.lego.survey.user.model.entity.OwnProject;
 import com.lego.survey.user.model.entity.OwnSection;
 import com.lego.survey.user.model.entity.User;
+import com.survey.lib.common.consts.HttpConsts;
 import com.survey.lib.common.vo.AuthVo;
 import com.survey.lib.common.vo.CurrentVo;
 import com.survey.lib.common.vo.TokenVo;
@@ -40,10 +41,6 @@ public class AuthServiceImpl implements IAuthService {
 
     @Autowired
     private JwtProperty jwtProperty;
-
-
-    @Value("${jwt.info.expiresSecond}")
-    private int expiresSecond;
 
     private String prefix = "userToken:";
 
@@ -85,7 +82,14 @@ public class AuthServiceImpl implements IAuthService {
         authVo.setSubject(deviceType);
         authVo.setCurrentVo(currentVo);
         //添加Token过期时间
-        int expiresSecond = jwtProperty.getExpiresSecond();
+        int expiresSecond;
+        if (deviceType.equals(HttpConsts.DeviceType.DEVICE_ANDROID)) {
+            expiresSecond = jwtProperty.getAppExpires();
+        } else if (deviceType.equals(HttpConsts.DeviceType.DEVICE_WEB)) {
+            expiresSecond = jwtProperty.getWebExpires();
+        }else {
+            return null;
+        }
         Date exp = new Date();
         if (expiresSecond >= 0) {
             long expMillis = nowMillis + (expiresSecond * 1000);

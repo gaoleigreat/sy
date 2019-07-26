@@ -4,7 +4,8 @@ jwt:
     clientId: 098f6bcd4621d373cade4e832627b4f6
     base64Secret: PL8iU@vt&0tFWijuoi%zASgsLP1rKwks
     name: user-api
-    expiresSecond: 432000
+    appExpires: 432000
+    webExpires: 1800
 
 
 

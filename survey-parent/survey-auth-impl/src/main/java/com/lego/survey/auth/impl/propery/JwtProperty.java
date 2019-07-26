@@ -19,7 +19,12 @@ public class JwtProperty {
     private String base64Secret;
     private String name;
     /**
-     * 过期时间(秒)
+     * APP 过期时间(秒)
      */
-    private int expiresSecond;
+    private int appExpires;
+
+    /**
+     * WEB 过期时间 (秒)
+     */
+    private int webExpires;
 }
