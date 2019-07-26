@@ -26,7 +26,7 @@ public class MonitorAdminApplication {
     }
 
 
-    @Profile("dev")
+    @Profile("local")
     @Configuration
     public static class SecurityPermitAllConfig extends WebSecurityConfigurerAdapter {
         @Override
@@ -36,7 +36,7 @@ public class MonitorAdminApplication {
         }
     }
 
-    @Profile("prod")
+    @Profile("local")
     @Configuration
     public static class SecuritySecureConfig extends WebSecurityConfigurerAdapter {
         private final String adminContextPath;

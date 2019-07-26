@@ -14,10 +14,10 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class RibbonRule {
 
-    @Bean
+  /*  @Bean
     @Primary
-    @Profile(value = "dev")
+    @Profile(value = "local")
     public IRule myRule() {
         return new MyRule();
-    }
+    }*/
 }

@@ -51,7 +51,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
     @Bean("grayAwareRule")
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    @Profile(value = "dev")
+    @Profile(value = "local")
     public IRule grayAwareRule(StringRedisTemplate stringRedisTemplate){
         return new GrayAwareRule(new GrayAwarePredicate(stringRedisTemplate));
     }
