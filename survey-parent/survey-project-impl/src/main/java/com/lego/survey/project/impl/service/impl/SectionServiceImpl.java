@@ -63,7 +63,7 @@ public class SectionServiceImpl implements ISectionService {
             if (sections == null) {
                 sections = new ArrayList<>();
             }
-            sections.add(OwnerSection.builder().id(section.getId()).name(section.getName()).build());
+            sections.add(OwnerSection.builder().id(section.getId()).name(section.getName()).code(section.getCode()).build());
             project.setSections(sections);
             project.setUpdateTime(new Date());
             projectRepository.save(project);
@@ -94,7 +94,7 @@ public class SectionServiceImpl implements ISectionService {
     @Override
     public RespVO delete(String code) {
         Section section = sectionRepository.findSectionByCodeAndValid(code, 0);
-        if(section!=null){
+        if (section != null) {
             section.setValid(1);
             sectionRepository.save(section);
             // TODO 更新关联表状态
