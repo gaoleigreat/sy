@@ -9,6 +9,7 @@ import com.lego.survey.settlement.model.entity.BasePoint;
 import com.lego.survey.settlement.model.vo.BasePointVo;
 import com.lego.survey.event.user.LogSender;
 import com.survey.lib.common.consts.DictConstant;
+import com.survey.lib.common.consts.RespConsts;
 import com.survey.lib.common.utils.HeaderUtils;
 import com.survey.lib.common.utils.HttpUtils;
 import com.survey.lib.common.utils.SnowflakeIdUtils;
@@ -67,7 +68,9 @@ public class BasePointController {
         basePoint.setCreateUser(userId);
         RespVO respVO = iBasePointService.create(basePoint);
         // 新增日志
-        logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "新增基准点:[" + basePoint.getId() + "]");
+        if (respVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
+            logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "新增基准点:[" + basePoint.getId() + "]");
+        }
         return respVO;
     }
 
@@ -84,7 +87,9 @@ public class BasePointController {
         //TODO 校验权限
         RespVO respVO = iBasePointService.modify(basePoint);
         // 新增日志
-        logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "修改基准点:[" + basePoint.getId() + "]");
+        if (respVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
+            logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "修改基准点:[" + basePoint.getId() + "]");
+        }
         return respVO;
     }
 
@@ -102,7 +107,9 @@ public class BasePointController {
         // 验证用户正确性
         String userId = headerVo.getUserId();
         RespVO delete = iBasePointService.delete(codes);
-        logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "删除基准点:[" + JSONObject.toJSONString(codes) + "]");
+        if(delete.getRetCode()==RespConsts.SUCCESS_RESULT_CODE){
+            logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "删除基准点:[" + JSONObject.toJSONString(codes) + "]");
+        }
         return delete;
     }
 
