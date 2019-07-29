@@ -355,6 +355,8 @@ public class SurveyResultController {
         String fileName = "测量成果报表" + System.currentTimeMillis() + ".xlsx";
         response.setContentType("application/force-download");
         List<SurveyReportDataVo> surveyReportDataVoList = surveyResultService.querySurveyReportData(sectionCode, taskId);
+
+
         Set<String> typeSet = surveyReportDataVoList.stream().map(SurveyReportDataVo::getPointType).collect(Collectors.toSet());
         for (String type : typeSet) {
             List<SurveyReportDataVo> list = surveyReportDataVoList.stream().filter(o -> o.getPointType().equals(type)).collect(Collectors.toList());

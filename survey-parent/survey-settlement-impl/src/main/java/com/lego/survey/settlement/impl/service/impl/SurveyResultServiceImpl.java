@@ -237,7 +237,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                     overrun.setCurValue(surveyResult.getElevation());
                     overrun.setSurveyer(surveyResult.getSurveyer());
                     SurveyOriginal surveyOriginal = surveyOriginalMapper.selectById(surveyResult.getOriginalId());
-                    if(surveyOriginal!=null){
+                    if (surveyOriginal != null) {
                         overrun.setTaskId(surveyOriginal.getTaskId());
                     }
                 }
@@ -292,7 +292,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
         PagedResult<OverrunListVo> voPagedResult = new PagedResult<>();
         IPage<SurveyResult> resultPage = new Page<>(pageIndex, pageSize);
         QueryWrapper<SurveyResult> resultWrapper = new QueryWrapper<>();
-        resultWrapper.eq("point_code",pointCode);
+        resultWrapper.eq("point_code", pointCode);
         IPage<SurveyResult> surveyResultPage = surveyResultMapper.queryList(resultPage, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, resultWrapper);
         List<SurveyResult> records = surveyResultPage.getRecords();
         List<OverrunListVo> overrunListVos = new ArrayList<>();
@@ -321,7 +321,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                 overrun.setPointStatus(surveyPoint.getStatus());
                 overrun.setSurveyer(record.getSurveyer());
                 SurveyOriginal surveyOriginal = surveyOriginalMapper.selectById(record.getOriginalId());
-                if(surveyOriginal!=null){
+                if (surveyOriginal != null) {
                     overrun.setTaskId(surveyOriginal.getTaskId());
                 }
 
@@ -358,68 +358,76 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
     public List<SurveyReportDataVo> querySurveyReportData(String sectionCode, Long taskId) {
 
         //获取原始数据
-        List<SurveyOriginalVo> originalVos = surveyOriginalService.list(taskId, sectionCode);
-        //获取原始数据ID
-        List<Long> originalIds = originalVos.stream().map(SurveyOriginalVo::getId).collect(Collectors.toList());
-        //获取结果数据
-        List<SurveyResult> surveyResults = queryResult(sectionCode, originalIds);
+        try {
+            List<SurveyOriginalVo> originalVos = surveyOriginalService.list(taskId, sectionCode);
 
-        //测量结果
-        List<SurveyReportDataVo> surveyReportDataVos = new ArrayList<>();
-        surveyResults.forEach(surveyResult -> surveyReportDataVos.add(SurveyReportDataVo.builder().build().loadSurveyReportDataVo(surveyResult)));
+            //获取原始数据ID
+            List<Long> originalIds = originalVos.stream().map(SurveyOriginalVo::getId).collect(Collectors.toList());
+            //获取结果数据
 
-        for (SurveyReportDataVo surveyReportDataVo : surveyReportDataVos) {
+            List<SurveyResult> surveyResults = queryResult(sectionCode, originalIds);
 
-            //上次测量结果
-            List<SurveyResult> tempResults = queryPreResult(surveyReportDataVo.getSurveyTime(), DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 1, surveyReportDataVo.getPointCode());
-            //第一次测量结果
-            List<SurveyResult> intResults = queryPreResult(null, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 1, surveyReportDataVo.getPointCode());
-            //点初始值
-            SurveyPointVo surveyPointVo = surveyPointService.querySurveyPointByCode(surveyReportDataVo.getPointCode(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
-            surveyReportDataVo.setPointType(surveyPointVo.getType());
-            surveyReportDataVo.setInitElevation(surveyPointVo.getElevation());
-            surveyReportDataVo.setOnceLowerLimit(surveyPointVo.getOnceLowerLimit());
-            surveyReportDataVo.setOnceUpperLimit(surveyPointVo.getOnceUpperLimit());
-            surveyReportDataVo.setSpeedLowerLimit(surveyPointVo.getSpeedLowerLimit());
-            surveyReportDataVo.setSpeedUpperLimit(surveyPointVo.getSpeedUpperLimit());
-            surveyReportDataVo.setTotalLowerLimit(surveyPointVo.getTotalLowerLimit());
-            surveyReportDataVo.setTotalUpperLimit(surveyPointVo.getTotalUpperLimit());
+            //测量结果
+            List<SurveyReportDataVo> surveyReportDataVos = new ArrayList<>();
+            surveyResults.forEach(surveyResult -> surveyReportDataVos.add(SurveyReportDataVo.builder().build().loadSurveyReportDataVo(surveyResult)));
+
+            for (SurveyReportDataVo surveyReportDataVo : surveyReportDataVos) {
+
+                //上次测量结果
+                List<SurveyResult> tempResults = queryPreResult(surveyReportDataVo.getSurveyTime(), DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 1, surveyReportDataVo.getPointCode());
+                //第一次测量结果
+                List<SurveyResult> intResults = queryPreResult(null, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 1, surveyReportDataVo.getPointCode());
+                //点初始值
+                SurveyPointVo surveyPointVo = surveyPointService.querySurveyPointByCode(surveyReportDataVo.getPointCode(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
+                surveyReportDataVo.setPointType(surveyPointVo.getType());
+                surveyReportDataVo.setInitElevation(surveyPointVo.getElevation());
+                surveyReportDataVo.setOnceLowerLimit(surveyPointVo.getOnceLowerLimit());
+                surveyReportDataVo.setOnceUpperLimit(surveyPointVo.getOnceUpperLimit());
+                surveyReportDataVo.setSpeedLowerLimit(surveyPointVo.getSpeedLowerLimit());
+                surveyReportDataVo.setSpeedUpperLimit(surveyPointVo.getSpeedUpperLimit());
+                surveyReportDataVo.setTotalLowerLimit(surveyPointVo.getTotalLowerLimit());
+                surveyReportDataVo.setTotalUpperLimit(surveyPointVo.getTotalUpperLimit());
 
 
-            if (!CollectionUtils.isEmpty(intResults) && intResults.size() > 1) {
-                surveyReportDataVo.setInitSurveyTime(intResults.get(intResults.size() - 1).getSurveyTime());
+                if (!CollectionUtils.isEmpty(intResults) && intResults.size() > 1) {
+                    surveyReportDataVo.setInitSurveyTime(intResults.get(intResults.size() - 1).getSurveyTime());
+                }
+                if (!CollectionUtils.isEmpty(tempResults)) {
+                    surveyReportDataVo.setPreElevation(tempResults.get(0).getElevation());
+                    surveyReportDataVo.setPreSurveyTime(tempResults.get(0).getSurveyTime());
+                }
+
             }
-            if (!CollectionUtils.isEmpty(tempResults)) {
-                surveyReportDataVo.setPreElevation(tempResults.get(0).getElevation());
-                surveyReportDataVo.setPreSurveyTime(tempResults.get(0).getSurveyTime());
-            }
-
-        }
-        return surveyReportDataVos;
-    }
-@Override
-public SurveyReportVo getSurveyReportVo(String workspaceCode) {
-    SurveyReportVo surveyReportVo = new SurveyReportVo();
-
-    //用来封装所有条件的对象
-    Query query = new Query();
-    //用来构建条件
-    Criteria criteria = new Criteria();
-    criteria.and("workSpace").elemMatch(new Criteria().and("code").is(workspaceCode));
-    query.addCriteria(criteria);
-    JSONObject jsonObject = mongoTemplate.findOne(query, JSONObject.class, "section");
-    // 标段名
-    surveyReportVo.setTitle(jsonObject.getString("name"));
-
-    //设置地址
-    JSONArray jsonArray = jsonObject.getJSONArray("workSpace");
-    for (int i = 0; i < jsonArray.size(); i++) {
-        if (jsonArray.getJSONObject(i).getString("code").equals(workspaceCode)) {
-            surveyReportVo.setAddress(jsonArray.getJSONObject(i).getString("name"));
+            return surveyReportDataVos;
+        } catch (Exception e) {
+            log.error("get Exception:{}", e.getMessage());
+            return new ArrayList<SurveyReportDataVo>();
         }
     }
 
-    return surveyReportVo;
-}
+    @Override
+    public SurveyReportVo getSurveyReportVo(String workspaceCode) {
+        SurveyReportVo surveyReportVo = new SurveyReportVo();
+
+        //用来封装所有条件的对象
+        Query query = new Query();
+        //用来构建条件
+        Criteria criteria = new Criteria();
+        criteria.and("workSpace").elemMatch(new Criteria().and("code").is(workspaceCode));
+        query.addCriteria(criteria);
+        JSONObject jsonObject = mongoTemplate.findOne(query, JSONObject.class, "section");
+        // 标段名
+        surveyReportVo.setTitle(jsonObject.getString("name"));
+
+        //设置地址
+        JSONArray jsonArray = jsonObject.getJSONArray("workSpace");
+        for (int i = 0; i < jsonArray.size(); i++) {
+            if (jsonArray.getJSONObject(i).getString("code").equals(workspaceCode)) {
+                surveyReportVo.setAddress(jsonArray.getJSONObject(i).getString("name"));
+            }
+        }
+
+        return surveyReportVo;
+    }
 
 }
