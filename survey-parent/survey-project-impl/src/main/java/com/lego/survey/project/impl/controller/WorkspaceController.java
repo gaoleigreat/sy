@@ -88,7 +88,6 @@ public class WorkspaceController {
     @Operation(value = "delete",desc = "删除工区信息")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public RespVO delete(String code, HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         iWorkspaceService.deleteWorkSpace(code);
@@ -104,7 +103,6 @@ public class WorkspaceController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public RespVO<RespDataVO<Workspace>> list(HttpServletRequest request,
                                               @RequestParam String sectionCode) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         return iWorkspaceService.queryBySectionCode(sectionCode);
     }
@@ -116,7 +114,6 @@ public class WorkspaceController {
     @Operation(value = "info",desc = "根据ID获取工区信息")
     @RequestMapping(value = "/info/{code}", method = RequestMethod.GET)
     public RespVO<Workspace> info(@PathVariable(value = "code") String code,HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         Workspace workspace=iWorkspaceService.queryByCode(code);
         return RespVOBuilder.success(workspace);
@@ -131,7 +128,6 @@ public class WorkspaceController {
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public RespVO<RespDataVO<OwnWorkspace>> findAll(@RequestParam(required = false) List<String> sectionCodes,
                                                HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         List<OwnWorkspace> sections = iWorkspaceService.findAll(sectionCodes);
         return RespVOBuilder.success(sections);

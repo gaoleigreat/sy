@@ -102,7 +102,6 @@ public class BasePointController {
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public RespVO delete(HttpServletRequest request,
                          @RequestParam List<String> codes) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         // 验证用户正确性
         String userId = headerVo.getUserId();

@@ -107,7 +107,6 @@ public class SurveyResultController {
     public RespVO create(@Validated @RequestBody SurveyResultVo surveyResultVo,
                          @PathVariable(value = "sectionCode") String sectionCode,
                          HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = headerVo.getUserId();
         if (surveyResultVo.getId() == null) {
@@ -195,7 +194,6 @@ public class SurveyResultController {
     public RespVO modify(@Validated @RequestBody SurveyResultVo surveyResultVo,
                          @PathVariable(value = "sectionCode") String sectionCode,
                          HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = headerVo.getUserId();
         //TODO 校验权限
@@ -223,7 +221,6 @@ public class SurveyResultController {
             Long endTimestamp,
             HttpServletRequest request
     ) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         RespVO<Section> sectionRespVO = sectionClient.queryByWorkspaceId(workspaceCode);
         if (sectionRespVO.getRetCode() != RespConsts.SUCCESS_RESULT_CODE) {
@@ -263,7 +260,6 @@ public class SurveyResultController {
             @RequestParam List<Long> ids,
             HttpServletRequest request
     ) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         // 验证用户正确性
@@ -288,7 +284,6 @@ public class SurveyResultController {
                                                                @RequestParam(required = false, defaultValue = "0") Integer type,
                                                                @RequestParam String sectionCode,
                                                                @RequestParam(required = false) String workspaceCode) {
-        // TODO ID -> CODE
         PagedResult<OverrunListVo> listVoPagedResult = iSurveyResultService.queryOverrunList(pageIndex, pageSize, sectionCode, workspaceCode, type);
         return RespVOBuilder.success(listVoPagedResult);
     }
@@ -307,7 +302,6 @@ public class SurveyResultController {
                                                                   @RequestParam(required = false, defaultValue = "0") Integer type,
                                                                   @RequestParam String sectionCode,
                                                                   @RequestParam String pointCode) {
-        // TODO ID -> CODE
         PagedResult<OverrunListVo> listVoPagedResult = iSurveyResultService.queryOverrunDetails(pageIndex, pageSize, sectionCode, pointCode, type);
         return RespVOBuilder.success(listVoPagedResult);
     }
@@ -321,7 +315,6 @@ public class SurveyResultController {
     @RequestMapping(value = "/query/list", method = RequestMethod.GET)
     public RespVO<RespDataVO<SurveyResult>> query(@RequestParam String sectionCode,
                                                   @RequestParam List<Long> originalIds) {
-        // TODO ID -> CODE
         List<SurveyResult> surveyResults = iSurveyResultService.queryResult(sectionCode, originalIds);
         return RespVOBuilder.success(surveyResults);
     }
@@ -335,7 +328,6 @@ public class SurveyResultController {
     @RequestMapping(value = "/query/pointData", method = RequestMethod.GET)
     public RespVO<RespDataVO<SurveyPontResultVo>> queryPontData(@RequestParam String sectionCode,
                                                                 @RequestParam String pointCode) {
-        // TODO ID -> CODE
         List<SurveyPontResultVo> surveyPontResultVos = iSurveyResultService.queryPontResult(sectionCode, pointCode);
         return RespVOBuilder.success(surveyPontResultVos);
     }
@@ -480,7 +472,6 @@ public class SurveyResultController {
     @RequestMapping(value = "/uploadPointResultExcel", method = RequestMethod.POST)
     public RespVO uploadPointResultExcel(@RequestParam(value = "fileName") String fileName,
                                          @RequestParam() String sectionCode) {
-        // TODO ID -> CODE
         if (StringUtils.isEmpty(fileName)) {
             return RespVOBuilder.failure("文件名不能为空");
         }

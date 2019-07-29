@@ -86,7 +86,6 @@ public class SurveyTaskController {
     public RespVO modify(@Validated @RequestBody SurveyTaskVo surveyTaskVo,
                          @PathVariable(value = "sectionCode") String sectionCode,
                          HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         //TODO 校验权限

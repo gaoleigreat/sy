@@ -83,7 +83,6 @@ public class SurveyPointController {
     public RespVO create(@Validated @RequestBody SurveyPointVo surveyPointVo,
                          @PathVariable(value = "sectionCode") String sectionCode,
                          HttpServletRequest request) {
-        // TODO ID -> CODE
         String code = surveyPointVo.getCode();
         String name = surveyPointVo.getName();
         SurveyPointVo surveyPoint = iSurveyPointService.querySurveyPointByNameOrCode(name, code, DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
@@ -107,7 +106,6 @@ public class SurveyPointController {
     public RespVO createBatch(@Validated @RequestBody List<SurveyPointVo> surveyPointVos,
                               @PathVariable(value = "sectionCode") String sectionCode,
                               HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         //TODO 校验权限
@@ -125,7 +123,6 @@ public class SurveyPointController {
     public RespVO modify(@Validated @RequestBody SurveyPointVo surveyPointVo,
                          @PathVariable(value = "sectionCode") String sectionCode,
                          HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = headerVo.getUserId();
         //TODO 校验权限
@@ -152,7 +149,6 @@ public class SurveyPointController {
             @RequestParam(required = false) Long endTimestamp,
             HttpServletRequest request
     ) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String deviceType = headerVo.getDeviceType();
         RespVO<Section> sectionRespVO = sectionClient.queryByWorkspaceCode(workspaceCode);
@@ -195,7 +191,6 @@ public class SurveyPointController {
             @RequestParam List<String> codes,
             HttpServletRequest request
     ) {
-        // TODO ID ->CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         RespVO delete = iSurveyPointService.delete(codes, DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
@@ -213,7 +208,6 @@ public class SurveyPointController {
     @RequestMapping(value = "/uploadBatch",method = RequestMethod.POST)
     public RespVO uploadPointResultExcel(@RequestParam(value = "fileName") String fileName,
                                          @RequestParam() String sectionCode){
-        // TODO ID -> CODE
         if(StringUtils.isEmpty(fileName)){
             return RespVOBuilder.failure("文件名不能为空");
         }

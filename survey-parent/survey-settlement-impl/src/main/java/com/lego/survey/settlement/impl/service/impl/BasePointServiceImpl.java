@@ -124,7 +124,7 @@ public class BasePointServiceImpl implements IBasePointService {
     public BasePoint queryByCodeOrName(String code, String name, String sectionCode) {
         QueryWrapper<BasePoint> wrapper = new QueryWrapper<>();
         wrapper.eq("section_code", sectionCode);
-        wrapper.eq("code", name).or().eq("name", sectionCode);
+        wrapper.eq("code", code).or().eq("name", name);
         List<BasePoint> basePoints = basePointMapper.selectList(wrapper);
         if (basePoints != null && basePoints.size() > 0) {
             return basePoints.get(0);

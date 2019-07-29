@@ -62,7 +62,6 @@ public class SurveyOriginalController {
     public RespVO create(@Validated @RequestBody SurveyOriginalVo surveyOriginalVo,
                          @PathVariable(value = "sectionCode") String sectionCode,
                          HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         //TODO 校验权限
@@ -84,7 +83,6 @@ public class SurveyOriginalController {
     public RespVO createBatch(@Validated @RequestBody List<SurveyOriginalVo> surveyOriginalVos,
                               @PathVariable(value = "sectionCode") String sectionCode,
                               HttpServletRequest request) {
-        // TODO ID -> CODE
         List<SurveyOriginal> surveyOriginals=new ArrayList<>();
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
@@ -109,7 +107,6 @@ public class SurveyOriginalController {
     public RespVO modify(@Validated @RequestBody SurveyOriginalVo surveyOriginalVo,
                          @PathVariable(value = "sectionCode") String sectionCode,
                          HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         //TODO 校验权限
@@ -133,7 +130,6 @@ public class SurveyOriginalController {
             @RequestParam(required = false, defaultValue = "10") int pageSize,
             @RequestParam(required = false) Long taskId
     ) {
-        // TODO ID -> CODE
         List<SurveyOriginalVo> surveyOriginals = iSurveyOriginalService.list(pageIndex, pageSize, taskId, DictConstant.TableNamePrefix.SURVEY_ORIGINAL + sectionCode);
         return RespVOBuilder.success(surveyOriginals);
     }
@@ -150,7 +146,6 @@ public class SurveyOriginalController {
             @RequestParam List<String> codes,
             HttpServletRequest request
     ) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = headerVo.getUserId();
         RespVO delete = iSurveyOriginalService.delete(codes, DictConstant.TableNamePrefix.SURVEY_ORIGINAL + sectionCode);
@@ -170,7 +165,6 @@ public class SurveyOriginalController {
             @PathVariable(value = "sectionCode") String sectionCode,
             @RequestParam Long taskId
     ) {
-        // TODO ID -> CODE
         List<SurveyOriginalVo> surveyOriginals = iSurveyOriginalService.list(taskId,  sectionCode);
         return RespVOBuilder.success(surveyOriginals);
     }

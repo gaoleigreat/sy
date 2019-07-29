@@ -71,7 +71,7 @@ public class ProjectController {
         String userId = currentVo.getUserId();
         String role = currentVo.getRole();
         // TODO 权限校验
-        if (!role.equals("admin")) {
+        if (!role.equals(DictConstant.Role.ADMIN)) {
             return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE, RespConsts.FAIL_NOPRESSION_MSG);
         }
         Project project = projectAddVo.loadProject();
@@ -110,7 +110,6 @@ public class ProjectController {
     @Operation(value = "info", desc = "查询工程详细信息")
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public RespVO<ProjectVo> query(@RequestParam String code, HttpServletRequest request) {
-        //TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         ProjectVo projectVo = iProjectService.queryByCode(code);
@@ -125,7 +124,6 @@ public class ProjectController {
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public RespVO<RespDataVO<ProjectVo>> delete(HttpServletRequest request,
                                                 @RequestParam String code) {
-        // TODO ID  -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         CurrentVo currentVo = authClient.getAuthVo(headerVo);
         String userId = currentVo.getUserId();

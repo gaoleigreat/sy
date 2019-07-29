@@ -110,8 +110,6 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
     public RespVO create(SurveyResult surveyResult, String tableName) {
         try {
             Date currentTime = new Date();
-            // TODO 测试  setSurveyTime
-            //surveyResult.setSurveyTime(currentTime);
             surveyResult.setUploadTime(currentTime);
             Integer save = surveyResultMapper.save(surveyResult, tableName);
             if (save <= 0) {

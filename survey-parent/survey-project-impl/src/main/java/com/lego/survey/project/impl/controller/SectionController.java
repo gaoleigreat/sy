@@ -156,7 +156,6 @@ public class SectionController {
     @Operation(value = "query", desc = "查询标段信息")
     @RequestMapping(value = "/query", method = RequestMethod.GET)
     public RespVO<SectionAddVo> query(@RequestParam String code, HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         SectionAddVo sectionAddVo = iSectionService.queryByCode(code);
@@ -209,7 +208,6 @@ public class SectionController {
     @Operation(value = "queryByWorkspaceCode", desc = "根据工区编码获取标段信息")
     @RequestMapping(value = "/queryByWorkspaceCode", method = RequestMethod.GET)
     public RespVO<Section> queryByWorkspaceCode(@RequestParam String workspaceCode, HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         return iSectionService.queryByWorkspaceCode(workspaceCode);
@@ -223,7 +221,6 @@ public class SectionController {
     @Operation(value = "delete", desc = "删除标段")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public RespVO delete(@RequestParam String code, HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         RespVO respVO = iSectionService.delete(code);
@@ -244,7 +241,6 @@ public class SectionController {
                                                @RequestParam(required = false, defaultValue = "10") int pageSize,
                                                @RequestParam(required = false) String projectCode,
                                                HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         PagedResult<SectionVo> pagedResult = iSectionService.list(pageIndex, pageSize, projectCode);
@@ -260,7 +256,6 @@ public class SectionController {
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public RespVO<RespDataVO<Section>> findAll(@RequestParam(required = false) List<String> projectCodes,
                                                HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         List<Section> sections = iSectionService.findAll(projectCodes);
@@ -277,7 +272,6 @@ public class SectionController {
     public RespVO<RespDataVO<SectionVo>> queryByProjectId(
             @RequestParam String projectCode,
             HttpServletRequest request) {
-        // TODO ID -> CODE
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String userId = authClient.getAuthVo(headerVo).getUserId();
         return iSectionService.queryByProjectCode(projectCode);
@@ -291,7 +285,6 @@ public class SectionController {
     @Operation(value = "findBySectionMasterBySectionCode", desc = "查询标段管理员")
     @RequestMapping(value = "/findBySectionMasterBySectionCode/{sectionCode}", method = RequestMethod.GET)
     public List<Master> findBySectionMasterBySectionCode(@PathVariable String sectionCode) {
-        // TODO ID -> CODE
         return iSectionService.findBySectionMasterBySectionCode(sectionCode);
     }
 
@@ -303,7 +296,6 @@ public class SectionController {
     @Operation(value = "findSurveyerBySectionCode", desc = "查询标段测量员")
     @RequestMapping(value = "/findSurveyerBySectionCode/{sectionCode}", method = RequestMethod.GET)
     public List<Surveyer> findSurveyerBySectionCode(@PathVariable String sectionCode) {
-        // TODO ID -> CODE
         return iSectionService.findSurveyerBySectionCode(sectionCode);
     }
 
@@ -315,7 +307,6 @@ public class SectionController {
     @Operation(value = "findSurveyerByWorkspaceCode", desc = "查询工区测量员")
     @RequestMapping(value = "/findSurveyerByWorkspaceCode/{workspaceCode}", method = RequestMethod.GET)
     public List<Surveyer> findSurveyerByWorkspaceCode(@PathVariable String workspaceCode) {
-        // TODO ID -> CODE
         return iSectionService.findSurveyerByWorkspaceCode(workspaceCode);
     }
 
