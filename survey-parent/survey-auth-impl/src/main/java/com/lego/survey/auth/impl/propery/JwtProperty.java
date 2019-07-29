@@ -3,6 +3,7 @@ package com.lego.survey.auth.impl.propery;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+
 /**
  * @author yanglf
  * @descript
@@ -21,10 +22,10 @@ public class JwtProperty {
     /**
      * APP 过期时间(秒)
      */
-    private int appExpires;
+    private long appExpires;
 
     /**
      * WEB 过期时间 (秒)
      */
-    private int webExpires;
+    private long webExpires;
 }

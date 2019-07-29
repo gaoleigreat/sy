@@ -131,6 +131,9 @@ public class ProjectServiceImpl implements IProjectService {
     @Override
     public ProjectVo queryByCode(String code) {
         Project project = projectRepository.findProjectByCodeAndValid(code, 0);
+        if (project == null) {
+            return null;
+        }
         return ProjectVo.builder()
                 .code(project.getCode())
                 .desc(project.getDesc())

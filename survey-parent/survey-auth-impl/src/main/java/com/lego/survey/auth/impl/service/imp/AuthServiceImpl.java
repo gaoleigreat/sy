@@ -60,7 +60,7 @@ public class AuthServiceImpl implements IAuthService {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
         long nowMillis = System.currentTimeMillis();
-        Date nowDate = new Date(nowMillis);
+        Date nowDate = new Date();
         //生成签名密钥
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(jwtProperty.getBase64Secret());
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
@@ -82,7 +82,7 @@ public class AuthServiceImpl implements IAuthService {
         authVo.setSubject(deviceType);
         authVo.setCurrentVo(currentVo);
         //添加Token过期时间
-        int expiresSecond;
+        long expiresSecond;
         if (deviceType.equals(HttpConsts.DeviceType.DEVICE_ANDROID)) {
             expiresSecond = jwtProperty.getAppExpires();
         } else if (deviceType.equals(HttpConsts.DeviceType.DEVICE_WEB)) {
@@ -93,7 +93,7 @@ public class AuthServiceImpl implements IAuthService {
         Date exp = new Date();
         if (expiresSecond >= 0) {
             long expMillis = nowMillis + (expiresSecond * 1000);
-            exp = new Date(expMillis);
+            exp.setTime(expMillis);
             // 设置  jwt  的过期时间
             jwtBuilder.setExpiration(exp)
                     // 如果当前时间在 nowDate 之前  token不生效
@@ -107,7 +107,15 @@ public class AuthServiceImpl implements IAuthService {
         ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
         ops.set(prefix + currentVo.getUserId() + ":" + deviceType, token, expiresSecond, TimeUnit.SECONDS);
         ops.set(token, JSONObject.toJSONString(authVo), expiresSecond, TimeUnit.SECONDS);
-        return TokenVo.builder().token(token).expireTime(exp).build();
+        return TokenVo.builder()
+                .token(token)
+                .expireTime(exp)
+                .userName(user.getUserName())
+                .cardId(user.getCardId())
+                .permissions(user.getPermission())
+                .role(user.getRole())
+                .deviceType(deviceType)
+                .build();
     }
 
     private CurrentVo generateCurrentVo(User user, String deviceType) {

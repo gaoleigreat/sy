@@ -1,9 +1,12 @@
 package com.lego.survey.user.impl.controller;
+
 import com.lego.survey.auth.feign.AuthClient;
 import com.lego.survey.base.annotation.Operation;
 import com.lego.survey.base.annotation.Resource;
 import com.lego.survey.event.user.LogSender;
+import com.lego.survey.user.impl.service.ILogService;
 import com.lego.survey.user.impl.service.IUserService;
+import com.lego.survey.user.model.entity.Log;
 import com.lego.survey.user.model.entity.OwnProject;
 import com.lego.survey.user.model.entity.OwnSection;
 import com.lego.survey.user.model.entity.User;
@@ -24,6 +27,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -38,7 +42,7 @@ import java.util.List;
 @RestController
 @RequestMapping(DictConstant.Path.USER)
 @Api(value = "UserController", description = "用户管理")
-@Resource(value = "user",desc = "用户管理")
+@Resource(value = "user", desc = "用户管理")
 public class UserController {
 
     @Autowired
@@ -46,6 +50,9 @@ public class UserController {
 
     @Autowired
     private IUserService iUserService;
+
+    @Autowired
+    private ILogService iLogService;
 
     @Autowired
     private LogSender logSender;
@@ -70,7 +77,7 @@ public class UserController {
         List<String> permission = userObj.getPermission();
         // TODO 允许采集端登录
         String password = userObj.getPassWord();
-       // String withMd5 = SecurityUtils.encryptionWithMd5(pwd);
+        // String withMd5 = SecurityUtils.encryptionWithMd5(pwd);
         if (!pwd.equals(password)) {
             return RespVOBuilder.failure(RespConsts.FAIL_LOGIN_CODE, "密码输入错误");
         }
@@ -81,7 +88,18 @@ public class UserController {
         }
         //  登录逻辑
         RespVO<TokenVo> respVO = authClient.generate(userObj, deviceType);
-        logSender.sendLogEvent(HttpUtils.getClientIp(request), userObj.getId(), "用户登录");
+        if (respVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
+            TokenVo info = respVO.getInfo();
+            Log log = iLogService.findLastLoginLogByUserId(userObj.getId());
+            if (log != null) {
+                info.setLastLoginTime(log.getTime());
+            }
+            try {
+                logSender.sendLogEvent(HttpUtils.getClientIp(request), userObj.getId(), "用户登录");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return respVO;
     }
 
@@ -93,7 +111,7 @@ public class UserController {
     @RequestMapping(value = {"/logout"}, method = RequestMethod.POST)
     public RespVO<TokenVo> logout(HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
-        String userId =  request.getHeader("userId");
+        String userId = request.getHeader("userId");
         String token = headerVo.getToken();
         String deviceType = headerVo.getDeviceType();
         // 验证用户正确性
@@ -110,7 +128,7 @@ public class UserController {
             @ApiImplicitParam(name = "name", value = "昵称", dataType = "String", required = true, paramType = "query"),
             @ApiImplicitParam(name = "cardId", value = "身份证号", dataType = "String", required = true, paramType = "query"),
     })
-    @Operation(value = "modify",desc = "修改用户信息")
+    @Operation(value = "modify", desc = "修改用户信息")
     @RequestMapping(value = "/modify", method = RequestMethod.PUT)
     public RespVO modify(@RequestParam("userId") String userId,
                          @RequestParam("userName") String userName,
@@ -132,7 +150,7 @@ public class UserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "删除用户的id", dataType = "String", required = true, paramType = "query"),
     })
-    @Operation(value = "delete",desc = "删除用户")
+    @Operation(value = "delete", desc = "删除用户")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public RespVO delete(@RequestParam("userId") String userId,
                          HttpServletRequest request) {
@@ -197,7 +215,7 @@ public class UserController {
     @ApiImplicitParams({
 
     })
-    @Operation(value = "create",desc = "新增用户")
+    @Operation(value = "create", desc = "新增用户")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public RespVO create(@Validated @RequestBody UserAddVo userAddVo, HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
@@ -205,16 +223,16 @@ public class UserController {
         String userId = currentVo.getUserId();
         String userRole = currentVo.getRole();
         String role = userAddVo.getRole();
-        if(!userRole.equals("admin") && !userRole.equals("master")){
-            return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE,RespConsts.FAIL_NOPRESSION_MSG);
+        if (!userRole.equals("admin") && !userRole.equals("master")) {
+            return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE, RespConsts.FAIL_NOPRESSION_MSG);
         }
-        if(userRole.equals("admin")){
-            if(!role.equals("surveyer") && ! role.equals("companyAdmin")){
-                return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE,RespConsts.FAIL_NOPRESSION_MSG);
+        if (userRole.equals("admin")) {
+            if (!role.equals("surveyer") && !role.equals("companyAdmin")) {
+                return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE, RespConsts.FAIL_NOPRESSION_MSG);
             }
-        }else {
-            if(!role.equals("surveyer")){
-                return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE,RespConsts.FAIL_NOPRESSION_MSG);
+        } else {
+            if (!role.equals("surveyer")) {
+                return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE, RespConsts.FAIL_NOPRESSION_MSG);
             }
         }
         String phone = userAddVo.getPhone();
@@ -231,7 +249,7 @@ public class UserController {
         userAddVo.setId(UuidUtils.generateShortUuid());
 
         RespVO respVO = iUserService.create(userAddVo);
-        if(respVO.getRetCode()==RespConsts.SUCCESS_RESULT_CODE){
+        if (respVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
             String group = userAddVo.getGroup();
             List<String> projects = userAddVo.getProject();
             //TODO 更新 工程  标段  人员信息
@@ -272,27 +290,27 @@ public class UserController {
             @ApiImplicitParam(name = "projectCode", value = "项目code", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "sectionCode", value = "标段code", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "role", value = "角色", dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "groupId", value = "单位ID", dataType = "String",  paramType = "query"),
+            @ApiImplicitParam(name = "groupId", value = "单位ID", dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "pageIndex", value = "当前页", dataType = "int", required = true, example = "1", paramType = "path"),
             @ApiImplicitParam(name = "pageSize", value = "每页大小", dataType = "int", defaultValue = "10", example = "10", paramType = "query"),
     })
     @RequestMapping(value = "/list/{pageIndex}", method = RequestMethod.GET)
     public RespVO<PagedResult<UserAddVo>> list(@PathVariable(value = "pageIndex") int pageIndex,
-                                    @RequestParam(required = false, defaultValue = "10") int pageSize,
-                                    @RequestParam(required = false) String  projectCode,
-                                    @RequestParam(required = false) String sectionCode,
-                                    @RequestParam(required = false) String role,
-                                    @RequestParam(required = false) String groupId,
-                                    HttpServletRequest request) {
+                                               @RequestParam(required = false, defaultValue = "10") int pageSize,
+                                               @RequestParam(required = false) String projectCode,
+                                               @RequestParam(required = false) String sectionCode,
+                                               @RequestParam(required = false) String role,
+                                               @RequestParam(required = false) String groupId,
+                                               HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         CurrentVo currentVo = authClient.getAuthVo(headerVo);
-        PagedResult<UserAddVo> pagedResult = iUserService.queryList(pageIndex, pageSize,projectCode,sectionCode,role,groupId);
+        PagedResult<UserAddVo> pagedResult = iUserService.queryList(pageIndex, pageSize, projectCode, sectionCode, role, groupId);
         return RespVOBuilder.success(pagedResult);
     }
 
 
     @RequestMapping(value = "/findByUserId", method = RequestMethod.GET)
-    public  UserAddVo findByUserId(@RequestParam String userId){
+    public UserAddVo findByUserId(@RequestParam String userId) {
         return iUserService.findByUserId(userId);
     }
 

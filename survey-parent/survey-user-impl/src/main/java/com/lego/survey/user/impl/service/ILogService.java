@@ -28,4 +28,9 @@ public interface ILogService {
     RespVO<PagedResult<LogVo>>   list(int pageIndex, int pageSize);
 
 
+    /**
+     * @param id
+     * @return
+     */
+    Log findLastLoginLogByUserId(String id);
 }

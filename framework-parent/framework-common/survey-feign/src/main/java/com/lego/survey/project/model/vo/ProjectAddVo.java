@@ -24,20 +24,19 @@ public class ProjectAddVo {
     /**
      * 工程项目名称
      */
-    @ApiModelProperty("项目工程名称")
-    @NotBlank(message = "项目工程名称不能为空")
+    @ApiModelProperty("工程名称")
+    @NotBlank(message = "工程名称不能为空")
     private String name;
     /**
      * 工程项目编号
      */
-    @ApiModelProperty("项目工程编号")
-    @NotBlank(message = "项目工程编号不能为空")
+    @ApiModelProperty("工程编号")
+    @NotBlank(message = "工程编号不能为空")
     private String code;
     /**
      * 工程项目描述
      */
-    @ApiModelProperty("项目工程描述")
-    @NotBlank(message = "项目工程描述不能为空")
+    @ApiModelProperty("工程描述")
     private String desc;
 
     @ApiModelProperty("所属单位")

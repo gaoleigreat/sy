@@ -29,6 +29,7 @@ public class MyRule extends AbstractLoadBalancerRule {
     @Override
     public void initWithNiwsConfig(IClientConfig iClientConfig) {
 
+
     }
 
     @Override

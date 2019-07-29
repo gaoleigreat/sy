@@ -35,7 +35,6 @@ public class Group {
      * 所属单位描述
      */
     @ApiModelProperty("单位描述")
-    @NotBlank(message = "单位描述不能为空")
     private String desc;
 
     /**
