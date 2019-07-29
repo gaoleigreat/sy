@@ -112,14 +112,17 @@ public class Section {
     }
 
 
-    public  List<Workspace> loadWorkspace(){
-        List<Workspace> workspaces=new ArrayList<>();
+    public List<Workspace> loadWorkspace() {
+        List<Workspace> workspaces = new ArrayList<>();
         List<OwnWorkspace> workSpaces = this.workSpace;
         if (!CollectionUtils.isEmpty(workSpaces)) {
             for (OwnWorkspace workSpace : workSpaces) {
                 Integer valid = workSpace.getValid();
                 String wId = workSpace.getId();
-                if (valid != 0 || !wId.equals(id)) {
+                if (valid == null || valid != 0) {
+                    continue;
+                }
+                if (!wId.equals(id)) {
                     continue;
                 }
                 Workspace workspace = new Workspace();
