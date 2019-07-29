@@ -123,5 +123,15 @@
         order by upload_time desc
     </select>
 
+    <select id="queryById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="survey_original_column"/>
+        from
+        ${tableName}
+        <where>
+            id=#{id}
+        </where>
+    </select>
+
 
 </mapper>

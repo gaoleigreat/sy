@@ -43,16 +43,10 @@ public interface IUserService {
     /**
      * 修改用户信息
      *
-     * @param userId
-     * @param userName
-     * @param name
-     * @param cardId
+     * @param userAddVo
      * @return
      */
-    RespVO modify(String userId,
-                  String userName,
-                  String name,
-                  String cardId);
+    RespVO modify(UserAddVo userAddVo);
 
 
     /**

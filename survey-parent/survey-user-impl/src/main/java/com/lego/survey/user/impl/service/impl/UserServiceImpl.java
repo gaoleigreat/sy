@@ -84,13 +84,15 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public RespVO modify(String userId, String userName, String name, String cardId) {
+    public RespVO modify(UserAddVo userAddVo) {
         //  修改用户信息
+        String userId = userAddVo.getId();
         User user = userRepository.findUserByIdAndValid(userId, 0);
-        user.setName(name);
-        user.setCardId(cardId);
-        user.setUpdateTime(new Date());
-        userRepository.save(user);
+        if (user == null) {
+            return RespVOBuilder.failure();
+        }
+        User loadUser = userAddVo.loadUser(user);
+        userRepository.save(loadUser);
         return RespVOBuilder.success();
     }
 
@@ -130,7 +132,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public RespVO create(UserAddVo userAddVo) {
         // 创建用户
-        User user = userAddVo.loadUser();
+        User user = userAddVo.loadUser(null);
         String group = userAddVo.getGroup();
         if (group != null) {
             RespVO<GroupVo> respVO = groupClient.query(group);

@@ -130,18 +130,16 @@ public class UserController {
     })
     @Operation(value = "modify", desc = "修改用户信息")
     @RequestMapping(value = "/modify", method = RequestMethod.PUT)
-    public RespVO modify(@RequestParam("userId") String userId,
-                         @RequestParam("userName") String userName,
-                         @RequestParam("name") String name,
-                         @RequestParam("cardId") String cardId,
-                         HttpServletRequest request) {
+    public RespVO modify(@Validated @RequestBody UserAddVo userAddVo, HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         String id = authClient.getAuthVo(headerVo).getUserId();
+        String modifyUserId = userAddVo.getId();
         //修改用户信息
-        RespVO modify = iUserService.modify(userId, userName, name, cardId);
+        RespVO modify = iUserService.modify(userAddVo);
         //TODO 同步更新 工程  标段   工区信息
-
-        logSender.sendLogEvent(HttpUtils.getClientIp(request), id, "修改用户信息:[" + userId + "]");
+        if(modify.getRetCode()==RespConsts.SUCCESS_RESULT_CODE){
+            logSender.sendLogEvent(HttpUtils.getClientIp(request), id, "修改用户信息:[" + modifyUserId + "]");
+        }
         return modify;
     }
 

@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.validation.constraints.NotBlank;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -203,7 +204,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
         }
         Page<SurveyPoint> surveyPoints = surveyPointMapper.queryList(iPage, DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode, wrapper);
         List<SurveyPoint> records = surveyPoints.getRecords();
-        Map<String, String> typeMap = getTypeMap();
+        Map<Long, String> typeMap = getTypeMap();
 
         if (!CollectionUtils.isEmpty(records)) {
             for (SurveyPoint record : records) {
@@ -220,8 +221,8 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                 overrun.setPointName(record.getName());
                 overrun.setInitValue(record.getElevation());
                 overrun.setRemark(record.getComment());
-                String sp = record.getType();
-                overrun.setType(typeMap.get(sp) != null ? sp : sp);
+                Long sp = record.getType();
+                overrun.setType(typeMap.getOrDefault(sp, null));
 
                 List<SurveyResult> surveyResults = surveyResultMapper.queryPreResult(null, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 1);
                 if (!CollectionUtils.isEmpty(surveyResults)) {
@@ -236,7 +237,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                     overrun.setSurveyTime(surveyResult.getSurveyTime());
                     overrun.setCurValue(surveyResult.getElevation());
                     overrun.setSurveyer(surveyResult.getSurveyer());
-                    SurveyOriginal surveyOriginal = surveyOriginalMapper.selectById(surveyResult.getOriginalId());
+                    SurveyOriginal surveyOriginal = surveyOriginalMapper.queryById(surveyResult.getOriginalId(), DictConstant.TableNamePrefix.SURVEY_ORIGINAL + sectionCode);
                     if (surveyOriginal != null) {
                         overrun.setTaskId(surveyOriginal.getTaskId());
                     }
@@ -258,11 +259,11 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
         return voPagedResult;
     }
 
-    private Map<String, String> getTypeMap() {
-        Map<String, String> typeMap = new HashMap<>();
+    private Map<Long, String> getTypeMap() {
+        Map<Long, String> typeMap = new HashMap<>();
         List<SurveyPointType> typeList = surveyPointTypeMapper.selectList(null);
         if (!CollectionUtils.isEmpty(typeList)) {
-            typeList.forEach(tp -> typeMap.put(tp.getName(), tp.getName()));
+            typeList.forEach(tp -> typeMap.put(tp.getId(), tp.getName()));
         }
         return typeMap;
     }
@@ -297,7 +298,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
         List<SurveyResult> records = surveyResultPage.getRecords();
         List<OverrunListVo> overrunListVos = new ArrayList<>();
         if (!CollectionUtils.isEmpty(records)) {
-            Map<String, String> typeMap = getTypeMap();
+            Map<Long, String> typeMap = getTypeMap();
             for (SurveyResult record : records) {
                 QueryWrapper<SurveyPointException> exceptionWrapper = new QueryWrapper<>();
                 exceptionWrapper.eq("result_id", record.getId());
@@ -316,11 +317,11 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                 overrun.setPointCode(surveyPoint.getCode());
                 overrun.setPointName(surveyPoint.getName());
                 overrun.setInitValue(surveyPoint.getElevation());
-                String sp = surveyPoint.getType();
-                overrun.setType(typeMap.get(sp) != null ? sp : sp);
+                Long sp = surveyPoint.getType();
+                overrun.setType(typeMap.getOrDefault(sp, null));
                 overrun.setPointStatus(surveyPoint.getStatus());
                 overrun.setSurveyer(record.getSurveyer());
-                SurveyOriginal surveyOriginal = surveyOriginalMapper.selectById(record.getOriginalId());
+                SurveyOriginal surveyOriginal = surveyOriginalMapper.queryById(record.getOriginalId(), DictConstant.TableNamePrefix.SURVEY_ORIGINAL + sectionCode);
                 if (surveyOriginal != null) {
                     overrun.setTaskId(surveyOriginal.getTaskId());
                 }
@@ -379,7 +380,9 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                 List<SurveyResult> intResults = queryPreResult(null, DictConstant.TableNamePrefix.SURVEY_RESULT + sectionCode, 1, surveyReportDataVo.getPointCode());
                 //点初始值
                 SurveyPointVo surveyPointVo = surveyPointService.querySurveyPointByCode(surveyReportDataVo.getPointCode(), DictConstant.TableNamePrefix.SURVEY_POINT + sectionCode);
-                surveyReportDataVo.setPointType(surveyPointVo.getType());
+                Long type = surveyPointVo.getType();
+                SurveyPointType pointType = surveyPointTypeMapper.selectById(type);
+                surveyReportDataVo.setPointType(pointType != null ? pointType.getName() : null);
                 surveyReportDataVo.setInitElevation(surveyPointVo.getElevation());
                 surveyReportDataVo.setOnceLowerLimit(surveyPointVo.getOnceLowerLimit());
                 surveyReportDataVo.setOnceUpperLimit(surveyPointVo.getOnceUpperLimit());

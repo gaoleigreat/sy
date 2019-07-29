@@ -27,8 +27,8 @@ public class SurveyPoint {
     @NotBlank(message = "测点名称不能为空")
     @ApiModelProperty("测点名称")
     private String name;
-    @ApiModelProperty("测点类型 建筑；地表；管线")
-    private String type;
+    @ApiModelProperty("测点类型")
+    private Long type;
     @ApiModelProperty("初始平面X")
     private Double gridX;
     @ApiModelProperty("初始平面Y")

@@ -30,13 +30,15 @@ public class SurveyPointTypeServiceImpl implements ISurveyPointTypeService {
     SurveyPointTypeMapper surveyPointTypeMapper;
 
     @Override
-    public RespVO<RespDataVO<SurveyPointTypeVo>> list(String sectionCode) {
+    public RespVO<RespDataVO<SurveyPointTypeVo>> list(String sectionCode, Integer status) {
         List<SurveyPointTypeVo> typeVos = new ArrayList<>();
         QueryWrapper<SurveyPointType> wrapper = new QueryWrapper<>();
         if (sectionCode != null) {
             wrapper.eq("section_code", sectionCode);
         }
-        wrapper.eq("status", 0);
+        if (status != null) {
+            wrapper.eq("status", status);
+        }
         wrapper.orderByDesc("create_time");
         List<SurveyPointType> typeList = surveyPointTypeMapper.selectList(wrapper);
         if (typeList != null) {

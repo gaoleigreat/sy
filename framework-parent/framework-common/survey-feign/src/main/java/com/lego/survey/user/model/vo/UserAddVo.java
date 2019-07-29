@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -75,23 +76,22 @@ public class UserAddVo {
     private String cardId;
 
 
-    public User loadUser() {
+    public User loadUser(User user) {
         Date currentDate = new Date();
-        User user = User.builder().createTime(currentDate)
-                .id(this.id)
-                .name(this.name)
-                .passWord("111111")
-                .permission(this.permission)
-                .phone(this.phone)
-                .role(this.role)
-                .updateTime(currentDate)
-                .userName(this.userName)
-                .valid(0)
-                .cardId(cardId)
-                .build();
-        if (this.valid != null) {
-            user.setValid(this.valid);
+        if (user == null) {
+            user = User.builder().build();
+            user.setId(this.id);
+            user.setPassWord("111111");
         }
+        user.setCreateTime(currentDate);
+        user.setName(this.name);
+        user.setPermission(this.permission);
+        user.setPhone(this.phone);
+        user.setRole(this.role);
+        user.setUpdateTime(currentDate);
+        user.setUserName(this.userName);
+        user.setValid(this.valid != null ? this.valid : 0);
+        user.setCardId(this.cardId);
         return user;
     }
 

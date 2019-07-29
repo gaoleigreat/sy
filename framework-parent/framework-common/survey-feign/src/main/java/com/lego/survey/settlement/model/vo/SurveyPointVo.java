@@ -34,9 +34,8 @@ public class SurveyPointVo extends BaseRowModel {
     @ApiModelProperty("测点名称")
     private String name;
     @ExcelProperty(value = "测点类型", index = 2)
-    @ApiModelProperty("测点类型 建筑；地表；管线")
     @NotBlank(message = "测点类型不能为空")
-    private String type;
+    private Long type;
     @ExcelProperty(value = "初始平面X", index = 3)
     @ApiModelProperty("初始平面X")
     private Double gridX;

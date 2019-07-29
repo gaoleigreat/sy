@@ -13,9 +13,10 @@ public interface ISurveyPointTypeService {
      * 获取点类型列表
      *
      * @param sectionCode
+     * @param status
      * @return
      */
-    RespVO<RespDataVO<SurveyPointTypeVo>> list(String sectionCode);
+    RespVO<RespDataVO<SurveyPointTypeVo>> list(String sectionCode,Integer status);
 
 
     /**

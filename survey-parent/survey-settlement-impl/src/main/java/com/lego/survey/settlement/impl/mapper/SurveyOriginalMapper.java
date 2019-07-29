@@ -70,4 +70,11 @@ public interface SurveyOriginalMapper extends Mapper<SurveyOriginal> {
      * @return
      */
     Integer saveBatch(@Param("surveyOriginals") List<SurveyOriginal> surveyOriginals, @Param("tableName") String tableName);
+
+    /**
+     * @param id
+     * @param tableName
+     * @return
+     */
+    SurveyOriginal queryById(@Param(value = "id") Long id,@Param(value = "tableName") String tableName);
 }

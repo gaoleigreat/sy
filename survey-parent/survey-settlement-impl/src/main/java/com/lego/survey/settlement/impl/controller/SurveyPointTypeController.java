@@ -68,11 +68,13 @@ public class SurveyPointTypeController {
     @ApiOperation(value = "查询测点类型", httpMethod = "GET", notes = "查询测点类型")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sectionCode", value = "标段编号", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "status", value = "是否可用，0可以，1不可以", dataType = "int", paramType = "query"),
     })
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public RespVO<RespDataVO<SurveyPointTypeVo>> list(@RequestParam(required = false) String sectionCode
+    public RespVO<RespDataVO<SurveyPointTypeVo>> list(@RequestParam(required = false) String sectionCode,
+                                                      @RequestParam(required = false) Integer status
     ) {
-        return iSurveyPointTypeService.list(sectionCode);
+        return iSurveyPointTypeService.list(sectionCode,status);
     }
 
     @ApiOperation(value = "删除测点类型", notes = "删除测点类型", httpMethod = "DELETE")
