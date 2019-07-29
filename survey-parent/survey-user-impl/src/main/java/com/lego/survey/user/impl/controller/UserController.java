@@ -223,15 +223,15 @@ public class UserController {
         String userId = currentVo.getUserId();
         String userRole = currentVo.getRole();
         String role = userAddVo.getRole();
-        if (!userRole.equals("admin") && !userRole.equals("master")) {
+        if (!userRole.equals(DictConstant.Role.ADMIN) && !userRole.equals(DictConstant.Role.SECTION)) {
             return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE, RespConsts.FAIL_NOPRESSION_MSG);
         }
-        if (userRole.equals("admin")) {
-            if (!role.equals("surveyer") && !role.equals("companyAdmin")) {
+        if (userRole.equals(DictConstant.Role.ADMIN)) {
+            if (!role.equals(DictConstant.Role.SECTION) && !role.equals(DictConstant.Role.MASTER)) {
                 return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE, RespConsts.FAIL_NOPRESSION_MSG);
             }
         } else {
-            if (!role.equals("surveyer")) {
+            if (!role.equals(DictConstant.Role.SURVEYER)) {
                 return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE, RespConsts.FAIL_NOPRESSION_MSG);
             }
         }

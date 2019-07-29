@@ -101,12 +101,9 @@ public class GrayAwarePredicate extends AbstractServerPredicate {
                 }
                 Map<String, String> metadata = server.getInstanceInfo().getMetadata();
                 if (StringUtils.isBlank(metadata.get("version"))) {
-                    log.debug("服务未设置 version");
                     continue;
                 }
                 if (!metadata.get("version").equals(targetVersion)) {
-                    log.debug("当前微服务{} 版本为{}，目标版本{} 匹配失败", server.getInstanceInfo().getAppName()
-                            , metadata.get("version"), targetVersion);
                     continue;
                 }
                 targetServers.add(server);

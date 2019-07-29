@@ -3,6 +3,7 @@ import com.lego.survey.user.impl.repository.ConfigRepository;
 import com.lego.survey.user.impl.service.IConfigService;
 import com.lego.survey.user.model.entity.Config;
 import com.lego.survey.user.model.vo.ConfigOptionVo;
+import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.page.PagedResult;
 import com.survey.lib.common.vo.CurrentVo;
 import com.survey.lib.common.vo.RespVO;
@@ -82,11 +83,11 @@ public class ConfigServiceImpl implements IConfigService {
         }
         String role = authVo.getRole();
         List<ConfigOptionVo> optionVos;
-        if(role.equalsIgnoreCase("admin")){
-            optionVos = config.getOption().stream().filter(opt -> opt.getName().equalsIgnoreCase("companyAdmin")
-                    || opt.getName().equalsIgnoreCase("master")).collect(Collectors.toList());
-        }else if(role.equalsIgnoreCase("master")){
-             optionVos = config.getOption().stream().filter(opt -> opt.getName().equalsIgnoreCase("surveyer")
+        if(role.equalsIgnoreCase(DictConstant.Role.ADMIN)){
+            optionVos = config.getOption().stream().filter(opt -> opt.getName().equalsIgnoreCase(DictConstant.Role.MASTER)
+                    || opt.getName().equalsIgnoreCase(DictConstant.Role.SECTION)).collect(Collectors.toList());
+        }else if(role.equalsIgnoreCase(DictConstant.Role.SECTION)){
+             optionVos = config.getOption().stream().filter(opt -> opt.getName().equalsIgnoreCase(DictConstant.Role.SURVEYER)
                   ).collect(Collectors.toList());
         }else {
             return null;
