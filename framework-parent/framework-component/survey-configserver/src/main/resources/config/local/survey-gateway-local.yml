@@ -8,6 +8,7 @@ spring:
   cloud:
     gateway:
       routes:
+        # auth
         - id: api-auth
           uri: lb://auth-service
           predicates:
@@ -17,6 +18,7 @@ spring:
           - SwaggerHeaderFilter
           - StripPrefix=1
 
+        # project
         - id: api-project
           uri: lb://project-service
           predicates:
@@ -25,6 +27,47 @@ spring:
           filters:
             - SwaggerHeaderFilter
             - StripPrefix=1
+
+        # user
+        - id: api-user
+          uri: lb://user-service
+          predicates:
+            - Path=/api-user/**
+          # - Weight=auth1, 90
+          filters:
+            - SwaggerHeaderFilter
+            - StripPrefix=1
+
+        #settlement
+        - id: api-settlement
+          uri: lb://settlement-service
+          predicates:
+            - Path=/api-settlement/**
+          # - Weight=auth1, 90
+          filters:
+            - SwaggerHeaderFilter
+            - StripPrefix=1
+
+
+        - id: api-report
+          uri: lb://report-service
+          predicates:
+            - Path=/api-report/**
+          # - Weight=auth1, 90
+          filters:
+            - SwaggerHeaderFilter
+            - StripPrefix=1
+
+        - id: api-file
+          uri: lb://file-service
+          predicates:
+            - Path=/api-file/**
+          # - Weight=auth1, 90
+          filters:
+            - SwaggerHeaderFilter
+            - StripPrefix=1
+
+
 
       discovery:
         locator:
@@ -35,4 +78,13 @@ spring:
 jwt:
   exclude:
     urlPatterns:
-      - /user/login
+      - /api-user/user/login
+      - .*api-docs.*
+      - .*swagger.*
+      - /api-user/package/.*
+      - /api-file/file/.*
+
+
+
+session:
+  domain: survey-gateway

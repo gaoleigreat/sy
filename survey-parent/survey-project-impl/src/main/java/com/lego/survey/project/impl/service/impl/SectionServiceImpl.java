@@ -7,7 +7,10 @@ import com.lego.survey.project.impl.repository.SectionRepository;
 import com.lego.survey.project.impl.service.ISectionService;
 import com.lego.survey.project.model.entity.*;
 import com.lego.survey.project.model.vo.*;
+import com.lego.survey.user.feign.ConfigClient;
 import com.lego.survey.user.feign.UserClient;
+import com.lego.survey.user.model.entity.Config;
+import com.lego.survey.user.model.vo.ConfigOptionVo;
 import com.lego.survey.user.model.vo.UserVo;
 import com.survey.lib.common.consts.RespConsts;
 import com.survey.lib.common.page.PagedResult;
@@ -25,9 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author yanglf
@@ -51,6 +52,9 @@ public class SectionServiceImpl implements ISectionService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private ConfigClient configClient;
 
     @Override
     public RespVO add(Section section) {
@@ -266,6 +270,18 @@ public class SectionServiceImpl implements ISectionService {
                         .address(section.getAddress())
                         .desc(section.getDesc())
                         .colleagues(colleaguesVos).build();
+
+                List<String> serviceDesc = new ArrayList<>();
+                List<String> service = section.getService();
+                if (!CollectionUtils.isEmpty(service)) {
+                    Map<String, String> configs = getServices();
+                    if (!CollectionUtils.isEmpty(configs)) {
+                        for (String s : service) {
+                            serviceDesc.add(configs.get(s));
+                        }
+                    }
+                }
+                sectionVo.setServices(serviceDesc);
                 if (ownerGroup != null) {
                     Group group = groupRepository.findGroupByIdAndValid(ownerGroup.getId(), 0);
                     if (group != null) {
@@ -290,6 +306,21 @@ public class SectionServiceImpl implements ISectionService {
         pagedResult.setResultList(sectionVos);
 
         return getJsonObjectPagedResult(pageIndex, pageSize, query, sectionVos, mongoTemplate, "section");
+    }
+
+    private Map<String, String> getServices() {
+        Map<String, String> confs = new HashMap<>();
+        RespVO<Config> configsVo = configClient.queryByName("场景配置");
+        if (configsVo.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
+            Config info = configsVo.getInfo();
+            if (info != null) {
+                List<ConfigOptionVo> option = info.getOption();
+                if (!CollectionUtils.isEmpty(option)) {
+                    option.forEach(opt -> confs.put(opt.getName(), opt.getDesc()));
+                }
+            }
+        }
+        return confs;
     }
 
 

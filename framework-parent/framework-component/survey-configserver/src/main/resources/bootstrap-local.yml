@@ -36,7 +36,11 @@ spring:
 encrypt:
   key: PL8iU@vt&0tFWijuoi%zASgsLP1rKwks
 
-
+define:
+  eureka:
+    user:
+      name: admin
+      password: admin123
 
 
 eureka:
@@ -44,7 +48,7 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     serviceUrl:
-      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@localhost:48010/eureka/
+      defaultZone: http://${define.eureka.user.name}:${define.eureka.user.password}@localhost:48010/eureka/
   instance:
     prefer-ip-address: true
     instance-id: ${spring.cloud.client.ip-address}:${server.port}

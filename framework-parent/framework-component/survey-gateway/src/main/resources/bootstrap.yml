@@ -1,10 +1,10 @@
 server:
   port: 48000
   servlet:
-    context-path: /
+    context-path: /survey
 
 spring:
   application:
     name: survey-gateway
   profiles:
-    active: dev
+    active: local

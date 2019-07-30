@@ -7,19 +7,19 @@ define:
 spring:
   cloud:
    # gateway:
-    #  routes:
-    #  - id: auth1_prod
-     #   uri: lb://auth-service
-      #  predicates:
-       # - Path=/api-auth/**
-       # - Weight=auth1, 90
-       # filters:
-        #- SwaggerHeaderFilter
-       # - StripPrefix=1
-       # - name: Hystrix   #对应熔断的 filter  HystrixGatewayFilterFactory
-        #  args:
-         #   name: fallbackcmd
-          #  fallbackUri: forward:/fallback
+    #    #  routes:
+    #    #  - id: auth1_prod
+    #     #   uri: lb://auth-service
+    #      #  predicates:
+    #       # - Path=/api-auth/**
+    #       # - Weight=auth1, 90
+    #       # filters:
+    #        #- SwaggerHeaderFilter
+    #       # - StripPrefix=1
+    #       # - name: Hystrix   #对应熔断的 filter  HystrixGatewayFilterFactory
+    #        #  args:
+    #         #   name: fallbackcmd
+    #          #  fallbackUri: forward:/fallback
 
       discovery:
         locator:

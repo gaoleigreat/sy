@@ -1,3 +1,4 @@
+/*
 package com.lego.survey.gateway.filter;
 
 import com.lego.survey.gateway.utils.RouteUtil;
@@ -16,11 +17,13 @@ import reactor.core.publisher.Mono;
 
 import java.util.concurrent.TimeUnit;
 
+*/
 /**
  * @author yanglf
  * @description
  * @since 2019/1/24
- **/
+ **//*
+
 @Component
 public class RequestFilter implements Ordered, GlobalFilter {
 
@@ -58,3 +61,4 @@ public class RequestFilter implements Ordered, GlobalFilter {
         return 0;
     }
 }
+*/

@@ -33,12 +33,18 @@ public class GatewaySwaggerProvider implements SwaggerResourcesProvider {
         List<String> routes = new ArrayList<>();
 
         routeLocator.getRoutes().subscribe(r -> routes.add(r.getId()));
-        gatewayProperties.getRoutes().stream().filter(g -> routes.contains(g.getId()))
+       /* gatewayProperties.getRoutes().stream().filter(g -> routes.contains(g.getId()))
                 .forEach(g -> g.getPredicates().stream()
                         .filter(p -> "Path".equalsIgnoreCase(p.getName()))
                         .forEach(p -> swaggerResources.add(swaggerResource(g.getId(), p.getArgs().get(NameUtils.GENERATED_NAME_PREFIX + "0")
                                 .replace("/**", API_URL)
-                        ))));
+                        ))));*/
+        swaggerResources.add(swaggerResource("用户服务","/api-user/v2/api-docs")) ;
+        swaggerResources.add(swaggerResource("工程服务","/api-project/v2/api-docs")) ;
+        swaggerResources.add(swaggerResource("文件服务","/api-file/v2/api-docs")) ;
+        swaggerResources.add(swaggerResource("沉降服务","/api-settlement/v2/api-docs")) ;
+        swaggerResources.add(swaggerResource("报表服务","/api-report/v2/api-docs")) ;
+        swaggerResources.add(swaggerResource("权限服务","/api-auth/v2/api-docs")) ;
         return swaggerResources;
     }
 

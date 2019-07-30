@@ -1,4 +1,4 @@
-package com.lego.survey.gateway.model;
+package com.lego.survey.gateway.utils;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

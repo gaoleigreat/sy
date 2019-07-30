@@ -35,4 +35,11 @@ spring:
 jwt:
   exclude:
     urlPatterns:
-      - /user/login
+      - /api-user/user/login
+      - .*api-docs.*
+      - .*swagger.*
+      - /api-user/package/.*
+      - /api-file/file/.*
+
+session:
+  domain: survey-gateway

@@ -27,7 +27,10 @@ public class SwaggerHeaderFilter extends AbstractGatewayFilterFactory {
                 return chain.filter(exchange);
             }
             String basePath = path.substring(0, path.lastIndexOf(GatewaySwaggerProvider.API_URL));
-            ServerHttpRequest newRequest = request.mutate().header(HEADER_NAME, basePath).build();
+            ServerHttpRequest newRequest = request.mutate()
+                    .header(HEADER_NAME, basePath)
+                    .header("Forwarded", "proto")
+                    .build();
             ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
             return chain.filter(newExchange);
         };
