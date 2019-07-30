@@ -63,7 +63,7 @@ public class SectionServiceImpl implements ISectionService {
             if (sections == null) {
                 sections = new ArrayList<>();
             }
-            sections.add(OwnerSection.builder().id(section.getId()).name(section.getName()).code(section.getCode()).build());
+            sections.add(OwnerSection.builder().id(section.getId()).name(section.getName()).code(section.getCode()).desc(section.getDesc()).build());
             project.setSections(sections);
             project.setUpdateTime(new Date());
             projectRepository.save(project);
