@@ -142,11 +142,19 @@ public interface UserClient {
 
     /**
      * 根据ID 获取用户信息
+     *
      * @param userId
      * @return
      */
     @RequestMapping(value = "/findByUserId", method = RequestMethod.GET)
     User findByUserId(@RequestParam(value = "userId") String userId);
+
+    /**
+     * @param userName
+     * @return
+     */
+    @RequestMapping(value = "/queryByUserName", method = RequestMethod.GET)
+    User queryByUserName(@RequestParam(value = "userName") String userName);
 }
 
 @Component
@@ -204,6 +212,11 @@ class UserClientFallback implements UserClient {
 
     @Override
     public User findByUserId(String userId) {
+        return null;
+    }
+
+    @Override
+    public User queryByUserName(String userName) {
         return null;
     }
 }

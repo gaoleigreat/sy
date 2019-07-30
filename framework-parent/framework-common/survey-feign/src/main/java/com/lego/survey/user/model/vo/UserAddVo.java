@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class UserAddVo {
      * 用户名
      */
     @ApiModelProperty("账号")
+    @NotBlank(message = "账号不能为空")
     private String userName;
     /**
      * 用户昵称
@@ -45,11 +47,13 @@ public class UserAddVo {
      * 用户角色
      */
     @ApiModelProperty("用户角色")
+    @NotBlank(message = "用户角色不能为空")
     private String role;
     /**
      * 所属单位
      */
     @ApiModelProperty("所属单位")
+    @NotBlank(message = "所属单位不能为空")
     private String group;
     /**
      * 用户权限
@@ -73,6 +77,7 @@ public class UserAddVo {
     private Integer valid;
 
     @ApiModelProperty("身份证号")
+    @NotBlank(message = "身份证号不能为空")
     private String cardId;
 
 

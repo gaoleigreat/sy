@@ -25,6 +25,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -135,7 +136,7 @@ public class UserController {
         //修改用户信息
         RespVO modify = iUserService.modify(userAddVo);
         //TODO 同步更新 工程  标段   工区信息
-        if(modify.getRetCode()==RespConsts.SUCCESS_RESULT_CODE){
+        if (modify.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
             logSender.sendLogEvent(HttpUtils.getClientIp(request), id, "修改用户信息:[" + modifyUserId + "]");
         }
         return modify;
@@ -159,6 +160,12 @@ public class UserController {
         //更新日志
         logSender.sendLogEvent(HttpUtils.getClientIp(request), id, "删除用户:[" + userId + "]");
         return delete;
+    }
+
+
+    @RequestMapping(value = "/queryByUserName", method = RequestMethod.GET)
+    public User queryByUserName(String userName) {
+        return iUserService.queryByUserName(userName);
     }
 
 
@@ -232,9 +239,11 @@ public class UserController {
             }
         }
         String phone = userAddVo.getPhone();
-        User phoneUser = iUserService.queryByPhone(phone);
-        if (phoneUser != null) {
-            return RespVOBuilder.failure(RespConsts.FAIL_RESULT_CODE, "手机号已被添加");
+        if(!StringUtils.isEmpty(phone)){
+            User phoneUser = iUserService.queryByPhone(phone);
+            if (phoneUser != null) {
+                return RespVOBuilder.failure(RespConsts.FAIL_RESULT_CODE, "手机号已被添加");
+            }
         }
         String userName = userAddVo.getUserName();
         User queryByUserName = iUserService.queryByUserName(userName);
@@ -252,7 +261,7 @@ public class UserController {
             String userRole1 = userAddVo.getRole();
             try {
                 logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "新增用户:[" + userAddVo.getId() + "]");
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

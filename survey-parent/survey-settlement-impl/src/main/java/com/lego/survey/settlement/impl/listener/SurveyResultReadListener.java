@@ -10,6 +10,8 @@ import com.lego.survey.settlement.impl.service.ISurveyResultService;
 import com.lego.survey.settlement.model.entity.SurveyResult;
 import com.lego.survey.settlement.model.vo.SurveyPointVo;
 import com.lego.survey.settlement.model.vo.SurveyResultVo;
+import com.lego.survey.user.feign.UserClient;
+import com.lego.survey.user.model.entity.User;
 import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.consts.RespConsts;
 import com.survey.lib.common.utils.HeaderUtils;
@@ -46,6 +48,9 @@ public class SurveyResultReadListener extends ExcelListener<SurveyResultVo> {
     private String sectionCode;
 
     @Autowired
+    private UserClient userClient;
+
+    @Autowired
     private SurveyPointResultSource surveyPointResultSource;
 
 
@@ -70,11 +75,13 @@ public class SurveyResultReadListener extends ExcelListener<SurveyResultVo> {
     private void saveSurveyResults(List<SurveyResultVo> surveyResultVos) {
         List<SurveyResult> surveyResults = new ArrayList<>();
         if (surveyResultVos != null) {
-            surveyResultVos.forEach(surveyResultVo -> {
+            for (SurveyResultVo surveyResultVo : surveyResultVos) {
                 SurveyResult surveyResult = surveyResultVo.getSurveyResult();
                 setDefaultValue(surveyResult);
+                User user = userClient.queryByUserName(surveyResult.getSurveyer());
+                surveyResult.setSurveyId(user != null ? user.getId() : "");
                 surveyResults.add(surveyResult);
-            });
+            }
         }
         //TODO 校验权限
         if (CollectionUtils.isEmpty(surveyResults)) {

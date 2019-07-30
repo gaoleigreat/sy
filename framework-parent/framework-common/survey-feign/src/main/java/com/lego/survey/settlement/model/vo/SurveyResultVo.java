@@ -47,7 +47,7 @@ public class SurveyResultVo extends BaseRowModel {
     @ApiModelProperty("状态(1-正常，2-停测，3-损坏，4-新建)")
     @ExcelProperty(value = "状态(1-正常，2-停测，3-损坏，4-新建)", index = 6)
     private Integer status;
-    @ExcelProperty(value = "原始数据ID",index = 7)
+    @ExcelProperty(value = "原始数据ID",index = 6)
     @ApiModelProperty("原始数据ID")
     private Long originalId;
 
