@@ -122,11 +122,9 @@ public class UserController {
     }
 
 
-    @ApiOperation(value = "修改用户信息", httpMethod = "POST", notes = "修改用户信息")
+    @ApiOperation(value = "修改用户信息", httpMethod = "PUT", notes = "修改用户信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userName", value = "用户名", dataType = "String", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "name", value = "昵称", dataType = "String", required = true, paramType = "query"),
-            @ApiImplicitParam(name = "cardId", value = "身份证号", dataType = "String", required = true, paramType = "query"),
+
     })
     @Operation(value = "modify", desc = "修改用户信息")
     @RequestMapping(value = "/modify", method = RequestMethod.PUT)
@@ -164,7 +162,7 @@ public class UserController {
     }
 
 
-    @ApiOperation(value = "修改手机号", httpMethod = "POST", notes = "修改手机号")
+    @ApiOperation(value = "修改手机号", httpMethod = "PUT", notes = "修改手机号")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户名id", dataType = "String", required = true, paramType = "query"),
             @ApiImplicitParam(name = "phone", value = "手机号", dataType = "String", required = true, paramType = "query"),
@@ -189,7 +187,7 @@ public class UserController {
     }
 
 
-    @ApiOperation(value = "修改密码", httpMethod = "POST", notes = "修改密码")
+    @ApiOperation(value = "修改密码", httpMethod = "PUT", notes = "修改密码")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "phone", value = "手机号", dataType = "String", required = true, paramType = "query"),
             @ApiImplicitParam(name = "activeCode", value = "手机号验证码", dataType = "String", required = true, paramType = "query"),
@@ -252,8 +250,11 @@ public class UserController {
             List<String> projects = userAddVo.getProject();
             //TODO 更新 工程  标段  人员信息
             String userRole1 = userAddVo.getRole();
-
-            logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "新增用户:[" + userAddVo.getId() + "]");
+            try {
+                logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "新增用户:[" + userAddVo.getId() + "]");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
         return respVO;
     }

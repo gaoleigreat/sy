@@ -94,7 +94,11 @@ public class SectionController {
             if (service != null && service.size() > 0) {
                 sectionSource.createSection().send(MessageBuilder.withPayload(section).build());
             }
-            logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "新增标段信息:[" + section.getId() + "]");
+            try {
+                logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "新增标段信息:[" + section.getId() + "]");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return respVO;
     }

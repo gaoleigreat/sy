@@ -1,4 +1,5 @@
 package com.lego.survey.project.impl.controller;
+
 import com.lego.survey.auth.feign.AuthClient;
 import com.lego.survey.base.annotation.Operation;
 import com.lego.survey.base.annotation.Resource;
@@ -35,7 +36,7 @@ import java.util.List;
 @RestController
 @RequestMapping(DictConstant.Path.WORKSPACE)
 @Api(value = "WorkSpaceController", description = "工区管理")
-@Resource(value = "workspace",desc = "工区管理")
+@Resource(value = "workspace", desc = "工区管理")
 public class WorkspaceController {
 
     @Autowired
@@ -51,7 +52,7 @@ public class WorkspaceController {
     @ApiImplicitParams({
 
     })
-    @Operation(value = "create",desc = "添加工区信息")
+    @Operation(value = "create", desc = "添加工区信息")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public RespVO create(@RequestBody Workspace workspace,
                          HttpServletRequest request) {
@@ -59,8 +60,12 @@ public class WorkspaceController {
         String userId = authClient.getAuthVo(headerVo).getUserId();
         workspace.setId(UuidUtils.generateShortUuid());
         RespVO respVO = iWorkspaceService.add(workspace);
-        if(respVO.getRetCode()== RespConsts.SUCCESS_RESULT_CODE){
-            logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "新增工区:[" + workspace.getId() + "]");
+        if (respVO.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
+            try {
+                logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "新增工区:[" + workspace.getId() + "]");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return respVO;
     }
@@ -70,7 +75,7 @@ public class WorkspaceController {
     @ApiImplicitParams({
 
     })
-    @Operation(value = "modify",desc = "修改工区信息")
+    @Operation(value = "modify", desc = "修改工区信息")
     @RequestMapping(value = "/modify", method = RequestMethod.PUT)
     public RespVO modify(@RequestBody Workspace workspace, HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
@@ -85,7 +90,7 @@ public class WorkspaceController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "code", value = "工区code", dataType = "String", required = true, paramType = "query"),
     })
-    @Operation(value = "delete",desc = "删除工区信息")
+    @Operation(value = "delete", desc = "删除工区信息")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public RespVO delete(String code, HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
@@ -99,7 +104,7 @@ public class WorkspaceController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sectionCode", value = "标段code", dataType = "String", required = true, paramType = "query"),
     })
-    @Operation(value = "list",desc = "根据标段id获取工区信息")
+    @Operation(value = "list", desc = "根据标段id获取工区信息")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public RespVO<RespDataVO<Workspace>> list(HttpServletRequest request,
                                               @RequestParam String sectionCode) {
@@ -111,11 +116,11 @@ public class WorkspaceController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "code", value = "工区code", dataType = "String", required = true, paramType = "path"),
     })
-    @Operation(value = "info",desc = "根据ID获取工区信息")
+    @Operation(value = "info", desc = "根据ID获取工区信息")
     @RequestMapping(value = "/info/{code}", method = RequestMethod.GET)
-    public RespVO<Workspace> info(@PathVariable(value = "code") String code,HttpServletRequest request) {
+    public RespVO<Workspace> info(@PathVariable(value = "code") String code, HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
-        Workspace workspace=iWorkspaceService.queryByCode(code);
+        Workspace workspace = iWorkspaceService.queryByCode(code);
         return RespVOBuilder.success(workspace);
     }
 
@@ -127,7 +132,7 @@ public class WorkspaceController {
     @Operation(value = "findAll", desc = "查询全部标段信息")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public RespVO<RespDataVO<OwnWorkspace>> findAll(@RequestParam(required = false) List<String> sectionCodes,
-                                               HttpServletRequest request) {
+                                                    HttpServletRequest request) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         List<OwnWorkspace> sections = iWorkspaceService.findAll(sectionCodes);
         return RespVOBuilder.success(sections);
