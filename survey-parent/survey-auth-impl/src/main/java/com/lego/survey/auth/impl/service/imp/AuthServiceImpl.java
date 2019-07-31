@@ -43,7 +43,7 @@ public class AuthServiceImpl implements IAuthService {
     @Autowired
     private JwtProperty jwtProperty;
 
-    private String prefix = "userToken:";
+    private String prefix = "survey:loginToken:";
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;

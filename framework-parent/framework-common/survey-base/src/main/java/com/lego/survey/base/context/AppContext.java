@@ -18,4 +18,40 @@ public class AppContext implements ApplicationContextAware {
     public static ApplicationContext getContext(){
         return context;
     }
+
+    /**
+     * 通过name获取 Bean.
+     *
+     * @param name
+     * @return
+     */
+    public static Object getBean(String name) {
+
+        return getContext().getBean(name);
+    }
+
+    /**
+     * 通过class获取Bean.
+     *
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T> T getBean(Class<T> clazz) {
+        return getContext().getBean(clazz);
+    }
+
+    /**
+     * 通过name,以及Clazz返回指定的Bean
+     *
+     * @param name
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T> T getBean(String name, Class<T> clazz) {
+        return getContext().getBean(name, clazz);
+    }
+
+
 }

@@ -42,11 +42,13 @@ public class JwtTokenUtil {
         String token = Jwts.builder()
                 .setHeaderParam("type", "JWT")
                 .setClaims(claims)
+                // 发行者
                 .setIssuer(jwtProperty.getClientId())
-                // 设置 接收 jwt 的名称
+                // 设置 接收 jwt 的名称  受众
                 .setAudience(jwtProperty.getName())
                 //  设置  jwt 所面向的对象
                 .setSubject(deviceType)
+                // 过期时间
                 .setExpiration(expirationDate)
                 .setNotBefore(new Date())
                 .signWith(SignatureAlgorithm.HS512, signingKey)

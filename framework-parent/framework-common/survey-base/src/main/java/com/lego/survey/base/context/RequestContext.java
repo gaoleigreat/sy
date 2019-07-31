@@ -1,4 +1,5 @@
 package com.lego.survey.base.context;
+
 import com.lego.survey.base.service.IAuthCheckService;
 import com.survey.lib.common.vo.CurrentVo;
 import org.slf4j.Logger;
@@ -15,7 +16,7 @@ public class RequestContext {
 
     private static ThreadLocal<CurrentVo> current = new ThreadLocal<CurrentVo>();
 
-    private  static IAuthCheckService authCheckService;
+    private static IAuthCheckService authCheckService;
 
 
     public static void setCurrnet(CurrentVo cur) {
@@ -25,34 +26,34 @@ public class RequestContext {
     public static CurrentVo getCurrent() {
         CurrentVo currentVo = current.get();
         try {
-            if(currentVo!=null && currentVo.getToken()!=null && currentVo.getDeviceType()!=null){
+            if (currentVo != null && currentVo.getToken() != null && currentVo.getDeviceType() != null) {
                 String token = currentVo.getToken();
                 String deviceType = currentVo.getDeviceType();
-                if(null == authCheckService){
-                    authCheckService = (IAuthCheckService) AppContext.getContext().getBean("authCheckService");
+                if (null == authCheckService) {
+                    authCheckService = (IAuthCheckService) AppContext.getBean("authCheckService");
                 }
-                return authCheckService.getData(token,deviceType);
+                return authCheckService.getData(token, deviceType);
 
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return currentVo;
     }
 
-    public static CurrentVo getBaseCurrent(){
+    public static CurrentVo getBaseCurrent() {
         CurrentVo cur = current.get();
         return cur;
     }
 
-    public static CurrentVo initCurrent(){
+    public static CurrentVo initCurrent() {
         current.remove();
         current.set(new CurrentVo());
 
         return current.get();
     }
 
-    public static void remove(){
+    public static void remove() {
         current.remove();
     }
 
