@@ -1,8 +1,9 @@
 package com.lego.survey.gateway.provider;
+
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.config.GatewayProperties;
 import org.springframework.cloud.gateway.route.RouteLocator;
-import org.springframework.cloud.gateway.support.NameUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import springfox.documentation.swagger.web.SwaggerResource;
@@ -27,12 +28,16 @@ public class GatewaySwaggerProvider implements SwaggerResourcesProvider {
 
     private final GatewayProperties gatewayProperties;
 
+   // @Value("${define.context-path}")
+    //private String contextPath;
+
     @Override
     public List<SwaggerResource> get() {
+        // String temp = "/" + contextPath + "%s" + API_URL;
         List<SwaggerResource> swaggerResources = new ArrayList<>();
-        List<String> routes = new ArrayList<>();
+        //List<String> routes = new ArrayList<>();
 
-        routeLocator.getRoutes().subscribe(r -> routes.add(r.getId()));
+        //   routeLocator.getRoutes().subscribe(r -> routes.add(r.getId()));
        /* gatewayProperties.getRoutes().stream().filter(g -> routes.contains(g.getId()))
                 .forEach(g -> g.getPredicates().stream()
                         .filter(p -> "Path".equalsIgnoreCase(p.getName()))

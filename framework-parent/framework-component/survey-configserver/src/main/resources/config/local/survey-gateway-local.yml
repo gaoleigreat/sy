@@ -1,3 +1,4 @@
+
 #配置熔断的超时时间
 hystrix.command.fallbackcmd.execution.isolation.thread.timeoutInMilliseconds: 5000
 #配置路由策略
