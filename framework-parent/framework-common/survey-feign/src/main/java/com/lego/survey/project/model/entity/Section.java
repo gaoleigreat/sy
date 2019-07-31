@@ -118,11 +118,7 @@ public class Section {
         if (!CollectionUtils.isEmpty(workSpaces)) {
             for (OwnWorkspace workSpace : workSpaces) {
                 Integer valid = workSpace.getValid();
-                String wId = workSpace.getId();
                 if (valid == null || valid != 0) {
-                    continue;
-                }
-                if (!wId.equals(id)) {
                     continue;
                 }
                 Workspace workspace = new Workspace();

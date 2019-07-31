@@ -12,11 +12,6 @@
     <version>0.0.1-SNAPSHOT</version>
     <artifactId>survey-report-impl</artifactId>
 
-    <properties>
-        <java.version>1.8</java.version>
-        <spring.boot.admin.version>2.0.1</spring.boot.admin.version>
-    </properties>
-
     <dependencies>
         <!--  spring cloud -->
         <dependency>
@@ -76,14 +71,14 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.15</version>
+            <version>${mysql.version}</version>
         </dependency>
 
         <!-- event -->
         <dependency>
             <groupId>com.lego.event</groupId>
             <artifactId>survey-event</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>guava</artifactId>
@@ -96,25 +91,25 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>26.0-jre</version>
+            <version>${guava.verson}</version>
         </dependency>
 
         <dependency>
             <groupId>com.lego.mybatis</groupId>
             <artifactId>lib-mybatis</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.lego.base</groupId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
             <artifactId>survey-base</artifactId>
         </dependency>
 
         <dependency>
             <groupId>com.lego.excel</groupId>
             <artifactId>lib-excel</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -129,14 +124,14 @@
         <dependency>
             <groupId>com.lego.feign</groupId>
             <artifactId>survey-feign</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
             <scope>compile</scope>
         </dependency>
 
 
         <dependency>
             <groupId>com.lego.log</groupId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
             <artifactId>lib-log</artifactId>
         </dependency>
 
@@ -247,18 +242,6 @@
 
         </plugins>
     </build>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Finchley.RELEASE</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 
 </project>

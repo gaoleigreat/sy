@@ -12,12 +12,6 @@
     <artifactId>survey-file-impl</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
-    <properties>
-        <java.version>1.8</java.version>
-        <spring.cloud.version>Finchley.RELEASE</spring.cloud.version>
-        <spring.boot.admin.version>2.0.1</spring.boot.admin.version>
-    </properties>
-
     <dependencies>
         <!--  spring cloud -->
         <dependency>
@@ -87,24 +81,24 @@
         <dependency>
             <groupId>com.lego.swagger</groupId>
             <artifactId>lib-swagger</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.lego.common</groupId>
             <artifactId>lib-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.lego.log</groupId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
             <artifactId>lib-log</artifactId>
         </dependency>
 
         <dependency>
             <groupId>com.lego.base</groupId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
             <artifactId>survey-base</artifactId>
         </dependency>
 
@@ -148,17 +142,6 @@
 
         </plugins>
     </build>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring.cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 
 

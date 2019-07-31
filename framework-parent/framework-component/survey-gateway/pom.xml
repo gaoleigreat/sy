@@ -13,14 +13,6 @@
     <description>网关(Gateway)</description>
 
 
-    <properties>
-        <java.version>1.8</java.version>
-        <spring.cloud.version>Finchley.RELEASE</spring.cloud.version>
-        <spring.boot.admin.version>2.0.1</spring.boot.admin.version>
-        <jjwt.version>0.9.1</jjwt.version>
-        <spring.swagger.version>2.9.2</spring.swagger.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -50,7 +42,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.2</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -58,12 +50,12 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>2.9.2</version>
+            <version>${gateway.swagger.version}</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>2.9.2</version>
+            <version>${gateway.swagger.version}</version>
         </dependency>
 
         <dependency>
@@ -114,7 +106,7 @@
         <dependency>
             <groupId>com.lego.feign</groupId>
             <artifactId>survey-feign</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>spring-boot-starter-web</artifactId>
@@ -127,7 +119,7 @@
         <dependency>
             <groupId>io.jmnarloch</groupId>
             <artifactId>ribbon-discovery-filter-spring-cloud-starter</artifactId>
-            <version>2.1.0</version>
+            <version>${cloud.ribbon.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>spring-boot-starter-web</artifactId>
@@ -144,7 +136,7 @@
 
         <dependency>
             <groupId>com.lego.log</groupId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
             <artifactId>lib-log</artifactId>
             <exclusions>
                 <exclusion>
@@ -156,18 +148,6 @@
 
 
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring.cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <plugins>

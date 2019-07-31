@@ -12,10 +12,6 @@
     <version>0.0.1-SNAPSHOT</version>
     <artifactId>survey-user-impl</artifactId>
 
-    <properties>
-        <java.version>1.8</java.version>
-        <spring.boot.admin.version>2.0.1</spring.boot.admin.version>
-    </properties>
 
     <dependencies>
         <!--  spring cloud -->
@@ -107,19 +103,19 @@
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
-            <version>2.10.4</version>
+            <version>${ehcache.version}</version>
         </dependency>
 
         <!-- event -->
         <dependency>
             <groupId>com.lego.event</groupId>
             <artifactId>survey-event</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.lego.base</groupId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
             <artifactId>survey-base</artifactId>
         </dependency>
 
@@ -129,26 +125,27 @@
         <dependency>
             <groupId>com.lego.feign</groupId>
             <artifactId>survey-feign</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>com.lego.permission</groupId>
             <artifactId>survey-permission</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>com.lego.log</groupId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
             <artifactId>lib-log</artifactId>
         </dependency>
+
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.6</version>
+            <version>${commons.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -168,7 +165,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>1.0.0</version>
@@ -196,11 +193,11 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <!--运行jar包时运行的主类，要求类全名-->
+                            &lt;!&ndash;运行jar包时运行的主类，要求类全名&ndash;&gt;
                             <mainClass>com.lego.survey.user.impl.UserServiceImplApplication</mainClass>
-                            <!-- 是否指定项目classpath下的依赖 -->
+                            &lt;!&ndash; 是否指定项目classpath下的依赖 &ndash;&gt;
                             <addClasspath>true</addClasspath>
-                            <!-- 指定依赖的时候声明前缀 -->
+                            &lt;!&ndash; 指定依赖的时候声明前缀 &ndash;&gt;
                             <classpathPrefix>./</classpathPrefix>
                         </manifest>
                     </archive>
@@ -224,12 +221,10 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
 
         </plugins>
     </build>
-
-
 
 
 </project>

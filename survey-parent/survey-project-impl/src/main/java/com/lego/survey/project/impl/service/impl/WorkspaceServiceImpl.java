@@ -36,9 +36,6 @@ public class WorkspaceServiceImpl implements IWorkspaceService {
     @Autowired
     private SectionRepository sectionRepository;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
-
     @Override
     public RespVO add(Workspace workSpace) {
         String sectionCode = workSpace.getSection();

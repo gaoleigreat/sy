@@ -12,11 +12,6 @@
     <groupId>com.lego.settlement</groupId>
     <artifactId>survey-settlement-impl</artifactId>
 
-    <properties>
-        <java.version>1.8</java.version>
-        <spring.cloud.version>Finchley.RELEASE</spring.cloud.version>
-        <spring.boot.admin.version>2.0.1</spring.boot.admin.version>
-    </properties>
 
     <dependencies>
         <!--  spring cloud -->
@@ -72,21 +67,21 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.15</version>
+            <version>${mysql.version}</version>
         </dependency>
 
         <!-- event -->
         <dependency>
             <groupId>com.lego.event</groupId>
             <artifactId>survey-event</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
         </dependency>
 
 
         <!--  lib -->
         <dependency>
             <groupId>com.lego.base</groupId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
             <artifactId>survey-base</artifactId>
         </dependency>
 
@@ -94,7 +89,7 @@
         <dependency>
             <groupId>com.lego.mybatis</groupId>
             <artifactId>lib-mybatis</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
         </dependency>
 
 
@@ -102,27 +97,27 @@
         <dependency>
             <groupId>com.lego.feign</groupId>
             <artifactId>survey-feign</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>com.lego.log</groupId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
             <artifactId>lib-log</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
-            <version>1.0.2</version>
+            <version>${easy.excel.version}</version>
         </dependency>
+
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>19.0</version>
+            <version>${guava.verson}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -132,10 +127,8 @@
         <dependency>
             <groupId>com.lego.excel</groupId>
             <artifactId>lib-excel</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
         </dependency>
-
-
 
 
     </dependencies>
@@ -154,79 +147,68 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>1.0.0</version>
-                <configuration>
-                    <imageName>${project.artifactId}</imageName>
-                    <imageTags>
-                        <imageTag>latest</imageTag>
-                    </imageTags>
-                    <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
-                </configuration>
-            </plugin>
+            <!--   <plugin>
+                   <groupId>com.spotify</groupId>
+                   <artifactId>docker-maven-plugin</artifactId>
+                   <version>1.0.0</version>
+                   <configuration>
+                       <imageName>${project.artifactId}</imageName>
+                       <imageTags>
+                           <imageTag>latest</imageTag>
+                       </imageTags>
+                       <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
+                       <resources>
+                           <resource>
+                               <targetPath>/</targetPath>
+                               <directory>${project.build.directory}</directory>
+                               <include>${project.build.finalName}.jar</include>
+                           </resource>
+                       </resources>
+                   </configuration>
+               </plugin>
 
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <!--运行jar包时运行的主类，要求类全名-->
-                            <mainClass>com.lego.survey.settlement.impl.SettlementServiceApplication</mainClass>
-                            <!-- 是否指定项目classpath下的依赖 -->
-                            <addClasspath>true</addClasspath>
-                            <!-- 指定依赖的时候声明前缀 -->
-                            <classpathPrefix>./</classpathPrefix>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <finalName>${project.artifactId}-${project.version}</finalName>
-                    <descriptor>${project.basedir}/src/main/assembly/assembly.xml</descriptor>
-                    <appendAssemblyId>false</appendAssemblyId>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
+               <plugin>
+                   <groupId>org.apache.maven.plugins</groupId>
+                   <artifactId>maven-jar-plugin</artifactId>
+                   <version>2.3.1</version>
+                   <configuration>
+                       <archive>
+                           <manifest>
+                               &lt;!&ndash;运行jar包时运行的主类，要求类全名&ndash;&gt;
+                               <mainClass>com.lego.survey.settlement.impl.SettlementServiceApplication</mainClass>
+                               &lt;!&ndash; 是否指定项目classpath下的依赖 &ndash;&gt;
+                               <addClasspath>true</addClasspath>
+                               &lt;!&ndash; 指定依赖的时候声明前缀 &ndash;&gt;
+                               <classpathPrefix>./</classpathPrefix>
+                           </manifest>
+                       </archive>
+                   </configuration>
+               </plugin>
+               <plugin>
+                   <groupId>org.apache.maven.plugins</groupId>
+                   <artifactId>maven-assembly-plugin</artifactId>
+                   <version>2.6</version>
+                   <configuration>
+                       <finalName>${project.artifactId}-${project.version}</finalName>
+                       <descriptor>${project.basedir}/src/main/assembly/assembly.xml</descriptor>
+                       <appendAssemblyId>false</appendAssemblyId>
+                   </configuration>
+                   <executions>
+                       <execution>
+                           <id>make-assembly</id>
+                           <phase>package</phase>
+                           <goals>
+                               <goal>single</goal>
+                           </goals>
+                       </execution>
+                   </executions>
+               </plugin>
+   -->
 
 
         </plugins>
     </build>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring.cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 
 </project>

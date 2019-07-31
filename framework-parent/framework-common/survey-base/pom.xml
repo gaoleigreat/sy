@@ -16,12 +16,12 @@
         <dependency>
             <groupId>com.lego.common</groupId>
             <artifactId>lib-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
-            <version>5.1.2.RELEASE</version>
+            <version>${spring.tx.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>com.lego.feign</groupId>
             <artifactId>survey-feign</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${service.version}</version>
         </dependency>
 
     </dependencies>

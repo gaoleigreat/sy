@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lego.survey.base.exception.ExceptionBuilder;
 import com.lego.survey.settlement.impl.mapper.SurveyPointMapper;
+import com.lego.survey.settlement.impl.mapper.SurveyPointTypeMapper;
 import com.lego.survey.settlement.impl.service.ISurveyPointService;
 import com.lego.survey.settlement.model.entity.SurveyPoint;
+import com.lego.survey.settlement.model.entity.SurveyPointType;
 import com.lego.survey.settlement.model.vo.SurveyPointVo;
 import com.survey.lib.common.consts.HttpConsts;
 import com.survey.lib.common.utils.HeaderUtils;
@@ -17,10 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author yanglf
@@ -33,6 +34,9 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
     @Autowired
     private SurveyPointMapper surveyPointMapper;
 
+    @Autowired
+    private SurveyPointTypeMapper typeMapper;
+
     @Override
     public List<SurveyPointVo> list(int pageIndex, int pageSize, String deviceType, String workspaceCode, String tableName, Date startDate, Date endDate) {
         List<SurveyPointVo> surveyPointVos = new ArrayList<>();
@@ -40,20 +44,36 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
         if (startDate != null) {
             queryWrapper.gt("create_time", startDate).lt("create_time", endDate);
         }
-        if(workspaceCode!=null){
-            queryWrapper.eq("workspace_code",workspaceCode);
+        if (workspaceCode != null) {
+            queryWrapper.eq("workspace_code", workspaceCode);
         }
         List<SurveyPoint> list = null;
         if (deviceType.equals(HttpConsts.DeviceType.DEVICE_WEB)) {
             Page<SurveyPoint> surveyPointPage = surveyPointMapper.queryList(new Page(pageIndex, pageSize), tableName, queryWrapper);
-            list=surveyPointPage.getRecords();
+            list = surveyPointPage.getRecords();
         } else if (deviceType.equals(HttpConsts.DeviceType.DEVICE_ANDROID)) {
             list = surveyPointMapper.queryList(tableName, queryWrapper);
         }
+        Map<Long, String> typeMap = getTypeMap();
         if (list != null) {
-            list.forEach(surveyPoint -> surveyPointVos.add(SurveyPointVo.builder().build().loadData(surveyPoint)));
+            list.forEach(surveyPoint -> {
+                SurveyPointVo surveyPointVo = SurveyPointVo.builder().build().loadData(surveyPoint);
+                surveyPointVo.setTypeStr(typeMap.get(surveyPointVo.getType()));
+                surveyPointVos.add(surveyPointVo);
+            });
         }
         return surveyPointVos;
+    }
+
+    private Map<Long, String> getTypeMap() {
+        Map<Long, String> map = new HashMap<>();
+        List<SurveyPointType> selectList = typeMapper.selectList(null);
+        if (!CollectionUtils.isEmpty(selectList)) {
+            for (SurveyPointType surveyPointType : selectList) {
+                map.put(surveyPointType.getId(), surveyPointType.getName());
+            }
+        }
+        return map;
     }
 
     @Override
@@ -68,9 +88,9 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
                 return RespVOBuilder.failure("添加测点失败");
             }
             return RespVOBuilder.success();
-        }catch (DuplicateKeyException ex){
+        } catch (DuplicateKeyException ex) {
             ex.printStackTrace();
-            ExceptionBuilder.duplicateKeyException("主键冲突",surveyPointVo.getId());
+            ExceptionBuilder.duplicateKeyException("主键冲突", surveyPointVo.getId());
         }
         return RespVOBuilder.failure("添加测点失败");
 
@@ -116,32 +136,37 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
                 ExceptionBuilder.operateFailException("批量新增测点失败");
             }
             return RespVOBuilder.success();
-        }catch (DuplicateKeyException ex){
+        } catch (DuplicateKeyException ex) {
             ex.printStackTrace();
-            ExceptionBuilder.duplicateKeyException("主键冲突",0L);
+            ExceptionBuilder.duplicateKeyException("主键冲突", 0L);
         }
         return RespVOBuilder.failure("批量新增测点失败");
 
     }
 
     @Override
-    public SurveyPointVo querySurveyPointByNameOrCode(String name, String code,String tableName) {
+    public SurveyPointVo querySurveyPointByNameOrCode(String name, String code, String tableName) {
         QueryWrapper<SurveyPoint> wrapper = new QueryWrapper<>();
         wrapper.eq("code", code).or().eq("name", name);
-        List<SurveyPoint> surveyPoints = surveyPointMapper.queryByNameOrCode(wrapper,tableName);
+        List<SurveyPoint> surveyPoints = surveyPointMapper.queryByNameOrCode(wrapper, tableName);
+        Map<Long, String> typeMap = getTypeMap();
         if (surveyPoints != null && surveyPoints.size() > 0) {
-            return SurveyPointVo.builder().build().loadData(surveyPoints.get(0));
+            SurveyPointVo surveyPointVo = SurveyPointVo.builder().build().loadData(surveyPoints.get(0));
+            surveyPointVo.setTypeStr(typeMap.get(surveyPointVo.getType()));
+            return surveyPointVo;
         }
         return null;
     }
 
     @Override
-    public SurveyPointVo querySurveyPointByCode(String pointCode,String tableName) {
-        QueryWrapper<SurveyPoint> wrapper=new QueryWrapper<>();
-        wrapper.eq("code",pointCode);
-        List<SurveyPoint> surveyPoints=surveyPointMapper.queryByName(wrapper,tableName);
+    public SurveyPointVo querySurveyPointByCode(String pointCode, String tableName) {
+        QueryWrapper<SurveyPoint> wrapper = new QueryWrapper<>();
+        wrapper.eq("code", pointCode);
+        List<SurveyPoint> surveyPoints = surveyPointMapper.queryByName(wrapper, tableName);
         if (surveyPoints != null && surveyPoints.size() > 0) {
-            return SurveyPointVo.builder().build().loadData(surveyPoints.get(0));
+            SurveyPointVo surveyPointVo = SurveyPointVo.builder().build().loadData(surveyPoints.get(0));
+            surveyPointVo.setTypeStr(getTypeMap().get(surveyPointVo.getType()));
+            return surveyPointVo;
         }
         return null;
     }

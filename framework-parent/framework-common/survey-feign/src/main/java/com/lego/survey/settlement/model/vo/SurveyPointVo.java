@@ -36,6 +36,8 @@ public class SurveyPointVo extends BaseRowModel {
     @ExcelProperty(value = "测点类型", index = 2)
     @NotBlank(message = "测点类型不能为空")
     private Long type;
+    @ApiModelProperty("测点类型")
+    private String typeStr;
     @ExcelProperty(value = "初始平面X", index = 3)
     @ApiModelProperty("初始平面X")
     private Double gridX;
@@ -89,9 +91,9 @@ public class SurveyPointVo extends BaseRowModel {
                 .gridX(this.gridX)
                 .gridY(this.gridY)
                 .name(this.name)
+                .type(this.type)
                 .workspaceCode(this.workspaceCode)
                 .status(this.status)
-                .type(this.type)
                 .updateTime(this.updateTime)
                 .createTime(this.createTime)
                 .limits(this.getFormatLimits()).build();
