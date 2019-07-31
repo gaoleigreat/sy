@@ -154,9 +154,9 @@ public class AuthController {
 
 
     @RequestMapping(value = "/setAuthVo", method = RequestMethod.POST)
-    public RespVO setAuthVo(@RequestParam String userId, String deviceType) {
+    public RespVO setAuthVo(@RequestParam String userId, String deviceType,String token) {
         User user = userClient.findByUserId(userId);
-        Integer integer = iAuthService.setUserToken(user, deviceType);
+        Integer integer = iAuthService.setUserToken(user, deviceType,token);
         return integer > 0 ? RespVOBuilder.success() : RespVOBuilder.failure();
     }
 

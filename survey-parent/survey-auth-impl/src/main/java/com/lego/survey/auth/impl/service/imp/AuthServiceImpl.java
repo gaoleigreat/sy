@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.lego.survey.auth.impl.propery.JwtProperty;
 import com.lego.survey.auth.impl.service.IAuthService;
 import com.lego.survey.auth.impl.service.IResourcesService;
+import com.lego.survey.auth.impl.utils.JwtTokenUtil;
 import com.lego.survey.user.model.entity.OwnProject;
 import com.lego.survey.user.model.entity.OwnSection;
 import com.lego.survey.user.model.entity.User;
@@ -50,72 +51,36 @@ public class AuthServiceImpl implements IAuthService {
     @Autowired
     private IResourcesService iResourcesService;
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
 
     @Override
     public TokenVo generateUserToken(User user, String deviceType) {
         if (user == null) {
             return null;
         }
-        // 使用加密算法  HS256
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-
-        long nowMillis = System.currentTimeMillis();
-        Date nowDate = new Date();
-        //生成签名密钥
-        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(jwtProperty.getBase64Secret());
-        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
-
         CurrentVo currentVo = generateCurrentVo(user, deviceType);
-
-        JwtBuilder jwtBuilder = Jwts.builder().setHeaderParam("type", "JWT")
-                .claim("current", currentVo)
-                // 设置 jwt 的签发者
-                .setIssuer(jwtProperty.getClientId())
-                // 设置 接收 jwt 的名称
-                .setAudience(jwtProperty.getName())
-                //  设置  jwt 所面向的对象
-                .setSubject(deviceType)
-                .signWith(signatureAlgorithm, signingKey);
         AuthVo authVo = new AuthVo();
         authVo.setIssUer(jwtProperty.getClientId());
         authVo.setAudience(jwtProperty.getName());
         authVo.setSubject(deviceType);
         authVo.setCurrentVo(currentVo);
-        //添加Token过期时间
-        long expiresSecond;
-        if (deviceType.equals(HttpConsts.DeviceType.DEVICE_ANDROID)) {
-            expiresSecond = jwtProperty.getAppExpires();
-        } else if (deviceType.equals(HttpConsts.DeviceType.DEVICE_WEB)) {
-            expiresSecond = jwtProperty.getWebExpires();
-        }else {
-            return null;
-        }
-        Date exp = new Date();
-        if (expiresSecond >= 0) {
-            long expMillis = nowMillis + (expiresSecond * 1000);
-            exp.setTime(expMillis);
-            // 设置  jwt  的过期时间
-            jwtBuilder.setExpiration(exp)
-                    // 如果当前时间在 nowDate 之前  token不生效
-                    .setNotBefore(nowDate);
-            authVo.setExpiration(exp);
-            authVo.setNotBefore(nowDate);
-        }
-        //  头部(Header)、载荷(Payload)与签名(Signature)
-        String token = jwtBuilder.compact();
+        authVo.setNotBefore(new Date());
+        TokenVo tokenVo = jwtTokenUtil.generateToken(currentVo, deviceType);
         //  缓存  token 和  用户信息
         ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
-        ops.set(prefix + currentVo.getUserId() + ":" + deviceType, token, expiresSecond, TimeUnit.SECONDS);
-        ops.set(token, JSONObject.toJSONString(authVo), expiresSecond, TimeUnit.SECONDS);
-        return TokenVo.builder()
-                .token(token)
-                .expireTime(exp)
-                .userName(user.getUserName())
-                .cardId(user.getCardId())
-                .permissions(user.getPermission())
-                .role(user.getRole())
-                .deviceType(deviceType)
-                .build();
+        long expiresSecond = tokenVo.getExpireTime().getTime() / 1000;
+        String token = tokenVo.getToken();
+        authVo.setToken(token);
+        authVo.setExpiration(tokenVo.getExpireTime());
+        ops.set(prefix + currentVo.getUserId() + ":" + deviceType, JSONObject.toJSONString(authVo), expiresSecond, TimeUnit.SECONDS);
+        tokenVo.setUserName(user.getUserName());
+        tokenVo.setCardId(user.getCardId());
+        tokenVo.setPermissions(user.getPermission());
+        tokenVo.setRole(user.getRole());
+        tokenVo.setUserId(user.getId());
+        return tokenVo;
     }
 
     private CurrentVo generateCurrentVo(User user, String deviceType) {
@@ -163,32 +128,18 @@ public class AuthServiceImpl implements IAuthService {
             if (StringUtils.isEmpty(token)) {
                 return null;
             }
-            Boolean hasToken = stringRedisTemplate.hasKey(token);
-            if (hasToken == null || !hasToken) {
+            TokenVo tokenVo = jwtTokenUtil.getTokenVoFromToken(token);
+            if (tokenVo == null) {
                 return null;
             }
+            String userId = tokenVo.getUserId();
             ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
-            String authStr = ops.get(token);
-            AuthVo authVo = JSONObject.parseObject(authStr, AuthVo.class);
-            if (authVo == null) {
-                return null;
-            }
-            CurrentVo currentVo = authVo.getCurrentVo();
-            if (currentVo == null) {
-                return null;
-            }
-            String userId = currentVo.getUserId();
-            log.info("tokenKey:{}", prefix + userId + ":" + deviceType);
             Boolean hasValue = stringRedisTemplate.hasKey(prefix + userId + ":" + deviceType);
             if (hasValue == null || !hasValue) {
                 return null;
             }
-            String storeToken = ops.get(prefix + userId + ":" + deviceType);
-            log.info("storeKey:{}", storeToken);
-            if (!token.equals(storeToken)) {
-                return null;
-            }
-            return authVo;
+            String authStr = ops.get(prefix + userId + ":" + deviceType);
+            return JSONObject.parseObject(authStr, AuthVo.class);
         } catch (Exception ex) {
             ex.printStackTrace();
             log.error("token 解析异常");
@@ -199,23 +150,14 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public Boolean deleteUserToken(String userToken, String deviceType) {
         //  注销用户 token
-        Boolean hasToken = stringRedisTemplate.hasKey(userToken);
-        if (hasToken != null && hasToken) {
-            ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
-            String authStr = ops.get(userToken);
-            AuthVo authVo = JSONObject.parseObject(authStr, AuthVo.class);
-            if (authVo == null) {
-                return true;
-            }
-            CurrentVo currentVo = authVo.getCurrentVo();
-            if (currentVo == null) {
-                return null;
-            }
-            stringRedisTemplate.delete(userToken);
-            Boolean hasAuth = stringRedisTemplate.hasKey(prefix + currentVo.getUserId() + ":" + deviceType);
-            if (hasAuth != null && hasAuth) {
-                stringRedisTemplate.delete(prefix + currentVo.getUserId() + ":" + deviceType);
-            }
+        TokenVo tokenVo = jwtTokenUtil.getTokenVoFromToken(userToken);
+        if (tokenVo == null) {
+            return null;
+        }
+        stringRedisTemplate.delete(userToken);
+        Boolean hasAuth = stringRedisTemplate.hasKey(prefix + tokenVo.getUserId() + ":" + deviceType);
+        if (hasAuth != null && hasAuth) {
+            stringRedisTemplate.delete(prefix + tokenVo.getUserId() + ":" + deviceType);
         }
         return true;
     }
@@ -231,33 +173,25 @@ public class AuthServiceImpl implements IAuthService {
     }
 
     @Override
-    public Integer setUserToken(User user, String deviceType) {
+    public Integer setUserToken(User user, String deviceType, String token) {
         ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
-        Boolean aBoolean = stringRedisTemplate.hasKey(prefix + user.getId() + ":" + deviceType);
-        if (aBoolean == null || !aBoolean) {
-            return 0;
-        }
 
-        String token = ops.get(prefix + user.getId() + ":" + deviceType);
-        if (token == null) {
+        String authStr = ops.get(prefix + user.getId() + ":" + deviceType);
+        if (authStr == null) {
             return 0;
         }
-        Boolean hasKey = stringRedisTemplate.hasKey(token);
-        if (hasKey == null || !hasKey) {
-            return 0;
-        }
-        String authVoStr = ops.get(token);
-        AuthVo authVo = JSONObject.parseObject(authVoStr, AuthVo.class);
+        AuthVo authVo = JSONObject.parseObject(authStr, AuthVo.class);
         if (authVo == null) {
             return 0;
         }
         CurrentVo currentVo = generateCurrentVo(user, deviceType);
         authVo.setCurrentVo(currentVo);
-        Long expire = stringRedisTemplate.getExpire(token, TimeUnit.SECONDS);
-        if (expire == null) {
+        TokenVo tokenVo = jwtTokenUtil.getTokenVoFromToken(token);
+        if (tokenVo == null || tokenVo.getExpireTime() == null) {
             return 0;
         }
-        ops.set(token, JSONObject.toJSONString(authVo), expire, TimeUnit.SECONDS);
+        long expire = tokenVo.getExpireTime().getTime() / 1000;
+        ops.set(prefix + user.getId() + ":" + deviceType, JSONObject.toJSONString(authVo), expire, TimeUnit.SECONDS);
         return 1;
     }
 

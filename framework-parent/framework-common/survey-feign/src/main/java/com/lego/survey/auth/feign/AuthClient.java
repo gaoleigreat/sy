@@ -1,4 +1,5 @@
 package com.lego.survey.auth.feign;
+
 import com.lego.survey.user.model.entity.User;
 import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.consts.RespConsts;
@@ -14,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
  * @descript
  * @since 2018/12/20
  **/
-@FeignClient(value = DictConstant.Service.AUTH, path = DictConstant.Path.AUTH,fallback = AuthClientFallback.class)
+@FeignClient(value = DictConstant.Service.AUTH, path = DictConstant.Path.AUTH, fallback = AuthClientFallback.class)
 public interface AuthClient {
 
     /**
@@ -32,13 +33,12 @@ public interface AuthClient {
     /**
      * 解析 用户 token
      *
-     * @param token    user token
-     * @param  deviceType   deviceType
-     * @return  user auth  vo
+     * @param token      user token
+     * @param deviceType deviceType
+     * @return user auth  vo
      */
     @RequestMapping(value = "/verify", method = RequestMethod.GET)
     RespVO<CurrentVo> parseUserToken(@RequestParam("token") String token, @RequestParam("deviceType") String deviceType);
-
 
 
     /**
@@ -55,6 +55,7 @@ public interface AuthClient {
 
     /**
      * 获取用户登录token
+     *
      * @param userId
      * @param deviceType
      * @return
@@ -66,40 +67,45 @@ public interface AuthClient {
 
     /**
      * 根据header解析用户信息
+     *
      * @param headerVo
      * @return
      */
-    @RequestMapping(value = "/getAuthVo",method = RequestMethod.POST)
+    @RequestMapping(value = "/getAuthVo", method = RequestMethod.POST)
     CurrentVo getAuthVo(@RequestBody HeaderVo headerVo);
 
 
     /**
      * 设置    session信息
+     *
      * @param userId
      * @param deviceType
+     * @param token
      * @return
      */
     @RequestMapping(value = "/setAuthVo", method = RequestMethod.POST)
-    RespVO setAuthVo(@RequestParam(value = "userId") String userId,@RequestParam(value = "deviceType") String deviceType);
+    RespVO setAuthVo(@RequestParam(value = "userId") String userId,
+                     @RequestParam(value = "deviceType") String deviceType,
+                     @RequestParam(value = "token") String token);
 
 }
 
 @Component
-class AuthClientFallback implements  AuthClient {
+class AuthClientFallback implements AuthClient {
 
     @Override
     public RespVO<TokenVo> generate(User user, String deviceType) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"auth服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "auth服务不可用");
     }
 
     @Override
     public RespVO<CurrentVo> parseUserToken(String token, String deviceType) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"auth服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "auth服务不可用");
     }
 
     @Override
     public RespVO<TokenVo> delete(String token, String deviceType) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"auth服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "auth服务不可用");
     }
 
     @Override
@@ -113,8 +119,8 @@ class AuthClientFallback implements  AuthClient {
     }
 
     @Override
-    public RespVO setAuthVo(String userId, String deviceType) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"auth服务不可用");
+    public RespVO setAuthVo(String userId, String deviceType, String token) {
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "auth服务不可用");
     }
 }
 

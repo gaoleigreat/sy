@@ -49,7 +49,7 @@ public interface IAuthService {
      * @param deviceType
      * @return
      */
-    Integer setUserToken(User user,String deviceType);
+    Integer setUserToken(User user,String deviceType,String token);
 
     /**
      * 生成服务 token
