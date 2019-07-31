@@ -2,7 +2,7 @@ spring:
   cloud:
     config:
       fail-fast: true
-      uri: http://114.116.44.104:48020
+      uri: http://192.168.0.154:48020
       profile: dev
       label: master
       username: admin
@@ -16,7 +16,7 @@ logging:
 
 file:
   service:
-    url: http://114.115.233.31/
+    url: http://192.168.0.95/
 
 
 ceph:

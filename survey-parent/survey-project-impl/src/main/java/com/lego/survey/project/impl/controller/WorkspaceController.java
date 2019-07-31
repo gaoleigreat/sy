@@ -102,12 +102,12 @@ public class WorkspaceController {
 
     @ApiOperation(value = "根据标段code获取工区信息", notes = "根据标段code获取工区信息", httpMethod = "GET")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "sectionCode", value = "标段code", dataType = "String", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "sectionCode", value = "标段code", dataType = "String",  paramType = "query"),
     })
     @Operation(value = "list", desc = "根据标段id获取工区信息")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public RespVO<RespDataVO<Workspace>> list(HttpServletRequest request,
-                                              @RequestParam String sectionCode) {
+                                              @RequestParam(required = false) String sectionCode) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         return iWorkspaceService.queryBySectionCode(sectionCode);
     }

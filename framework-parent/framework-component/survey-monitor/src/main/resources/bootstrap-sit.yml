@@ -2,7 +2,7 @@ spring:
   cloud:
     config:
       #fail-fast: true
-      uri: http://114.116.6.53:48020
+      uri: http://192.168.0.86:48020
       profile: sit
       label: master
       username: admin

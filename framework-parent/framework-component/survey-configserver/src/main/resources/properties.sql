@@ -22,13 +22,13 @@ VALUES ('application', 'dev', 'master', 'define.druid.username', 'admin');
 INSERT INTO properties (application, profile, label, `key`, value)
 VALUES ('application', 'dev', 'master', 'define.druid.password', '{cipher}a1d30c1325f1b0cd2e4619bff2be57bc32ae0413c0ce1fee07153b60bfa3a782');
 INSERT INTO properties (application, profile, label, `key`, value)
-VALUES ('application', 'dev', 'master', 'define.mysql.write.url', 'jdbc:mysql://114.116.6.53:3306/survey?useUnicode=true&characterEncoding=utf8&useSSL=false');
+VALUES ('application', 'dev', 'master', 'define.mysql.write.url', 'jdbc:mysql://192.168.0.86:3306/survey?useUnicode=true&characterEncoding=utf8&useSSL=false');
 INSERT INTO properties (application, profile, label, `key`, value)
 VALUES ('application', 'dev', 'master', 'define.mysql.write.username', 'root');
 INSERT INTO properties (application, profile, label, `key`, value)
 VALUES ('application', 'dev', 'master', 'define.mysql.write.password', 'mysql');
 INSERT INTO properties (application, profile, label, `key`, value)
-VALUES ('application', 'dev', 'master', 'define.mysql.read1.url', 'jdbc:mysql://114.116.6.53:3306/survey?useUnicode=true&characterEncoding=utf8&useSSL=false');
+VALUES ('application', 'dev', 'master', 'define.mysql.read1.url', 'jdbc:mysql://192.168.0.86:3306/survey?useUnicode=true&characterEncoding=utf8&useSSL=false');
 INSERT INTO properties (application, profile, label, `key`, value)
 VALUES ('application', 'dev', 'master', 'define.mysql.read1.username', 'root');
 INSERT INTO properties (application, profile, label, `key`, value)
@@ -40,7 +40,7 @@ VALUES ('application', 'dev', 'master', 'eureka.client.register-with-eureka', 't
 INSERT INTO properties (application, profile, label, `key`, value)
 VALUES ('application', 'dev', 'master', 'eureka.client.registry-fetch-interval-seconds', '5');
 INSERT INTO properties (application, profile, label, `key`, value)
-VALUES ('application', 'dev', 'master', 'eureka.client.serviceUrl.defaultZone', 'http://${define.user.name}:${define.user.password}@114.116.6.53:3306:48010/eureka/');
+VALUES ('application', 'dev', 'master', 'eureka.client.serviceUrl.defaultZone', 'http://${define.user.name}:${define.user.password}@192.168.0.86:3306:48010/eureka/');
 INSERT INTO properties (application, profile, label, `key`, value)
 VALUES ('application', 'dev', 'master', 'eureka.instance.prefer-ip-address', 'true');
 INSERT INTO properties (application, profile, label, `key`, value)
@@ -62,7 +62,7 @@ VALUES ('application', 'dev', 'master', 'spring.http.multipart.max-request-size'
 INSERT INTO properties (application, profile, label, `key`, value)
 VALUES ('application', 'dev', 'master', 'spring.cloud.bus.trace.enabled', 'true');
 INSERT INTO properties (application, profile, label, `key`, value)
-VALUES ('application', 'dev', 'master', 'spring.data.mongodb.host', '114.116.6.53');
+VALUES ('application', 'dev', 'master', 'spring.data.mongodb.host', '192.168.0.86');
 INSERT INTO properties (application, profile, label, `key`, value)
 VALUES ('application', 'dev', 'master', 'spring.data.mongodb.port', '27017');
 INSERT INTO properties (application, profile, label, `key`, value)
@@ -72,7 +72,7 @@ VALUES ('application', 'dev', 'master', 'spring.data.mongodb.username', 'admin')
 INSERT INTO properties (application, profile, label, `key`, value)
 VALUES ('application', 'dev', 'master', 'spring.data.mongodb.password', 'admin123');*/
 INSERT INTO properties (application, profile, label, `key`, value)
-VALUES ('application', 'dev', 'master', 'spring.redis.host', '114.116.6.53');
+VALUES ('application', 'dev', 'master', 'spring.redis.host', '192.168.0.86');
 INSERT INTO properties (application, profile, label, `key`, value)
 VALUES ('application', 'dev', 'master', 'spring.redis.port', '6379');
 INSERT INTO properties (application, profile, label, `key`, value)
@@ -90,7 +90,7 @@ VALUES ('application', 'dev', 'master', 'spring.redis.jedis.pool.min-idle', '0')
 INSERT INTO properties (application, profile, label, `key`, value)
 VALUES ('application', 'dev', 'master', 'spring.redis.timeout', '10000');
 INSERT INTO properties (application, profile, label, `key`, value)
-VALUES ('application', 'dev', 'master', 'spring.rabbitmq.host', '114.116.6.53');
+VALUES ('application', 'dev', 'master', 'spring.rabbitmq.host', '192.168.0.86');
 INSERT INTO properties (application, profile, label, `key`, value)
 VALUES ('application', 'dev', 'master', 'spring.rabbitmq.port', '5672');
 INSERT INTO properties (application, profile, label, `key`, value)

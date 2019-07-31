@@ -23,7 +23,7 @@ spring:
 
     #数据源
   # datasource:
-  #  url: jdbc:mysql://114.116.6.53:3306/survey_config
+  #  url: jdbc:mysql://192.168.0.86:3306/survey_config
   #  username: root
   #  password: mysql
   #  driver-class-name: com.mysql.jdbc.Driver
@@ -45,7 +45,7 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     serviceUrl:
-      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@114.116.6.53:48010/eureka/
+      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@192.168.0.86:48010/eureka/
   instance:
     prefer-ip-address: true
     instance-id: ${spring.cloud.client.ip-address}:${server.port}

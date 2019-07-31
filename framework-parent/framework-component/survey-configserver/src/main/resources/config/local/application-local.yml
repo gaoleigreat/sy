@@ -67,7 +67,7 @@ spring:
     username: admin
     password: admin123
   zipkin:
-    base-url: http://114.116.44.104:9411
+    base-url: http://192.168.0.154:9411
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8

@@ -1,6 +1,8 @@
 package com.lego.survey.project.impl.repository;
 
 import com.lego.survey.project.model.entity.Section;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -24,11 +26,15 @@ public interface SectionRepository extends MongoRepository<Section, String> {
     Section findSectionByIdAndValid(String id, int valid);
 
 
-
-    List<Section>  findSectionsByValid(int valid);
-
+    List<Section> findSectionsByValid(int valid);
 
 
+    /**
+     * @param valid
+     * @param pageable
+     * @return
+     */
+    Page<Section> findSectionsByValidOrderByCreateTimeDesc(int valid, Pageable pageable);
 
 
     /**
@@ -50,7 +56,7 @@ public interface SectionRepository extends MongoRepository<Section, String> {
     List<Section> findSectionsByOwnerProjectIdAndValidOrderByCreateTimeDesc(String projectId, int valid);
 
 
-    List<Section>  findSectionsByOwnerProjectCodeAndValidOrderByCreateTimeDesc(String projectCode, int valid);
+    List<Section> findSectionsByOwnerProjectCodeAndValidOrderByCreateTimeDesc(String projectCode, int valid);
 
 
     /**
@@ -93,7 +99,6 @@ public interface SectionRepository extends MongoRepository<Section, String> {
     Section findSectionByWorkSpaceIdAndValid(String workspaceId, int valid);
 
 
-
     /**
      * 根据工区编号获取标段信息
      *
@@ -105,21 +110,22 @@ public interface SectionRepository extends MongoRepository<Section, String> {
 
     /**
      * 根据  master 角色 获取标段信息
+     *
      * @param masterId
      * @param valid
      * @return
      */
-    List<Section>  findSectionsByMasterIdAndValid(String masterId,int valid);
+    List<Section> findSectionsByMasterIdAndValid(String masterId, int valid);
 
 
     /**
      * 获取测量员所属的项目
+     *
      * @param surveyId
      * @param valid
      * @return
      */
-    List<Section>  findSectionsBySurveyerIdAndValid(String surveyId,int valid);
-
+    List<Section> findSectionsBySurveyerIdAndValid(String surveyId, int valid);
 
 
 }

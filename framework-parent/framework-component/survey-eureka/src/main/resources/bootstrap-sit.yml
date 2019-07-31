@@ -7,7 +7,7 @@ spring:
   cloud:
     config:
       #fail-fast: true
-      uri: http://114.116.6.53:48020
+      uri: http://192.168.0.86:48020
       profile: sit
       label: master
       username: admin
@@ -22,4 +22,4 @@ eureka:
     fetch-registry: false
     register-with-eureka: false
     service-url:
-      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@114.116.6.53:48010/eureka/
+      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@192.168.0.86:48010/eureka/

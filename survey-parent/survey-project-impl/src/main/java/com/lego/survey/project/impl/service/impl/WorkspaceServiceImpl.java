@@ -6,12 +6,20 @@ import com.lego.survey.project.model.entity.OwnWorkspace;
 import com.lego.survey.project.model.entity.OwnerProject;
 import com.lego.survey.project.model.entity.Section;
 import com.lego.survey.project.model.entity.Workspace;
+import com.survey.lib.common.page.PagedResult;
 import com.survey.lib.common.vo.RespDataVO;
 import com.survey.lib.common.vo.RespVO;
 import com.survey.lib.common.vo.RespVOBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.CriteriaDefinition;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,6 +35,9 @@ public class WorkspaceServiceImpl implements IWorkspaceService {
 
     @Autowired
     private SectionRepository sectionRepository;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Override
     public RespVO add(Workspace workSpace) {

@@ -9,11 +9,11 @@ define:
     password: '{cipher}a1d30c1325f1b0cd2e4619bff2be57bc32ae0413c0ce1fee07153b60bfa3a782'
   mysql:
     write:
-      url: jdbc:mysql://114.116.6.53:3306/survey?useUnicode=true&characterEncoding=utf8&useSSL=false
+      url: jdbc:mysql://192.168.0.86:3306/survey?useUnicode=true&characterEncoding=utf8&useSSL=false
       username: root
       password: mysql
     read1:
-      url: jdbc:mysql://114.116.6.53:3306/survey?useUnicode=true&characterEncoding=utf8&useSSL=false
+      url: jdbc:mysql://192.168.0.86:3306/survey?useUnicode=true&characterEncoding=utf8&useSSL=false
       username: root
       password: mysql
 eureka:
@@ -22,7 +22,7 @@ eureka:
     register-with-eureka: true
     registry-fetch-interval-seconds: 30  # 获取服务间隔时间
     serviceUrl:
-      defaultZone: http://${define.user.name}:${define.user.password}@114.116.6.53:48010/eureka/
+      defaultZone: http://${define.user.name}:${define.user.password}@192.168.0.86:48010/eureka/
   instance:
     prefer-ip-address: true
     instance-id: ${spring.cloud.client.ip-address}:${server.port}
@@ -45,13 +45,13 @@ spring:
       override-system-properties: false
   data:
     mongodb:
-      host: 114.116.6.53
+      host: 192.168.0.86
       port: 27017
       database: survey
       #username: admin
       #password: '{cipher}a1d30c1325f1b0cd2e4619bff2be57bc32ae0413c0ce1fee07153b60bfa3a782'
   redis:
-    host: 114.115.233.31
+    host: 192.168.0.95
     port: 6379
     password: Legaoyun@2018
     database: 0
@@ -63,12 +63,12 @@ spring:
         min-idle: 0
     timeout: 10000
   rabbitmq:
-    host: 114.116.6.53
+    host: 192.168.0.86
     port: 5672
     username: admin
     password: legaoyun@2018
   zipkin:
-    base-url: http://114.116.6.53:9411
+    base-url: http://192.168.0.86:9411
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
@@ -123,4 +123,4 @@ ribbon:
 
 fpfile:
   path: /opt/work/file
-  url:  http://114.116.6.53:50010/survey/api-file/file/fpfile/download
+  url:  http://192.168.0.86:50010/survey/api-file/file/fpfile/download

@@ -1,7 +1,7 @@
 spring:
   cloud:
     config:
-      uri: http://114.116.44.104:48020
+      uri: http://192.168.0.154:48020
       profile: dev
       label: master
      # fail-fast: true
