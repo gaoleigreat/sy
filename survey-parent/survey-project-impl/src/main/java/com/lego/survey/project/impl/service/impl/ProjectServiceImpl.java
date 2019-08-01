@@ -161,8 +161,10 @@ public class ProjectServiceImpl implements IProjectService {
     @Override
     public RespVO deleteProject(String code) {
         Project project = projectRepository.findProjectByCodeAndValid(code, 0);
-        project.setValid(1);
-        projectRepository.save(project);
+        if(project!=null){
+            project.setValid(1);
+            projectRepository.save(project);
+        }
         //TODO 更新关联表数据状态
         return RespVOBuilder.success();
     }

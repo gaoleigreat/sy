@@ -1,6 +1,7 @@
 package com.lego.survey.user.model.vo;
 
 import com.lego.survey.user.model.entity.User;
+import com.survey.lib.common.utils.SecurityUtils;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -87,6 +88,7 @@ public class UserAddVo {
             user = User.builder().build();
             user.setId(this.id);
             user.setPassWord("111111");
+            //user.setPassWord(SecurityUtils.encryptionWithMd5(user.getPassWord()));
         }
         user.setCreateTime(currentDate);
         user.setName(this.name);

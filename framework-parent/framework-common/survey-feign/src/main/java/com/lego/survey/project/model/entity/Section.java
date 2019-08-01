@@ -128,6 +128,8 @@ public class Section {
                 workspace.setName(workSpace.getName());
                 workspace.setSurveyer(workSpace.getSurveyer());
                 workspace.setType(workSpace.getType());
+                workspace.setProject(this.ownerProject.getCode());
+                workspace.setSection(this.code);
                 workspaces.add(workspace);
             }
         }

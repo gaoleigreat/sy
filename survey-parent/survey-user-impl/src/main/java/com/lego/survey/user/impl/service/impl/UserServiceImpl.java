@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -91,7 +92,7 @@ public class UserServiceImpl implements IUserService {
         if (user == null) {
             return RespVOBuilder.failure();
         }
-        User loadUser = userAddVo.loadUser(user);
+        User loadUser = getUser(userAddVo, user);
         userRepository.save(loadUser);
         return RespVOBuilder.success();
     }
@@ -132,7 +133,14 @@ public class UserServiceImpl implements IUserService {
     @Override
     public RespVO create(UserAddVo userAddVo) {
         // 创建用户
-        User user = userAddVo.loadUser(null);
+        User user = getUser(userAddVo, null);
+        userRepository.save(user);
+        // 注册用户
+        return RespVOBuilder.success();
+    }
+
+    private User getUser(UserAddVo userAddVo, User queryUser) {
+        User user = userAddVo.loadUser(queryUser);
         String group = userAddVo.getGroup();
         if (group != null) {
             RespVO<GroupVo> respVO = groupClient.query(group);
@@ -179,11 +187,7 @@ public class UserServiceImpl implements IUserService {
                 user.setOwnSections(ownSections);
             }
         }
-
-        //user.setPassWord(SecurityUtils.encryptionWithMd5(user.getPassWord()));
-        userRepository.save(user);
-        // 注册用户
-        return RespVOBuilder.success();
+        return user;
     }
 
     @Override
