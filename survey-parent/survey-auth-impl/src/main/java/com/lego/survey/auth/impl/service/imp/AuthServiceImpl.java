@@ -1,5 +1,6 @@
 package com.lego.survey.auth.impl.service.imp;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lego.survey.auth.impl.propery.JwtProperty;
 import com.lego.survey.auth.impl.service.IAuthService;
@@ -167,7 +168,11 @@ public class AuthServiceImpl implements IAuthService {
         Boolean hasKey = stringRedisTemplate.hasKey(prefix + userId + ":" + deviceType);
         if (hasKey != null && hasKey) {
             ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
-            return ops.get(prefix + userId + ":" + deviceType);
+            String authVoStr = ops.get(prefix + userId + ":" + deviceType);
+            AuthVo authVo = JSONObject.parseObject(authVoStr, AuthVo.class);
+            if (authVo != null) {
+                return authVo.getToken();
+            }
         }
         return null;
     }

@@ -95,6 +95,13 @@ logging:
     com.lego.**: debug
   file: /home/work/logs/${spring.application.name}/error_log
 
+
+feign:
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
+
 #feign:
 #  hystrix:
 #    enabled: true

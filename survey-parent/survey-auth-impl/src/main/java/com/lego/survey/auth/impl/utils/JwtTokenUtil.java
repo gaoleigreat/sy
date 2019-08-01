@@ -34,7 +34,7 @@ public class JwtTokenUtil {
      */
     private TokenVo generateToken(Map<String, Object> claims, String deviceType) {
         // 使用加密算法  HS256
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS512;
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         //生成签名密钥
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(jwtProperty.getBase64Secret());
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
@@ -51,7 +51,7 @@ public class JwtTokenUtil {
                 // 过期时间
                 .setExpiration(expirationDate)
                 .setNotBefore(new Date())
-                .signWith(SignatureAlgorithm.HS512, signingKey)
+                .signWith(signatureAlgorithm, signingKey)
                 .compact();
         return TokenVo.builder()
                 .token(token)
@@ -67,7 +67,7 @@ public class JwtTokenUtil {
         Claims claims = null;
         try {
             claims = Jwts.parser()
-                    .setSigningKey(jwtProperty.getBase64Secret())
+                    .setSigningKey(DatatypeConverter.parseBase64Binary(jwtProperty.getBase64Secret()))
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {

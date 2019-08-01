@@ -76,14 +76,18 @@ public class WorkspaceServiceImpl implements IWorkspaceService {
     @Override
     public RespVO deleteWorkSpace(String code) {
         Section section = sectionRepository.findSectionByWorkSpaceCodeAndValid(code, 0);
-        List<OwnWorkspace> workspaceList = section.getWorkSpace();
-        workspaceList.forEach(x -> {
-            if (x.getCode().equals(code)) {
-                x.setValid(1);
+        if (section != null) {
+            List<OwnWorkspace> workspaceList = section.getWorkSpace();
+            if (!CollectionUtils.isEmpty(workspaceList)) {
+                workspaceList.forEach(x -> {
+                    if (x.getCode().equals(code)) {
+                        x.setValid(1);
+                    }
+                });
+                section.setUpdateTime(new Date());
+                sectionRepository.save(section);
             }
-        });
-        section.setUpdateTime(new Date());
-        sectionRepository.save(section);
+        }
         return RespVOBuilder.success();
     }
 
