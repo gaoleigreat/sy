@@ -17,7 +17,7 @@ import java.util.List;
  * @description
  * @since 2019/1/8
  **/
-@FeignClient(value = DictConstant.Service.SETTLEMENT, path = DictConstant.Path.SURVEY_TASK,fallback = SurveyTaskClientFallback.class)
+@FeignClient(value = DictConstant.Service.SETTLEMENT, path = DictConstant.Path.SURVEY_TASK, fallback = SurveyTaskClientFallback.class)
 public interface SurveyTaskClient {
 
 
@@ -77,25 +77,25 @@ public interface SurveyTaskClient {
 }
 
 @Component
-class SurveyTaskClientFallback implements SurveyTaskClient{
+class SurveyTaskClientFallback implements SurveyTaskClient {
 
     @Override
     public RespVO create(SurveyTaskVo surveyTaskVo) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO<RespDataVO<SurveyTaskVo>> query(String sectionCode, int pageIndex, int pageSize) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO modify(SurveyTaskVo surveyTaskVo, String sectionCode) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO delete(String sectionCode, List<Long> ids) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 }

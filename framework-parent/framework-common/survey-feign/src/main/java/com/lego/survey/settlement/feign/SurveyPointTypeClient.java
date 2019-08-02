@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @description
  * @since 2019/1/14
  **/
-@FeignClient(value = DictConstant.Service.SETTLEMENT, path = DictConstant.Path.SURVEY_POINT_TYPE,fallback = SurveyPointTypeClientFallback.class)
+@FeignClient(value = DictConstant.Service.SETTLEMENT,  path = DictConstant.Path.SURVEY_POINT_TYPE, fallback = SurveyPointTypeClientFallback.class)
 public interface SurveyPointTypeClient {
 
     /**
@@ -65,25 +65,25 @@ public interface SurveyPointTypeClient {
 }
 
 @Component
-class SurveyPointTypeClientFallback implements SurveyPointTypeClient{
+class SurveyPointTypeClientFallback implements SurveyPointTypeClient {
 
     @Override
     public RespVO create(SurveyPointTypeVo spType) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO<RespDataVO<SurveyPointTypeVo>> list(String sectionCode) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO delete(Long id) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO modify(SurveyPointTypeVo surveyPointTypeVo) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 }

@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,14 +21,15 @@ import java.util.concurrent.TimeUnit;
 public class FeignOkHttpConfig {
 
     @Bean
-    public okhttp3.OkHttpClient okHttpClient() {
+    public OkHttpClient okHttpClient() {
         return new OkHttpClient.Builder()
                 .readTimeout(60, TimeUnit.SECONDS)
                 .connectTimeout(60, TimeUnit.SECONDS)
                 .writeTimeout(120, TimeUnit.SECONDS)
-                .addInterceptor(new HttpHeaderInterceptor())
-                .addNetworkInterceptor(new NetworkInterceptor())
-                .addInterceptor(new LoggingInterceptor())
+                .retryOnConnectionFailure(false)
+                //.addInterceptor(new HttpHeaderInterceptor())
+               // .addNetworkInterceptor(new NetworkInterceptor())
+               // .addInterceptor(new LoggingInterceptor())
                 .connectionPool(new ConnectionPool())
                 .build();
     }

@@ -17,11 +17,12 @@ import java.util.List;
  * @description
  * @since 2019/1/8
  **/
-@FeignClient(value = DictConstant.Service.SETTLEMENT,path = DictConstant.Path.SURVEY_ORIGINAL,fallback = SurveyOriginalClientFallback.class)
+@FeignClient(value = DictConstant.Service.SETTLEMENT,  path = DictConstant.Path.SURVEY_ORIGINAL, fallback = SurveyOriginalClientFallback.class)
 public interface SurveyOriginalClient {
 
     /**
      * 新增原始数据
+     *
      * @param surveyOriginalVo
      * @param sectionCode
      * @return
@@ -34,6 +35,7 @@ public interface SurveyOriginalClient {
 
     /**
      * 查看原始数据
+     *
      * @param sectionCode
      * @param pageIndex
      * @param pageSize
@@ -49,6 +51,7 @@ public interface SurveyOriginalClient {
 
     /**
      * 修改原始数据
+     *
      * @param surveyOriginalVo
      * @param sectionCode
      * @return
@@ -61,6 +64,7 @@ public interface SurveyOriginalClient {
 
     /**
      * 删除原始数据
+     *
      * @param sectionCode
      * @param ids
      * @return
@@ -74,6 +78,7 @@ public interface SurveyOriginalClient {
 
     /**
      * 批量添加原始数据
+     *
      * @param surveyOriginalVos
      * @param sectionCode
      * @return
@@ -83,10 +88,9 @@ public interface SurveyOriginalClient {
                        @PathVariable(value = "sectionCode") String sectionCode);
 
 
-
-
     /**
      * 查看熱無原始数据
+     *
      * @param sectionCode
      * @param taskId
      * @return
@@ -102,35 +106,35 @@ public interface SurveyOriginalClient {
 
 
 @Component
-class SurveyOriginalClientFallback implements SurveyOriginalClient{
+class SurveyOriginalClientFallback implements SurveyOriginalClient {
 
     @Override
     public RespVO create(SurveyOriginalVo surveyOriginalVo, String sectionCode) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO<RespDataVO<SurveyOriginalVo>> query(String sectionCode, int pageIndex, int pageSize) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO modify(SurveyOriginalVo surveyOriginalVo, String sectionCode) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO delete(String sectionCode, List<Long> ids) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO createBatch(List<SurveyOriginalVo> surveyOriginalVos, String sectionCode) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO<RespDataVO<SurveyOriginalVo>> queryByTaskId(String sectionCode, Long taskId) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 }

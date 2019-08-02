@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * @description
  * @since 2018/12/27
  **/
-@FeignClient(value = DictConstant.Service.PROJECT, path = DictConstant.Path.WORKSPACE,fallback = WorkspaceClientFallback.class)
+@FeignClient(value = DictConstant.Service.PROJECT, path = DictConstant.Path.WORKSPACE, fallback = WorkspaceClientFallback.class)
 public interface WorkspaceClient {
 
     /**
@@ -37,6 +37,7 @@ public interface WorkspaceClient {
 
     /**
      * 删除工区信息
+     *
      * @param code
      * @return
      */
@@ -66,30 +67,30 @@ public interface WorkspaceClient {
 
 
 @Component
-class  WorkspaceClientFallback implements WorkspaceClient{
+class WorkspaceClientFallback implements WorkspaceClient {
 
     @Override
     public RespVO create(Workspace workspace) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO modify(Workspace workspace) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO delete(String code) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO<RespDataVO<Workspace>> list(String sectionCode) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO<Workspace> info(String code) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 }

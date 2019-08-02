@@ -19,7 +19,7 @@ import java.util.List;
  * @description
  * @since 2019/7/10
  **/
-@FeignClient(value = DictConstant.Service.AUTH, path = DictConstant.Path.RESOURCES,fallback = ResourcesClientFallback.class)
+@FeignClient(value = DictConstant.Service.AUTH,path = DictConstant.Path.RESOURCES,fallback = ResourcesClientFallback.class)
 public interface ResourcesClient {
 
 

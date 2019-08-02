@@ -34,7 +34,7 @@ public class JwtTokenUtil {
      */
     private TokenVo generateToken(Map<String, Object> claims, String deviceType) {
         // 使用加密算法  HS256
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS512;
         //生成签名密钥
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(jwtProperty.getBase64Secret());
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());

@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -34,7 +35,7 @@ public class SurveyPointVo extends BaseRowModel {
     @ApiModelProperty("测点名称")
     private String name;
     @ExcelProperty(value = "测点类型", index = 2)
-    @NotBlank(message = "测点类型不能为空")
+    @NotNull(message = "测点类型不能为空")
     private Long type;
     @ApiModelProperty("测点类型")
     private String typeStr;

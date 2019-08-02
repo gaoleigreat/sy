@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
  * @descript
  * @since 2018/12/20
  **/
-@FeignClient(value = DictConstant.Service.AUTH, path = DictConstant.Path.AUTH, fallback = AuthClientFallback.class)
+@FeignClient(value = DictConstant.Service.AUTH,path = DictConstant.Path.AUTH, fallback = AuthClientFallback.class)
 public interface AuthClient {
 
     /**

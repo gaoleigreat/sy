@@ -18,7 +18,7 @@ import java.util.List;
  * @description
  * @since 2019/1/8
  **/
-@FeignClient(value = DictConstant.Service.SETTLEMENT, path = DictConstant.Path.SURVEY_POINT,fallback = SurveyPointClientFallback.class)
+@FeignClient(value = DictConstant.Service.SETTLEMENT,path = DictConstant.Path.SURVEY_POINT, fallback = SurveyPointClientFallback.class)
 public interface SurveyPointClient {
 
 
@@ -34,7 +34,9 @@ public interface SurveyPointClient {
                   @PathVariable(value = "sectionCode") String sectionCode);
 
 
-    /**批量新增测点
+    /**
+     * 批量新增测点
+     *
      * @param surveyPointVos
      * @param sectionCode
      * @return
@@ -92,30 +94,30 @@ public interface SurveyPointClient {
 }
 
 @Component
-class SurveyPointClientFallback implements SurveyPointClient{
+class SurveyPointClientFallback implements SurveyPointClient {
 
     @Override
     public RespVO create(SurveyPointVo surveyPointVo, String sectionCode) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO createBatch(List<SurveyPointVo> surveyPointVos, String sectionCode) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO<RespDataVO<SurveyPointVo>> list(String workspaceCode, int pageIndex, int pageSize, Long startTimestamp, Long endTimestamp) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO modify(SurveyPointVo surveyPointVo, String sectionCode) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO delete(String sectionCode, List<String> codes) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 }

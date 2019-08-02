@@ -1,4 +1,5 @@
 package com.lego.survey.user.feign;
+
 import com.lego.survey.user.model.entity.Config;
 import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.consts.RespConsts;
@@ -15,11 +16,12 @@ import org.springframework.web.bind.annotation.*;
  * @description
  * @since 2019/1/3
  **/
-@FeignClient(value = DictConstant.Service.USER,path = DictConstant.Path.CONFIG,fallback = ConfigClientFallback.class)
+@FeignClient(value = DictConstant.Service.USER, path = DictConstant.Path.CONFIG, fallback = ConfigClientFallback.class)
 public interface ConfigClient {
 
     /**
      * 查询配置列表
+     *
      * @param pageIndex
      * @param pageSize
      * @return
@@ -31,6 +33,7 @@ public interface ConfigClient {
 
     /**
      * 新增配置
+     *
      * @param config
      * @return
      */
@@ -40,6 +43,7 @@ public interface ConfigClient {
 
     /**
      * 修改配置
+     *
      * @param config
      * @return
      */
@@ -49,6 +53,7 @@ public interface ConfigClient {
 
     /**
      * 删除配置信息
+     *
      * @param id
      * @return
      */
@@ -58,6 +63,7 @@ public interface ConfigClient {
 
     /**
      * 删除配置信息
+     *
      * @param id
      * @return
      */
@@ -67,6 +73,7 @@ public interface ConfigClient {
 
     /**
      * 根据名称获取配置信息
+     *
      * @param name
      * @return
      */
@@ -78,30 +85,35 @@ public interface ConfigClient {
 
 
 @Component
-class ConfigClientFallback implements ConfigClient{
+class ConfigClientFallback implements ConfigClient {
 
     @Override
     public RespVO<RespDataVO<Config>> list(int pageIndex, int pageSize) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"user服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "user服务不可用");
     }
 
     @Override
     public RespVO create(Config config) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"user服务不可用");    }
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "user服务不可用");
+    }
 
     @Override
     public RespVO modify(Config config) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"user服务不可用");    }
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "user服务不可用");
+    }
 
     @Override
     public RespVO delete(String id) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"user服务不可用");    }
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "user服务不可用");
+    }
 
     @Override
     public RespVO<Config> info(String id) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"user服务不可用");    }
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "user服务不可用");
+    }
 
     @Override
     public RespVO<Config> queryByName(String name) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"user服务不可用");    }
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "user服务不可用");
+    }
 }

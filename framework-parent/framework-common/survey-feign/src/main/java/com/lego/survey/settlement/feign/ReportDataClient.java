@@ -25,7 +25,7 @@ import java.util.List;
  * @description
  * @since 2019/1/7
  **/
-@FeignClient(value = DictConstant.Service.SETTLEMENT, path = "/reportData", fallback = ReportDataClientFallback.class)
+@FeignClient(value = DictConstant.Service.SETTLEMENT,path = "/reportData", fallback = ReportDataClientFallback.class)
 public interface ReportDataClient {
 
 
@@ -33,7 +33,7 @@ public interface ReportDataClient {
      * 查询沉降测量报告中需要插入的数据
      */
     @RequestMapping(value = "/query/settlementData", method = RequestMethod.GET)
-    RespVO<RespDataVO<SurveyReportDataVo>> queryData(@RequestParam( value = "sectionCode") String sectionCode,
+    RespVO<RespDataVO<SurveyReportDataVo>> queryData(@RequestParam(value = "sectionCode") String sectionCode,
                                                      @RequestParam(value = "taskId") Long taskId);
 }
 

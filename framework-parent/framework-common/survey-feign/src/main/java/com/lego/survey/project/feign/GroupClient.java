@@ -1,4 +1,5 @@
 package com.lego.survey.project.feign;
+
 import com.lego.survey.project.model.entity.Group;
 import com.lego.survey.project.model.vo.GroupVo;
 import com.survey.lib.common.consts.DictConstant;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * @description
  * @since 2018 /12/21
  */
-@FeignClient(value = DictConstant.Service.PROJECT, path = DictConstant.Path.GROUP,fallback = GroupClientFallback.class)
+@FeignClient(value = DictConstant.Service.PROJECT, path = DictConstant.Path.GROUP, fallback = GroupClientFallback.class)
 public interface GroupClient {
 
     /**
@@ -80,35 +81,35 @@ public interface GroupClient {
 
 
 @Component
-class  GroupClientFallback implements GroupClient{
+class GroupClientFallback implements GroupClient {
 
     @Override
     public RespVO create(Group group) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO modify(Group group) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO<GroupVo> query(String id) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO delete(String id) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO<RespDataVO<GroupVo>> list(int pageIndex, int pageSize) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO<RespDataVO<GroupVo>> queryFullGroup(String id) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 }

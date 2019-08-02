@@ -97,10 +97,21 @@ logging:
 
 
 feign:
+  compression:
+    request:
+      enabled: true # 请求压缩
+      mime-types: text/xml,application/xml,application/json
+      min-request-size: 2048
+    response:
+      enabled: true
+  hystrix:
+    enabled: true
   httpclient:
     enabled: false
   okhttp:
     enabled: true
+    max-connections: 500
+    max-connections-per-route: 100
 
 #feign:
 #  hystrix:
@@ -108,20 +119,32 @@ feign:
 # ribbon 的超时时间（<）hystrix的超时时间
 #MaxAutoRetries+MaxAutoRetriesNextServer+(MaxAutoRetries *MaxAutoRetriesNextServer) =重试次数
 #重试期间，时间超过了hystrix的超时时间，便会立即执行熔断，fallback
-# (1 + MaxAutoRetries + MaxAutoRetriesNextServer) * ReadTimeout=hystrix 超时时间
+# ribbonTimeout = (ribbonReadTimeout + ribbonConnectTimeout) * (maxAutoRetries + 1) * (maxAutoRetriesNextServer + 1);
 #当ribbon超时后且hystrix没有超时，便会采取重试机制。当OkToRetryOnAllOperations设置为false时，只会对get请求进行重试
 ribbon:
   ConnectTimeout: 3000  #ribbon 负载均衡连接超时时间
   ReadTimeout: 20000  #ribbon 负载均衡读取超时时间
-  #MaxAutoRetries: 1   #同一台实例最大重试次数,不包括首次调用
-  #MaxAutoRetriesNextServer: 1  #重试负载均衡其他的实例最大重试次数,不包括首次调用
+  #MaxAutoRetries: 1   #同配置首台服务器重试1次
+  #MaxAutoRetriesNextServer: 1  #配置其他服务器重试1次
   #OkToRetryOnAllOperations: false #否所有操作都重试
 
 hystrix:
+  threadpool:
+    default:
+      coreSize: 500
+      maximumSize: 10
+      maxQueueSize: -1
   command:
     default:
+      fallback:
+        enabled: true
       execution:
+        timeout:
+          enabled: true
         isolation:
+          strategy: SEMAPHORE  # 隔离策略
+          semaphore:
+            maxConcurrentRequests: 500  # 最大并发数
           thread:
             timeoutInMilliseconds: 60000
 
@@ -131,4 +154,5 @@ hystrix:
 fpfile:
   path: D:\业务文档\测量\file
   url:  http://localhost:50010/survey/api-file/file/fpfile/download
+
 

@@ -1,4 +1,5 @@
 package com.lego.survey.settlement.feign;
+
 import com.lego.survey.settlement.model.vo.SurveyPointExceptionVo;
 import com.survey.lib.common.consts.DictConstant;
 import com.survey.lib.common.consts.RespConsts;
@@ -15,11 +16,12 @@ import org.springframework.web.bind.annotation.*;
  * @description
  * @since 2019/1/9
  **/
-@FeignClient(value = DictConstant.Service.SETTLEMENT,path = DictConstant.Path.SURVEY_POINT_EXCEPTION,fallback = SurveyPointExceptionClientFallback.class)
+@FeignClient(value = DictConstant.Service.SETTLEMENT, path = DictConstant.Path.SURVEY_POINT_EXCEPTION, fallback = SurveyPointExceptionClientFallback.class)
 public interface SurveyPointExceptionClient {
 
     /**
      * 新增异常报警信息
+     *
      * @param surveyPointExceptionVo
      * @return
      */
@@ -29,6 +31,7 @@ public interface SurveyPointExceptionClient {
 
     /**
      * 查询异常报告列表
+     *
      * @param pageIndex
      * @param pageSize
      * @param sectionCode
@@ -44,6 +47,7 @@ public interface SurveyPointExceptionClient {
 
     /**
      * 删除异常警告
+     *
      * @param id
      * @return
      */
@@ -53,6 +57,7 @@ public interface SurveyPointExceptionClient {
 
     /**
      * 修改异常警告
+     *
      * @param surveyPointExceptionVo
      * @return
      */
@@ -63,25 +68,25 @@ public interface SurveyPointExceptionClient {
 }
 
 @Component
-class  SurveyPointExceptionClientFallback implements SurveyPointExceptionClient{
+class SurveyPointExceptionClientFallback implements SurveyPointExceptionClient {
 
     @Override
     public RespVO create(SurveyPointExceptionVo surveyPointExceptionVo) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO<RespDataVO<SurveyPointExceptionVo>> query(int pageIndex, int pageSize, String sectionCode, String pointCode) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO delete(Long id) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 
     @Override
     public RespVO modify(SurveyPointExceptionVo surveyPointExceptionVo) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"settlement服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "settlement服务不可用");
     }
 }

@@ -21,7 +21,7 @@ import java.util.List;
  * @description
  * @since 2019/1/7
  **/
-@FeignClient(value = DictConstant.Service.SETTLEMENT, path = DictConstant.Path.BASE_POINT,fallback = BasePointClientFallback.class)
+@FeignClient(value = DictConstant.Service.SETTLEMENT,path = DictConstant.Path.BASE_POINT,fallback = BasePointClientFallback.class)
 public interface BasePointClient {
 
     /**

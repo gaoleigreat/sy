@@ -1,4 +1,5 @@
 package com.lego.survey.project.feign;
+
 import com.lego.survey.project.model.entity.Master;
 import com.lego.survey.project.model.entity.Section;
 import com.lego.survey.project.model.entity.Surveyer;
@@ -20,11 +21,12 @@ import java.util.List;
  * @description
  * @since 2018/12/27
  **/
-@FeignClient(value = DictConstant.Service.PROJECT,path = DictConstant.Path.SECTION,fallback = SectionClientFallback.class)
+@FeignClient(value = DictConstant.Service.PROJECT, path = DictConstant.Path.SECTION, fallback = SectionClientFallback.class)
 public interface SectionClient {
 
     /**
      * 新增标段信息
+     *
      * @param section
      * @return
      */
@@ -34,6 +36,7 @@ public interface SectionClient {
 
     /**
      * 修改标段信息
+     *
      * @param section
      * @return
      */
@@ -43,6 +46,7 @@ public interface SectionClient {
 
     /**
      * 根据id查询标段信息
+     *
      * @param code
      * @return
      */
@@ -52,6 +56,7 @@ public interface SectionClient {
 
     /**
      * 删除标段信息
+     *
      * @param code
      * @return
      */
@@ -61,6 +66,7 @@ public interface SectionClient {
 
     /**
      * 查询标段列表
+     *
      * @param pageIndex
      * @param pageSize
      * @return
@@ -72,6 +78,7 @@ public interface SectionClient {
 
     /**
      * 根据负责人id获取标段信息
+     *
      * @param masterId
      * @return
      */
@@ -81,6 +88,7 @@ public interface SectionClient {
 
     /**
      * 根据工区id获取标段信息
+     *
      * @param workspaceId
      * @return
      */
@@ -90,6 +98,7 @@ public interface SectionClient {
 
     /**
      * 根据工区编码获取标段信息
+     *
      * @param workspaceCode
      * @return
      */
@@ -99,6 +108,7 @@ public interface SectionClient {
 
     /**
      * 根据工区ID获取工区测量员
+     *
      * @param workspaceCode
      * @return
      */
@@ -108,6 +118,7 @@ public interface SectionClient {
 
     /**
      * 查询标段测量员
+     *
      * @param sectionCode
      * @return
      */
@@ -117,6 +128,7 @@ public interface SectionClient {
 
     /**
      * 查询标段管理员
+     *
      * @param sectionCode
      * @return
      */
@@ -133,46 +145,46 @@ public interface SectionClient {
 
 
 @Component
-class SectionClientFallback implements SectionClient{
+class SectionClientFallback implements SectionClient {
 
     @Override
     public RespVO create(Section section) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO modify(Section section) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO<SectionVo> query(String code) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO delete(String code) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO<RespDataVO<SectionVo>> list(int pageIndex, int pageSize) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO<RespDataVO<Section>> queryByMasterId(String masterId) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO<Section> queryByWorkspaceId(String workspaceCode) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override
     public RespVO<Section> queryByWorkspaceCode(String workspaceCode) {
-        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE,"project服务不可用");
+        return RespVOBuilder.failure(RespConsts.ERROR_SERVER_CODE, "project服务不可用");
     }
 
     @Override

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * @description
  * @since 2018/12/21
  **/
-@FeignClient(value = DictConstant.Service.PROJECT, path = DictConstant.Path.PROJECT,fallback = ProjectClientFallback.class)
+@FeignClient(value = DictConstant.Service.PROJECT,path = DictConstant.Path.PROJECT,fallback = ProjectClientFallback.class)
 public interface ProjectClient {
 
     /**
