@@ -309,7 +309,7 @@ public class SectionServiceImpl implements ISectionService {
     }
 
     private Map<String, String> getServices() {
-        Map<String, String> confs = new HashMap<>();
+        Map<String, String> confs = new HashMap<>(16);
         RespVO<Config> configsVo = configClient.queryByName("场景配置");
         if (configsVo.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
             Config info = configsVo.getInfo();

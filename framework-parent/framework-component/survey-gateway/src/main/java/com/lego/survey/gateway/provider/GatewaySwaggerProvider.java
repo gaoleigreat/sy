@@ -28,8 +28,6 @@ public class GatewaySwaggerProvider implements SwaggerResourcesProvider {
 
     private final GatewayProperties gatewayProperties;
 
-   // @Value("${define.context-path}")
-    //private String contextPath;
 
     @Override
     public List<SwaggerResource> get() {

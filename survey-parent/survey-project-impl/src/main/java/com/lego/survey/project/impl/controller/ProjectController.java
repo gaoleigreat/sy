@@ -128,7 +128,7 @@ public class ProjectController {
         CurrentVo currentVo = authClient.getAuthVo(headerVo);
         String userId = currentVo.getUserId();
         String role = currentVo.getRole();
-        if (!role.equals("admin")) {
+        if (!role.equals(DictConstant.Role.ADMIN)) {
             return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE, RespConsts.FAIL_NOPRESSION_MSG);
         }
         iProjectService.deleteProject(code);

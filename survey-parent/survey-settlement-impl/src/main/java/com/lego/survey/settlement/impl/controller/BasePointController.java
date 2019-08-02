@@ -106,7 +106,7 @@ public class BasePointController {
         // 验证用户正确性
         String userId = headerVo.getUserId();
         RespVO delete = iBasePointService.delete(codes);
-        if(delete.getRetCode()==RespConsts.SUCCESS_RESULT_CODE){
+        if (delete.getRetCode() == RespConsts.SUCCESS_RESULT_CODE) {
             logSender.sendLogEvent(HttpUtils.getClientIp(request), userId, "删除基准点:[" + JSONObject.toJSONString(codes) + "]");
         }
         return delete;
@@ -137,5 +137,17 @@ public class BasePointController {
         List<BasePointVo> pointVos = iBasePointService.list(sectionCode, name, startDate, endDate);
         return RespVOBuilder.success(pointVos);
     }
+
+    @ApiOperation(value = "根据code获取基准点信息", httpMethod = "GET", notes = "根据code获取基准点信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "code", value = "基准点code", dataType = "String", required = true, paramType = "path"),
+    })
+    @Operation(value = "info", desc = "根据code获取基准点信息")
+    @RequestMapping(value = "/info/{code}", method = RequestMethod.GET)
+    public RespVO<BasePoint> info(@PathVariable String code) {
+        BasePoint basePoint = iBasePointService.queryByCode(code);
+        return RespVOBuilder.success(basePoint);
+    }
+
 
 }

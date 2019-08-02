@@ -79,13 +79,13 @@ public class SurveyTaskVo {
     }
 
     private Integer getMeasureTypeInteger(String measureType) {
-        if (measureType.equals("BF")) {
+        if ("BF".equals(measureType)) {
             return 0;
-        } else if (measureType.equals("BFFB")) {
+        } else if ("BFFB".equals(measureType)) {
             return 1;
-        } else if (measureType.equals("FBBF")) {
+        } else if ("FBBF".equals(measureType)) {
             return 2;
-        } else if (measureType.equals("BF...")) {
+        } else if ("BF...".equals(measureType)) {
             return 3;
         }
         return -1;

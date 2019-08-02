@@ -33,4 +33,6 @@ public class BasePointVo {
     private Integer version;
     @ApiModelProperty("新增时间")
     private Date time;
+    @ApiModelProperty("是否有效(0-有效;1-无效)")
+    private Integer valid;
 }

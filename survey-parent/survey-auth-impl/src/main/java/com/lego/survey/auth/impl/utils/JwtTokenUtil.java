@@ -186,7 +186,7 @@ public class JwtTokenUtil {
 
 
     private Map<String, Object> getClamsMap(CurrentVo currentVo) {
-        Map<String, Object> claims = new HashMap<>();
+        Map<String, Object> claims = new HashMap<>(4);
         claims.put("userName", currentVo.getUserName());
         claims.put("userId", currentVo.getUserId());
         claims.put("userPhone", currentVo.getPhone());

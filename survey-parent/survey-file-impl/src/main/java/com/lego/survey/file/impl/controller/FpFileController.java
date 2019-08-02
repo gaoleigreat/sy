@@ -30,7 +30,7 @@ import java.util.Map;
  * @date 2019/5/30/0030
  */
 @RestController
-@Api(value = "FpFileController",description = "fp文件存储")
+@Api(value = "FpFileController", description = "fp文件存储")
 @RequestMapping("/file")
 public class FpFileController {
 
@@ -52,17 +52,17 @@ public class FpFileController {
         if (req instanceof MultipartHttpServletRequest) {
             fileList = ((MultipartHttpServletRequest) req).getFiles("file");
         }
-        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>(16);
         try {
             List<Map<String, Object>> returnList = new ArrayList<>();
             for (MultipartFile file : fileList) {
                 if (StringUtils.isEmpty(file.getOriginalFilename())) {
-                    return RespVOBuilder.failure( "参数错误");
+                    return RespVOBuilder.failure("参数错误");
                 }
                 RespVO<Map<String, Object>> upload = fpFileService.upload(file);
-                if (upload.getRetCode()==1) {
+                if (upload.getRetCode() == 1) {
 
-                    Map result = new HashMap();
+                    Map result = new HashMap(16);
                     result.put("fileName", upload.getInfo().get("fileName"));
                     result.put("url", upload.getInfo().get("data"));
                     returnList.add(result);
@@ -71,13 +71,13 @@ public class FpFileController {
             resultMap.put("datas", returnList);
         } catch (IOException e) {
             log.error("upload file error", e);
-            return RespVOBuilder.failure( "上传失败");
+            return RespVOBuilder.failure("上传失败");
         }
         if (!resultMap.isEmpty()) {
             log.info(JSONObject.toJSONString(resultMap));
             return RespVOBuilder.success(resultMap);
         }
-        return RespVOBuilder.failure( "参数错误");
+        return RespVOBuilder.failure("参数错误");
     }
 
 
@@ -90,7 +90,7 @@ public class FpFileController {
         if (null == fileName) {
             log.error("download file error,filname is null");
         }
-        String filePath = FpFileUtil.getFilePath(fpFileRootPath,fileName);
+        String filePath = FpFileUtil.getFilePath(fpFileRootPath, fileName);
         File file = new File(filePath);
         if (file.exists()) {
             // 设置强制下载不打开

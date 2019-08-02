@@ -249,64 +249,69 @@ public class UserServiceImpl implements IUserService {
         query.addCriteria(criteria);
         List<User> userList = mongoTemplate.find(query, User.class, "user");
         for (User user : userList) {
-            UserAddVo userAddVo = UserAddVo.builder().role(user.getRole())
-                    .userName(user.getUserName())
-                    .phone(user.getPhone())
-                    .name(user.getName())
-                    .id(user.getId())
-                    .cardId(user.getCardId())
-                    .valid(user.getValid())
-                    .build();
-            if (user.getGroup() != null) {
-                userAddVo.setGroup(user.getGroup().getName());
-            }
-            List<String> permissions = user.getPermission();
-            if (!CollectionUtils.isEmpty(permissions)) {
-                List<String> permissionDesc = new ArrayList<>();
-                Config config = iConfigService.queryByName("权限配置");
-                if (config != null) {
-                    for (String permission : permissions) {
-                        List<ConfigOptionVo> options = config.getOption();
-                        if (!CollectionUtils.isEmpty(options)) {
-                            for (ConfigOptionVo option : options) {
-                                String name = option.getName();
-                                if (name.equals(permission)) {
-                                    permissionDesc.add(option.getDesc());
-                                }
+            UserAddVo userAddVo = getUserAddVo(user);
+            userAddVos.add(userAddVo);
+        }
+        return getJsonObjectPagedResult(pageIndex, pageSize, query, userAddVos, mongoTemplate, "user");
+    }
+
+    private UserAddVo getUserAddVo(User user) {
+        UserAddVo userAddVo = UserAddVo.builder().role(user.getRole())
+                .userName(user.getUserName())
+                .phone(user.getPhone())
+                .name(user.getName())
+                .id(user.getId())
+                .cardId(user.getCardId())
+                .valid(user.getValid())
+                .build();
+        if (user.getGroup() != null) {
+            userAddVo.setGroup(user.getGroup().getName());
+        }
+        List<String> permissions = user.getPermission();
+        if (!CollectionUtils.isEmpty(permissions)) {
+            List<String> permissionDesc = new ArrayList<>();
+            Config config = iConfigService.queryByName("权限配置");
+            if (config != null) {
+                for (String permission : permissions) {
+                    List<ConfigOptionVo> options = config.getOption();
+                    if (!CollectionUtils.isEmpty(options)) {
+                        for (ConfigOptionVo option : options) {
+                            String name = option.getName();
+                            if (name.equals(permission)) {
+                                permissionDesc.add(option.getDesc());
                             }
                         }
                     }
                 }
-                userAddVo.setPermission(permissionDesc);
             }
+            userAddVo.setPermission(permissionDesc);
+        }
 
 
-            List<OwnProject> ownProjects = user.getOwnProjects();
-            if (!CollectionUtils.isEmpty(ownProjects)) {
-                List<String> collect = ownProjects.stream().map(OwnProject::getName).collect(Collectors.toList());
-                userAddVo.setProject(collect);
-            }
-            List<OwnSection> ownSections = user.getOwnSections();
-            if (!CollectionUtils.isEmpty(ownSections)) {
-                List<String> sections = ownSections.stream().map(OwnSection::getName).collect(Collectors.toList());
-                userAddVo.setSection(sections);
-            }
-            String role1 = user.getRole();
-            if (role1 != null) {
-                Config config = iConfigService.queryByName("角色配置");
-                if (config != null) {
-                    List<ConfigOptionVo> option = config.getOption();
-                    for (ConfigOptionVo opt : option) {
-                        if (opt.getName().equals(role1)) {
-                            userAddVo.setRole(opt.getDesc());
-                            break;
-                        }
+        List<OwnProject> ownProjects = user.getOwnProjects();
+        if (!CollectionUtils.isEmpty(ownProjects)) {
+            List<String> collect = ownProjects.stream().map(OwnProject::getName).collect(Collectors.toList());
+            userAddVo.setProject(collect);
+        }
+        List<OwnSection> ownSections = user.getOwnSections();
+        if (!CollectionUtils.isEmpty(ownSections)) {
+            List<String> sections = ownSections.stream().map(OwnSection::getName).collect(Collectors.toList());
+            userAddVo.setSection(sections);
+        }
+        String role1 = user.getRole();
+        if (role1 != null) {
+            Config config = iConfigService.queryByName("角色配置");
+            if (config != null) {
+                List<ConfigOptionVo> option = config.getOption();
+                for (ConfigOptionVo opt : option) {
+                    if (opt.getName().equals(role1)) {
+                        userAddVo.setRole(opt.getDesc());
+                        break;
                     }
                 }
             }
-            userAddVos.add(userAddVo);
         }
-        return getJsonObjectPagedResult(pageIndex, pageSize, query, userAddVos, mongoTemplate, "user");
+        return userAddVo;
     }
 
     @Override

@@ -75,14 +75,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
             if (isIgnore) {
                 ServerWebExchange webExchange = getExchange(exchange, traceInfo, null);
                 return chain.filter(webExchange).then(Mono.fromRunnable(() -> {
-                   /* StringBuilder respSb = new StringBuilder();
                     // 返回参数
-                    ServerHttpResponse resp = webExchange.getResponse();
-
-                    respSb.append(System.currentTimeMillis()).append("\t").append("RETURN").append("\t").append(resp.getStatusCode().value())
-                            .append("\t").append(body);
-                    logger.info(respSb.toString());*/
-
                 }));
             }
 

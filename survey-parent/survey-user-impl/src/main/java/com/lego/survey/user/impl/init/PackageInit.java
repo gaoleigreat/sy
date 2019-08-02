@@ -39,7 +39,7 @@ public class PackageInit implements InitializingBean {
             properties.load(new FileInputStream(versionPath));
             String version = properties.getProperty("version");
             String forcedUpgrade = properties.getProperty("forcedUpgrade");
-            appVersion = new HashMap<>();
+            appVersion = new HashMap<>(3);
             appVersion.put("version",version);
             appVersion.put("forcedUpgrade",Boolean.valueOf(forcedUpgrade));
             appVersion.put("apkLength", appApk.length);

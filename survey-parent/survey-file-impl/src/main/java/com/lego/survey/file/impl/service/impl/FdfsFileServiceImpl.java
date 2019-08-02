@@ -19,9 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class FdfsFileService implements IFdfsFileService {
+public class FdfsFileServiceImpl implements IFdfsFileService {
 
-    public static final Logger log = LoggerFactory.getLogger(FdfsFileService.class);
+    public static final Logger log = LoggerFactory.getLogger(FdfsFileServiceImpl.class);
 
     @Autowired
     private TrackerGroup trackerGroup;
@@ -31,8 +31,8 @@ public class FdfsFileService implements IFdfsFileService {
 
     @Override
     public RespVO<Map<String, Object>> upload(UploadFile file) {
-        Map<String, Object> map = new HashMap<>();
-        StorageClient storageClient = null;
+        Map<String, Object> map = new HashMap<>(16);
+        StorageClient storageClient;
         TrackerServer trackerServer = null;
         try {
             trackerServer = trackerGroup.getConnection();

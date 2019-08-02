@@ -13,6 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * @author yanglf
+ */
 @Component
 @ServletComponentScan
 @WebFilter(filterName = "sessionFilter", urlPatterns = "/*")
@@ -31,18 +34,17 @@ public class SessionFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         //设置服务key
-
-        HttpServletRequest req = null;
-        HttpServletResponse res = null;
-        if(servletRequest instanceof HttpServletRequest){
-            req = (HttpServletRequest) servletRequest;
-            res = (HttpServletResponse) servletResponse;
-        }
-
-        req.setCharacterEncoding("utf-8");
-        res.setCharacterEncoding("utf-8");
-        setRequestContext(req);
         try{
+            HttpServletRequest req;
+            HttpServletResponse res;
+            if(servletRequest instanceof HttpServletRequest){
+                req = (HttpServletRequest) servletRequest;
+                res = (HttpServletResponse) servletResponse;
+                req.setCharacterEncoding("utf-8");
+                res.setCharacterEncoding("utf-8");
+                setRequestContext(req);
+            }
+
             filterChain.doFilter(servletRequest,servletResponse);
         }catch (Exception e){
             log.error("", e);

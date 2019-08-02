@@ -66,7 +66,7 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
     }
 
     private Map<Long, String> getTypeMap() {
-        Map<Long, String> map = new HashMap<>();
+        Map<Long, String> map = new HashMap<>(16);
         List<SurveyPointType> selectList = typeMapper.selectList(null);
         if (!CollectionUtils.isEmpty(selectList)) {
             for (SurveyPointType surveyPointType : selectList) {

@@ -21,8 +21,8 @@ import java.util.concurrent.TimeUnit;
 public class RedisUtil {
 
 
-    /** 默认缓存时间 */
-    private static final int DEFAULT_CACHE_SECONDS = 60 * 60 * 1;// 单位秒 设置成一个钟
+    /** 默认缓存时间  // 单位秒 设置成一个钟 */
+    private static final int DEFAULT_CACHE_SECONDS = 60 * 60 * 1;
 
     @SuppressWarnings("unchecked")
     private static RedisTemplate<String, Object> redisTemplate =

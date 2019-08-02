@@ -36,12 +36,10 @@ public class FpFileServiceImpl implements IFpFileService {
 
     @Override
     public RespVO<Map<String, Object>> upload(MultipartFile file) {
-        /*String folder1 = FpFileUtil.getFolder();
-        String folder2 = FpFileUtil.getFolder();*/
         String uuid = FpFileUtil.getUUID();
         String fileName = file.getOriginalFilename();
         String type=fileName.substring(fileName.indexOf("."));
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         String newFileName = uuid + type;
         map.put("data", FpFileUtil.getFileUrl(fileUrl, null, null, newFileName));
         map.put("fileName", newFileName);

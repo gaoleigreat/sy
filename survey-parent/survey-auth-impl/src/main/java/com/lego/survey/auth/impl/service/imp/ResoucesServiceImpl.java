@@ -42,7 +42,7 @@ public class ResoucesServiceImpl implements IResourcesService {
     public List<Map<String, Object>> findTree(Resources resources) {
         List<Resources> resourcesList = resourcesMapper.findList(resources);
 
-        Map<String, Map<String, List<Resources>>> map = new HashMap<>();
+        Map<String, Map<String, List<Resources>>> map = new HashMap<>(16);
         if (CollectionUtils.isEmpty(resourcesList)) {
             return Collections.EMPTY_LIST;
         }
@@ -61,7 +61,7 @@ public class ResoucesServiceImpl implements IResourcesService {
                     m1.put(r.getRName(), list);
                 }
             } else {
-                Map<String, List<Resources>> m1 = new HashMap<>();
+                Map<String, List<Resources>> m1 = new HashMap<>(16);
                 List<Resources> list = new ArrayList<>();
                 list.add(r);
                 m1.put(r.getRName(), list);
@@ -72,14 +72,14 @@ public class ResoucesServiceImpl implements IResourcesService {
         List<Map<String, Object>> resultList = new ArrayList<>();
 
         for (String key : map.keySet()) {
-            Map<String, Object> m1 = new HashMap<String, Object>();
+            Map<String, Object> m1 = new HashMap<>(16);
 
             Map<String, List<Resources>> mm = map.get(key);
             List<Map<String, Object>> list = new ArrayList<>();
 
             for (String k : mm.keySet()) {
                 List<Resources> permissionList = mm.get(k);
-                Map<String, Object> m2 = new HashMap<String, Object>();
+                Map<String, Object> m2 = new HashMap<>(16);
                 m2.put("rName", k);
                 m2.put("children", permissionList);
                 list.add(m2);
@@ -150,13 +150,13 @@ public class ResoucesServiceImpl implements IResourcesService {
             return RespVOBuilder.success();
         }
 
-        Map<String, Resources> originMap = new HashMap<String, Resources>();
+        Map<String, Resources> originMap = new HashMap<>(16);
         for (Resources r : origin) {
             originMap.put(r.getRId() + "$" + r.getPrId(), r);
             originIds.add(r.getId());
         }
 
-        Map<String, Resources> newMap = new HashMap<String, Resources>();
+        Map<String, Resources> newMap = new HashMap<>(16);
 
         List<Long> deletes = new ArrayList<Long>();
         List<Resources> inserts = new ArrayList<Resources>();

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class CephOSSService implements ICephOSSService {
+public class CephOSSServiceImpl implements ICephOSSService {
 
     @Autowired
     private CephInit cephInit;
@@ -44,7 +44,7 @@ public class CephOSSService implements ICephOSSService {
         List<Bucket> buckets = cephInit.getAmazonS3Client().listBuckets();
 
         for(Bucket bucket : buckets){
-            Map<String, String> map = new HashMap<>();
+            Map<String, String> map = new HashMap<>(16);
             map.put(bucket.getName(),bucket.toString());
             lst.add(map);
         }

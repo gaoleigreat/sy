@@ -34,11 +34,11 @@ public class SecurityInterceptor implements MethodInterceptor {
                 String permission = scope + "$" + resource.value() + "$" + operation.value();
                 if(null == currentVo.getResourcesScopes() || !currentVo.getResourcesScopes().contains(permission)){
                     Class returnType = invocation.getMethod().getReturnType();
-                    if(returnType.getName().equals("java.util.Map")){
+                    if("java.util.Map".equals(returnType.getName())){
                         return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE,RespConsts.FAIL_NOPRESSION_MSG);
-                    }else if(returnType.getName().equals("com.survey.lib.common.vo.RespVO")){
+                    }else if("com.survey.lib.common.vo.RespVO".equals(returnType.getName())){
                         return RespVOBuilder.failure(RespConsts.FAIL_NOPRESSION_CODE,RespConsts.FAIL_NOPRESSION_MSG);
-                    }else if(returnType.getName().equals("java.util.List")){
+                    }else if("java.util.List".equals(returnType.getName())){
                         return Collections.EMPTY_LIST;
                     }
                     return null;

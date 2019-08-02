@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 
+/**
+ * @author yanglf
+ */
 @Service
-public class AuthCheckService implements IAuthCheckService {
+public class AuthCheckServiceImpl implements IAuthCheckService {
 
     @Autowired
     private AuthClient authClient;

@@ -1,4 +1,5 @@
 package com.lego.survey.settlement.impl.service.impl;
+
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.lego.survey.base.exception.ExceptionBuilder;
@@ -52,6 +53,7 @@ public class BasePointServiceImpl implements IBasePointService {
                         .gridY(basePoint.getGridY())
                         .value(basePoint.getElevation())
                         .type(basePoint.getType())
+                        .valid(basePoint.getValid())
                         .version(basePoint.getVersion()).build());
             }
         }
@@ -76,7 +78,7 @@ public class BasePointServiceImpl implements IBasePointService {
             return RespVOBuilder.success();
         } catch (DuplicateKeyException ex) {
             ex.printStackTrace();
-            ExceptionBuilder.duplicateKeyException("主键冲突",basePoint.getId());
+            ExceptionBuilder.duplicateKeyException("主键冲突", basePoint.getId());
         }
         return RespVOBuilder.failure("添加失败");
     }
@@ -85,9 +87,12 @@ public class BasePointServiceImpl implements IBasePointService {
     @Transactional(rollbackFor = RuntimeException.class)
     public RespVO delete(List<String> codes) {
         for (String code : codes) {
-            QueryWrapper<BasePoint> wrapper=new QueryWrapper<>();
-            wrapper.eq("code",code);
+            QueryWrapper<BasePoint> wrapper = new QueryWrapper<>();
+            wrapper.eq("code", code);
             BasePoint basePoint = basePointMapper.selectOne(wrapper);
+            if (basePoint == null) {
+                continue;
+            }
             basePoint.setValid(1);
             basePoint.setUpdateTime(new Date());
             int update = basePointMapper.updateById(basePoint);
@@ -125,6 +130,17 @@ public class BasePointServiceImpl implements IBasePointService {
         QueryWrapper<BasePoint> wrapper = new QueryWrapper<>();
         wrapper.eq("section_code", sectionCode);
         wrapper.eq("code", code).or().eq("name", name);
+        List<BasePoint> basePoints = basePointMapper.selectList(wrapper);
+        if (basePoints != null && basePoints.size() > 0) {
+            return basePoints.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public BasePoint queryByCode(String code) {
+        QueryWrapper<BasePoint> wrapper = new QueryWrapper<>();
+        wrapper.eq("code", code);
         List<BasePoint> basePoints = basePointMapper.selectList(wrapper);
         if (basePoints != null && basePoints.size() > 0) {
             return basePoints.get(0);

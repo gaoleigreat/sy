@@ -83,7 +83,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
             wrapper.gt("survey_time", startDate).lt("survey_time", endDate);
         }
         if (deviceType.equals(HttpConsts.DeviceType.DEVICE_WEB)) {
-            Map<String, Object> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>(16);
             map.put("workspaceCode", workspaceCode);
             if (startDate != null) {
                 map.put("startDate", startDate);
@@ -258,7 +258,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
     }
 
     private Map<Long, String> getTypeMap() {
-        Map<Long, String> typeMap = new HashMap<>();
+        Map<Long, String> typeMap = new HashMap<>(16);
         List<SurveyPointType> typeList = surveyPointTypeMapper.selectList(null);
         if (!CollectionUtils.isEmpty(typeList)) {
             typeList.forEach(tp -> typeMap.put(tp.getId(), tp.getName()));

@@ -68,4 +68,10 @@ public interface IBasePointService {
      * @return
      */
     BasePoint queryByCodeOrName(String code, String name, String sectionCode);
+
+    /**
+     * @param code
+     * @return
+     */
+    BasePoint queryByCode(String code);
 }

@@ -1,4 +1,5 @@
 package com.lego.survey.file.impl.controller;
+
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.lego.survey.file.impl.model.OssUploadFile;
 import com.lego.survey.file.impl.service.ICephOSSService;
@@ -28,7 +29,7 @@ import java.util.*;
 
 @Controller
 @RequestMapping("/oss/v1")
-@Api(tags="对象存储")
+@Api(tags = "对象存储")
 public class CephOSSController {
 
     private static final Logger log = LoggerFactory.getLogger(CephOSSController.class);
@@ -42,7 +43,7 @@ public class CephOSSController {
     })
     @ResponseBody
     @RequestMapping(value = "/createBucket", method = RequestMethod.GET)
-    public RespVO createBucket(@RequestParam String bucketName){
+    public RespVO createBucket(@RequestParam String bucketName) {
 
         return cephOSSService.createBucket(bucketName);
     }
@@ -72,37 +73,36 @@ public class CephOSSController {
     }
 
 
-
     @ApiOperation(value = "获取文件对象", httpMethod = "GET")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "bucketName", value = "Bucket名称", dataType = "String", required = true, example = "1", paramType = "query"),
             @ApiImplicitParam(name = "key", value = "key", dataType = "String", required = true, example = "1", paramType = "query"),
     })
     @RequestMapping(value = "/getObject", method = RequestMethod.GET)
-    public void getObject(@RequestParam String bucketName, @RequestParam  String key, HttpServletResponse res) throws
+    public void getObject(@RequestParam String bucketName, @RequestParam String key, HttpServletResponse res) throws
             IOException {
         InputStream in = cephOSSService.getObject(bucketName, key);
         OutputStream out = null;
         try {
-            if(null != in) {
+            if (null != in) {
                 out = res.getOutputStream();
                 int len = 0;
                 byte[] datas = new byte[2048];
-                while ( (len = in.read(datas)) > 0) {
-                    out.write(datas, 0,len);
+                while ((len = in.read(datas)) > 0) {
+                    out.write(datas, 0, len);
                 }
             }
         } catch (IOException e) {
 
-        }finally{
-            if(null != out){
+        } finally {
+            if (null != out) {
                 try {
                     out.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            if(null != in){
+            if (null != in) {
                 in.close();
             }
         }
@@ -116,8 +116,8 @@ public class CephOSSController {
     })
     @ResponseBody
     @RequestMapping(value = "/deleteObject", method = RequestMethod.GET)
-    public RespVO deleteObject(@RequestParam String bucketName, @RequestParam  String key){
-        return cephOSSService.deleteObject(bucketName,key);
+    public RespVO deleteObject(@RequestParam String bucketName, @RequestParam String key) {
+        return cephOSSService.deleteObject(bucketName, key);
     }
 
 
@@ -127,38 +127,38 @@ public class CephOSSController {
     })
     @ResponseBody
     @RequestMapping(value = "/putObject/{bucketName}", method = RequestMethod.POST)
-    public RespVO putObject(@PathVariable String bucketName, HttpServletRequest req){
+    public RespVO putObject(@PathVariable String bucketName, HttpServletRequest req) {
         try {
             List<MultipartFile> fileList = new ArrayList<>();
-            if(req instanceof MultipartHttpServletRequest){
+            if (req instanceof MultipartHttpServletRequest) {
                 fileList = ((MultipartHttpServletRequest) req).getFiles("file");
             }
-            Map<String,Object> resultMap  = new HashMap<>();
+            Map<String, Object> resultMap = new HashMap<>(16);
             List<Map<String, Object>> returnList = new ArrayList<>();
-            for(MultipartFile file : fileList){
+            for (MultipartFile file : fileList) {
 
                 OssUploadFile uploadFile = new OssUploadFile();
                 uploadFile.setFileName(file.getOriginalFilename());
                 uploadFile.setStream(file.getInputStream());
                 uploadFile.setKey(UuidUtils.generate16Uuid());
 
-                if(!StringUtils.isEmpty(file.getOriginalFilename())){
+                if (!StringUtils.isEmpty(file.getOriginalFilename())) {
                     int pos = file.getOriginalFilename().lastIndexOf(".");
-                    if(pos > -1 && pos + 1 < file.getOriginalFilename().length()){
+                    if (pos > -1 && pos + 1 < file.getOriginalFilename().length()) {
                         uploadFile.setExt(file.getOriginalFilename().substring(pos + 1));
                     }
                 }
 
                 RespVO<URL> respVO = cephOSSService.put(uploadFile);
-                if(respVO.getRetCode()==1){
-                    Map f = new HashMap();
+                if (respVO.getRetCode() == 1) {
+                    Map<String, Object> f = new HashMap<>(16);
                     f.put("fileName", file.getOriginalFilename());
-                    f.put("url",respVO.getInfo());
+                    f.put("url", respVO.getInfo());
                     returnList.add(f);
                 }
             }
-            resultMap.put("datas",returnList);
-            if(!resultMap.isEmpty()){
+            resultMap.put("datas", returnList);
+            if (!resultMap.isEmpty()) {
                 return RespVOBuilder.success();
             }
         } catch (IOException e) {

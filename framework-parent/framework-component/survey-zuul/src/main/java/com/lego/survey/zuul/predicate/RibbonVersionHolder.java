@@ -7,19 +7,19 @@ package com.lego.survey.zuul.predicate;
  **/
 public class RibbonVersionHolder {
 
-    private static final ThreadLocal<String> context = new ThreadLocal<>();
+    private static final ThreadLocal<String> CONTEXT = new ThreadLocal<>();
 
 
     public static String getContext() {
-        return context.get();
+        return CONTEXT.get();
     }
 
     public static void setContext(String value) {
-        context.set(value);
+        CONTEXT.set(value);
     }
 
     public static void clearContext() {
-        context.remove();
+        CONTEXT.remove();
     }
 
 }

@@ -5,8 +5,6 @@ import com.lego.survey.eureka.model.Instance;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.StringUtils;
-
-import javax.jws.soap.InitParam;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
