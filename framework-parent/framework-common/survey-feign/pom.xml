@@ -32,6 +32,13 @@
         </dependency>
 
 
+        <!--<dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-alibaba-sentinel</artifactId>
+        </dependency>-->
+
+
+
         <!-- lib -->
         <dependency>
             <groupId>com.lego.common</groupId>

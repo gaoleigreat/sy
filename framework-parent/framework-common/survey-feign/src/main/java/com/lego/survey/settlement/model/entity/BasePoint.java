@@ -33,8 +33,10 @@ public class BasePoint {
     private Integer type;
     @ApiModelProperty("基准点版本")
     private Integer version;
+    @NotNull(message = "平面X不能为空")
     @ApiModelProperty("平面X")
     private Double gridX;
+    @NotNull(message = "平面Y不能为空")
     @ApiModelProperty("平面Y")
     private Double gridY;
     @NotNull(message = "高程Z不能为空")

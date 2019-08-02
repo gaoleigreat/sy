@@ -1,4 +1,5 @@
 package com.lego.survey.settlement.model.vo;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +18,8 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BasePointVo {
+    @ApiModelProperty("ID")
+    private Long id;
     @ApiModelProperty("基准点名称")
     private String name;
     @ApiModelProperty("基准点编码")
