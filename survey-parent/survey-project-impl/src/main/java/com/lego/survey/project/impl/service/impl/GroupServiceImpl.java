@@ -57,7 +57,7 @@ public class GroupServiceImpl implements IGroupService {
     @Override
     public GroupVo queryById(String id) {
         Group group = groupRepository.findGroupByIdAndValid(id, 0);
-        if(group==null){
+        if (group == null) {
             return null;
         }
         return GroupVo.builder().name(group.getName())
@@ -78,7 +78,7 @@ public class GroupServiceImpl implements IGroupService {
     @Override
     public void delete(String id) {
         Group group = groupRepository.findGroupByIdAndValid(id, 0);
-        if(group!=null){
+        if (group != null) {
             group.setValid(1);
             groupRepository.save(group);
         }
@@ -91,7 +91,7 @@ public class GroupServiceImpl implements IGroupService {
         List<GroupVo> groupVos = new ArrayList<>();
         Pageable pageable = PageRequest.of(pageIndex - 1, pageSize, Sort.Direction.DESC, "createTime");
         Page<Group> groupPage = groupRepository.findAll(pageable);
-        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, groupPage.getTotalElements(), groupPage.getTotalPages()));
+        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, (int) groupPage.getTotalElements(), groupPage.getTotalPages()));
         List<Group> groupList = groupPage.getContent();
         for (Group group : groupList) {
             groupVos.add(GroupVo.builder().id(group.getId())
@@ -134,9 +134,9 @@ public class GroupServiceImpl implements IGroupService {
     @Override
     public List<GroupTreeVo> findTreeList() {
         List<Group> groupList = groupRepository.findGroupsByValid(0);
-        List<GroupTreeVo> groupTreeVos=new ArrayList<>();
-        for (Group group: groupList) {
-            GroupTreeVo groupTreeVo=new GroupTreeVo();
+        List<GroupTreeVo> groupTreeVos = new ArrayList<>();
+        for (Group group : groupList) {
+            GroupTreeVo groupTreeVo = new GroupTreeVo();
             if (group.getUpperGroup() == null) {
                 groupTreeVo.setId(group.getId());
                 groupTreeVo.setName(group.getName());
@@ -149,11 +149,11 @@ public class GroupServiceImpl implements IGroupService {
 
 
     private List<GroupTreeVo> getChildGroup(String id, List<Group> groupList) {
-        List<GroupTreeVo> groupTreeVos=new ArrayList<>();
+        List<GroupTreeVo> groupTreeVos = new ArrayList<>();
         for (Group group : groupList) {
-            GroupTreeVo groupTreeVo=new GroupTreeVo();
+            GroupTreeVo groupTreeVo = new GroupTreeVo();
             UpperGroup upperGroup = group.getUpperGroup();
-            if (upperGroup!=null && id.equals(upperGroup.getId())) {
+            if (upperGroup != null && id.equals(upperGroup.getId())) {
                 groupTreeVo.setId(group.getId());
                 groupTreeVo.setName(group.getName());
                 groupTreeVo.setChildGroup(getChildGroup(group.getId(), groupList));

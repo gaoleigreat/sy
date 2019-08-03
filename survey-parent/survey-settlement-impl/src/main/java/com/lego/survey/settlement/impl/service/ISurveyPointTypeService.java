@@ -77,4 +77,5 @@ public interface ISurveyPointTypeService {
      * @return
      */
     SurveyPointType queryByName(String name, String sectionCode);
+
 }

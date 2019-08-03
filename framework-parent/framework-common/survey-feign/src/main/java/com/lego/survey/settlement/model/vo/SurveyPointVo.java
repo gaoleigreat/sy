@@ -34,9 +34,9 @@ public class SurveyPointVo extends BaseRowModel {
     @NotBlank(message = "测点名称不能为空")
     @ApiModelProperty("测点名称")
     private String name;
-    @ExcelProperty(value = "测点类型", index = 2)
     @NotNull(message = "测点类型不能为空")
     private Long type;
+    @ExcelProperty(value = "测点类型", index = 2)
     @ApiModelProperty("测点类型")
     private String typeStr;
     @ExcelProperty(value = "初始平面X", index = 3)
@@ -67,6 +67,7 @@ public class SurveyPointVo extends BaseRowModel {
     @ApiModelProperty("沉降速率上限")
     private Double speedUpperLimit;
     @ExcelProperty(value = "状态", index = 12)
+    private String statusStr;
     @ApiModelProperty("状态： 1：正常 2: 新建 3: 停测 4: 破坏")
     private Integer status;
     @ApiModelProperty("工区编码")
@@ -114,18 +115,18 @@ public class SurveyPointVo extends BaseRowModel {
     /**
      * LSurveyPoint 2 SurveyPointVo
      *
-     * @param  surveyPoint type
+     * @param surveyPoint type
      * @return the survey point  vo
      */
     @JsonIgnore
     public SurveyPointVo loadData(SurveyPoint surveyPoint) {
         this.code = surveyPoint.getCode();
         this.name = surveyPoint.getName();
-        this.createTime=surveyPoint.getCreateTime();
-        this.elevation=surveyPoint.getElevation();
-        this.status=surveyPoint.getStatus();
-        this.type=surveyPoint.getType();
-        this.workspaceCode=surveyPoint.getWorkspaceCode();
+        this.createTime = surveyPoint.getCreateTime();
+        this.elevation = surveyPoint.getElevation();
+        this.status = surveyPoint.getStatus();
+        this.type = surveyPoint.getType();
+        this.workspaceCode = surveyPoint.getWorkspaceCode();
         String[] limit = surveyPoint.getLimits().split(",");
         if (limit.length != 6) {
             throw new ClassCastException();
@@ -138,7 +139,6 @@ public class SurveyPointVo extends BaseRowModel {
         this.speedUpperLimit = Double.parseDouble(limit[5]);
         return this;
     }
-
 
 
 }

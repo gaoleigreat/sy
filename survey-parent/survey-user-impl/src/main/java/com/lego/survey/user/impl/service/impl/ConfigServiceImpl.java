@@ -70,7 +70,7 @@ public class ConfigServiceImpl implements IConfigService {
         PagedResult<Config> pagedResult=new PagedResult<>();
         Pageable pageable= PageRequest.of(pageIndex-1,pageSize, Sort.Direction.DESC,"updateTime");
         Page<Config> configPage = configRepository.findAll(pageable);
-        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex,pageSize,0,configPage.getTotalElements(),configPage.getTotalPages()));
+        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex,pageSize,0,(int)configPage.getTotalElements(),configPage.getTotalPages()));
         pagedResult.setResultList(configPage.getContent());
         return pagedResult;
     }

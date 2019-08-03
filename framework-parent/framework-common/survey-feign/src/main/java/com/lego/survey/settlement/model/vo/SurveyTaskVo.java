@@ -2,6 +2,9 @@ package com.lego.survey.settlement.model.vo;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lego.survey.settlement.model.entity.SurveyOriginal;
 import com.lego.survey.settlement.model.entity.SurveyTask;

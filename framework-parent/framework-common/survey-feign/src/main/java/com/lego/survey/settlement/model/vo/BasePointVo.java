@@ -29,7 +29,7 @@ public class BasePointVo {
     @ApiModelProperty("平面Y")
     private Double gridY;
     @ApiModelProperty("基准点高程Z")
-    private Double value;
+    private Double elevation;
     @ApiModelProperty("基准点类型 0 ：高程基准点 1：平面基准点 2：三维基准点")
     private Integer type;
     @ApiModelProperty("基准点版本")

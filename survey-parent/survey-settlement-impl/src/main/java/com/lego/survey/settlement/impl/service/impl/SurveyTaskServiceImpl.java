@@ -44,7 +44,7 @@ public class SurveyTaskServiceImpl implements ISurveyTaskService {
             records.forEach(surveyTask -> surveyTaskVos.add(SurveyTaskVo.builder().build().loadSurveyTaskVo(surveyTask)));
         }
         pagedResult.setResultList(surveyTaskVos);
-        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex,pageSize,0,surveyTaskPage.getTotal(),(int)surveyTaskPage.getPages()));
+        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex,pageSize,0,(int)surveyTaskPage.getTotal(),(int)surveyTaskPage.getPages()));
         return pagedResult;
     }
 

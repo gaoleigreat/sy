@@ -51,7 +51,7 @@ public class BasePointServiceImpl implements IBasePointService {
                         .time(basePoint.getCreateTime())
                         .gridX(basePoint.getGridX())
                         .gridY(basePoint.getGridY())
-                        .value(basePoint.getElevation())
+                        .elevation(basePoint.getElevation())
                         .id(basePoint.getId())
                         .type(basePoint.getType())
                         .valid(basePoint.getValid())

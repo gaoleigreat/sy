@@ -56,7 +56,7 @@ public class LogServiceImpl implements ILogService {
             }
             logVos.add(logVo);
         }
-        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, logPage.getTotalElements(), logPage.getTotalPages()));
+        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, (int)logPage.getTotalElements(), logPage.getTotalPages()));
         pagedResult.setResultList(logVos);
         return RespVOBuilder.success(pagedResult);
     }

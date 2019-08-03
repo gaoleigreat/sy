@@ -329,7 +329,7 @@ public class SectionServiceImpl implements ISectionService {
         Long count = mongoTemplate.count(query, Long.class, tableName);
         pagedResult.setResultList(objectList);
         int totalPage = count.intValue() % pageSize == 0 ? count.intValue() / pageSize : count.intValue() / pageSize + 1;
-        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, count, totalPage));
+        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, count.intValue(), totalPage));
         return pagedResult;
     }
 

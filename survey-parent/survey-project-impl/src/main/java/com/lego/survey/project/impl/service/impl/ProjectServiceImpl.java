@@ -177,7 +177,7 @@ public class ProjectServiceImpl implements IProjectService {
         Pageable pageable = PageRequest.of(pageIndex - 1, pageSize, Sort.Direction.DESC, "createTime");
         Page<Project> projects = projectRepository.findProjectsByValid(0, pageable);
         List<Project> projectList = projects.getContent();
-        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, projects.getTotalElements(), projects.getTotalPages()));
+        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, (int)projects.getTotalElements(), projects.getTotalPages()));
         for (Project project : projectList) {
             String group = project.getGroup();
             ProjectVo projectVo = ProjectVo.builder()

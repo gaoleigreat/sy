@@ -93,7 +93,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
             Page<SurveyResult> surveyResultPage = surveyResultMapper.queryList(new Page(pageIndex, pageSize), tableName, wrapper);
             surveyResultPage.getRecords().forEach(surveyResult -> surveyResultVos.add(SurveyResultVo.builder().build().loadSurveyResultVo(surveyResult)));
             pagedResult.setResultList(surveyResultVos);
-            pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, surveyResultPage.getTotal(), (int) surveyResultPage.getPages()));
+            pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, (int)surveyResultPage.getTotal(), (int) surveyResultPage.getPages()));
             return RespVOBuilder.success(surveyResultPage);
         } else if (deviceType.equals(HttpConsts.DeviceType.DEVICE_ANDROID)) {
 
@@ -252,7 +252,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                 overrunListVos.add(overrun);
             }
         }
-        voPagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, surveyPoints.getTotal(), (int) surveyPoints.getPages()));
+        voPagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, (int)surveyPoints.getTotal(), (int) surveyPoints.getPages()));
         voPagedResult.setResultList(overrunListVos);
         return voPagedResult;
     }
@@ -348,7 +348,7 @@ public class SurveyResultServiceImpl implements ISurveyResultService {
                 overrunListVos.add(overrun);
             }
         }
-        voPagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, surveyResultPage.getTotal(), (int) surveyResultPage.getPages()));
+        voPagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, (int)surveyResultPage.getTotal(), (int) surveyResultPage.getPages()));
         voPagedResult.setResultList(overrunListVos);
         return voPagedResult;
     }

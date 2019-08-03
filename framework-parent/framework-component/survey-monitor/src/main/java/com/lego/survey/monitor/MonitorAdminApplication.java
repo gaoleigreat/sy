@@ -36,7 +36,7 @@ public class MonitorAdminApplication {
         }
     }
 
-    @Profile("local")
+    @Profile("sit")
     @Configuration
     public static class SecuritySecureConfig extends WebSecurityConfigurerAdapter {
         private final String adminContextPath;
