@@ -63,11 +63,22 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public RespVO<RespDataVO<ProjectVo>> queryByUserId(String userId) {
+    public RespVO<RespDataVO<ProjectVo>> queryByUserId(CurrentVo currentVo) {
         List<ProjectVo> projectVos = new ArrayList<>();
         List<SectionVo> sectionVos = new ArrayList<>();
         // 根据用户id查询 workSpace 信息  (关联 master/surveyer id)
-        List<Section> sectionList = sectionRepository.findSectionsByMasterIdAndValidOrderByCreateTimeDesc(userId, 0);
+        List<Section> sectionList = null;
+        String role = currentVo.getRole();
+        if (role.equals(DictConstant.Role.ADMIN)) {
+            // 所有
+            sectionList = sectionRepository.findSectionsByValid(0);
+        } else if (role.equals(DictConstant.Role.MASTER)) {
+            sectionRepository.findSectionsByOwnerGroupIdAndValidOrderByCreateTimeDesc(currentVo.getGroupId(), 0);
+        } else if (role.equals(DictConstant.Role.SECTION)) {
+            sectionList = sectionRepository.findSectionsByMasterIdAndValidOrderByCreateTimeDesc(currentVo.getUserId(), 0);
+        } else {
+            return RespVOBuilder.success();
+        }
         for (Section section : sectionList) {
             ProjectVo projectVo = ProjectVo.builder().build();
             SectionVo sectionVo = SectionVo.builder().
@@ -161,7 +172,7 @@ public class ProjectServiceImpl implements IProjectService {
     @Override
     public RespVO deleteProject(String code) {
         Project project = projectRepository.findProjectByCodeAndValid(code, 0);
-        if(project!=null){
+        if (project != null) {
             project.setValid(1);
             projectRepository.save(project);
         }
@@ -177,7 +188,7 @@ public class ProjectServiceImpl implements IProjectService {
         Pageable pageable = PageRequest.of(pageIndex - 1, pageSize, Sort.Direction.DESC, "createTime");
         Page<Project> projects = projectRepository.findProjectsByValid(0, pageable);
         List<Project> projectList = projects.getContent();
-        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, (int)projects.getTotalElements(), projects.getTotalPages()));
+        pagedResult.setPage(new com.survey.lib.common.page.Page(pageIndex, pageSize, 0, (int) projects.getTotalElements(), projects.getTotalPages()));
         for (Project project : projectList) {
             String group = project.getGroup();
             ProjectVo projectVo = ProjectVo.builder()

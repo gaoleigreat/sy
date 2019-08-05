@@ -36,10 +36,10 @@ public interface IProjectService {
 
     /**
      * 根据用户id获取工程信息
-     * @param userId
+     * @param currentVo
      * @return
      */
-    RespVO<RespDataVO<ProjectVo>> queryByUserId(String userId);
+    RespVO<RespDataVO<ProjectVo>> queryByUserId(CurrentVo currentVo);
 
 
     /**
