@@ -20,6 +20,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -83,6 +84,10 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
             Date currentTime = new Date();
             surveyPointVo.setCreateTime(currentTime);
             surveyPointVo.setUpdateTime(currentTime);
+            String code = surveyPointVo.getCode();
+            if(StringUtils.isEmpty(code)){
+                surveyPointVo.setCode(surveyPointVo.getName());
+            }
             Integer save = surveyPointMapper.save(surveyPointVo.getSurveyPoint(), tableName);
             if (save <= 0) {
                 return RespVOBuilder.failure("添加测点失败");
@@ -125,6 +130,10 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
 
             surveyPointVos.forEach(surveyPointVo -> {
                 surveyPointVo.setId(SnowflakeIdUtils.createId());
+                String code = surveyPointVo.getCode();
+                if(StringUtils.isEmpty(code)){
+                    surveyPointVo.setCode(surveyPointVo.getName());
+                }
                 Date currentTime = new Date();
                 surveyPointVo.setCreateTime(currentTime);
                 surveyPointVo.setUpdateTime(currentTime);

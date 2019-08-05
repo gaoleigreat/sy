@@ -207,12 +207,12 @@ public class SurveyPointController {
     })
     @RequestMapping(value = "/uploadBatch",method = RequestMethod.POST)
     public RespVO uploadPointResultExcel(@RequestParam(value = "fileName") String fileName,
-                                         @RequestParam() String sectionCode){
+                                         @RequestParam() String workspaceCode){
         if(StringUtils.isEmpty(fileName)){
             return RespVOBuilder.failure("文件名不能为空");
         }
         String filePath = FpFileUtil.getFilePath(fpFileRootPath,fileName);
-        surveyPointReadListener.setTableName(sectionCode);
+        surveyPointReadListener.setWorkspaceCode(workspaceCode);
         excelService.readExcel(filePath,surveyPointReadListener, SurveyPointVo.class,1);
         return RespVOBuilder.success();
     }
