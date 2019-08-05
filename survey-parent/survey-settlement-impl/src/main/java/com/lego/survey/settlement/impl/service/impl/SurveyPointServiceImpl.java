@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 /**
@@ -58,8 +59,8 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
         Map<Long, String> typeMap = getTypeMap();
         if (list != null) {
             list.forEach(surveyPoint -> {
-                SurveyPointVo surveyPointVo = SurveyPointVo.builder().build().loadData(surveyPoint);
-                surveyPointVo.setTypeStr(typeMap.get(surveyPointVo.getType()));
+                String s = typeMap.get(surveyPoint.getType());
+                SurveyPointVo surveyPointVo = SurveyPointVo.builder().build().loadData(surveyPoint, s);
                 surveyPointVos.add(surveyPointVo);
             });
         }
@@ -71,7 +72,7 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
         List<SurveyPointType> selectList = typeMapper.selectList(null);
         if (!CollectionUtils.isEmpty(selectList)) {
             for (SurveyPointType surveyPointType : selectList) {
-                map.put(surveyPointType.getId(), surveyPointType.getName());
+                map.put(surveyPointType.getId(), surveyPointType.getName() + "$" + surveyPointType.getLimits());
             }
         }
         return map;
@@ -85,8 +86,26 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
             surveyPointVo.setCreateTime(currentTime);
             surveyPointVo.setUpdateTime(currentTime);
             String code = surveyPointVo.getCode();
-            if(StringUtils.isEmpty(code)){
+            if (StringUtils.isEmpty(code)) {
                 surveyPointVo.setCode(surveyPointVo.getName());
+            }
+            try {
+                Long type = surveyPointVo.getType();
+                if (type != null) {
+                    SurveyPointType surveyPointType = typeMapper.selectById(type);
+                    String limits = surveyPointType.getLimits();
+                    String[] split = limits.split(",");
+                    if (split.length == 6) {
+                        surveyPointVo.setOnceLowerLimit(Double.valueOf(split[0]));
+                        surveyPointVo.setOnceUpperLimit(Double.valueOf(split[1]));
+                        surveyPointVo.setTotalLowerLimit(Double.valueOf(split[2]));
+                        surveyPointVo.setTotalUpperLimit(Double.valueOf(split[3]));
+                        surveyPointVo.setSpeedLowerLimit(Double.valueOf(split[4]));
+                        surveyPointVo.setSpeedUpperLimit(Double.valueOf(split[5]));
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             Integer save = surveyPointMapper.save(surveyPointVo.getSurveyPoint(), tableName);
             if (save <= 0) {
@@ -131,7 +150,7 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
             surveyPointVos.forEach(surveyPointVo -> {
                 surveyPointVo.setId(SnowflakeIdUtils.createId());
                 String code = surveyPointVo.getCode();
-                if(StringUtils.isEmpty(code)){
+                if (StringUtils.isEmpty(code)) {
                     surveyPointVo.setCode(surveyPointVo.getName());
                 }
                 Date currentTime = new Date();
@@ -159,10 +178,10 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
         wrapper.eq("code", code).or().eq("name", name);
         List<SurveyPoint> surveyPoints = surveyPointMapper.queryByNameOrCode(wrapper, tableName);
         Map<Long, String> typeMap = getTypeMap();
-        if (surveyPoints != null && surveyPoints.size() > 0) {
-            SurveyPointVo surveyPointVo = SurveyPointVo.builder().build().loadData(surveyPoints.get(0));
-            surveyPointVo.setTypeStr(typeMap.get(surveyPointVo.getType()));
-            return surveyPointVo;
+        if (!CollectionUtils.isEmpty(surveyPoints)) {
+            SurveyPoint surveyPoint = surveyPoints.get(0);
+            String s = typeMap.get(surveyPoint.getType());
+            return SurveyPointVo.builder().build().loadData(surveyPoint, s);
         }
         return null;
     }
@@ -172,10 +191,10 @@ public class SurveyPointServiceImpl implements ISurveyPointService {
         QueryWrapper<SurveyPoint> wrapper = new QueryWrapper<>();
         wrapper.eq("code", pointCode);
         List<SurveyPoint> surveyPoints = surveyPointMapper.queryByName(wrapper, tableName);
-        if (surveyPoints != null && surveyPoints.size() > 0) {
-            SurveyPointVo surveyPointVo = SurveyPointVo.builder().build().loadData(surveyPoints.get(0));
-            surveyPointVo.setTypeStr(getTypeMap().get(surveyPointVo.getType()));
-            return surveyPointVo;
+        if (!CollectionUtils.isEmpty(surveyPoints)) {
+            SurveyPoint surveyPoint = surveyPoints.get(0);
+            String s = getTypeMap().get(surveyPoint.getType());
+            return SurveyPointVo.builder().build().loadData(surveyPoint, s);
         }
         return null;
     }

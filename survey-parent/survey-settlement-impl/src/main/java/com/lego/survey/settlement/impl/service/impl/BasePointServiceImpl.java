@@ -14,9 +14,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author yanglf
@@ -128,10 +126,11 @@ public class BasePointServiceImpl implements IBasePointService {
 
     @Override
     public BasePoint queryByCodeOrName(String code, String name, String sectionCode) {
-        QueryWrapper<BasePoint> wrapper = new QueryWrapper<>();
-        wrapper.eq("section_code", sectionCode);
-        wrapper.eq("code", code).or().eq("name", name);
-        List<BasePoint> basePoints = basePointMapper.selectList(wrapper);
+        Map<String,Object> map=new HashMap<>(16);
+        map.put("sectionCode",sectionCode);
+        map.put("name",name);
+        map.put("code",code);
+        List<BasePoint> basePoints = basePointMapper.queryByCodeOrName(map);
         if (basePoints != null && basePoints.size() > 0) {
             return basePoints.get(0);
         }

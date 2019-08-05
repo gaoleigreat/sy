@@ -112,7 +112,7 @@ public class SurveyPointVo extends BaseRowModel {
      * @return the survey point  vo
      */
     @JsonIgnore
-    public SurveyPointVo loadData(SurveyPoint surveyPoint) {
+    public SurveyPointVo loadData(SurveyPoint surveyPoint, String s) {
         this.code = surveyPoint.getCode();
         this.name = surveyPoint.getName();
         this.createTime = surveyPoint.getCreateTime();
@@ -120,16 +120,22 @@ public class SurveyPointVo extends BaseRowModel {
         this.status = surveyPoint.getStatus();
         this.type = surveyPoint.getType();
         this.workspaceCode = surveyPoint.getWorkspaceCode();
-        String[] limit = surveyPoint.getLimits().split(",");
+        String[] split = s.split("$");
+        this.typeStr = split[0];
+        String[] limit = split[1].split(",");
         if (limit.length != 6) {
             throw new ClassCastException();
         }
-        this.onceLowerLimit = Double.parseDouble(limit[0]);
-        this.onceUpperLimit = Double.parseDouble(limit[1]);
-        this.totalLowerLimit = Double.parseDouble(limit[2]);
-        this.totalUpperLimit = Double.parseDouble(limit[3]);
-        this.speedLowerLimit = Double.parseDouble(limit[4]);
-        this.speedUpperLimit = Double.parseDouble(limit[5]);
+        try {
+            this.onceLowerLimit = Double.parseDouble(limit[0]);
+            this.onceUpperLimit = Double.parseDouble(limit[1]);
+            this.totalLowerLimit = Double.parseDouble(limit[2]);
+            this.totalUpperLimit = Double.parseDouble(limit[3]);
+            this.speedLowerLimit = Double.parseDouble(limit[4]);
+            this.speedUpperLimit = Double.parseDouble(limit[5]);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return this;
     }
 

@@ -20,7 +20,14 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,code,name,`type`,version,grid_x,grid_y,elevation,create_user,create_time,update_time,comment
+        id id,code code,name name ,`type` type,version version,
+        grid_x gridX,
+        grid_y gridY,
+        elevation elevation,
+        create_user createUser,
+        create_time createTime,
+        update_time updateTime,
+        comment comment
     </sql>
 
     <select id="queryLastVersionBySectionCode" resultType="java.lang.Integer">
@@ -30,6 +37,13 @@
           and valid = 0
         order by create_time desc
         limit 1
+    </select>
+    <select id="queryByCodeOrName" resultType="com.lego.survey.settlement.model.entity.BasePoint">
+        select
+        <include refid="Base_Column_List"/>
+        from base_point where
+        section_code=#{sectionCode} and
+        (name =#{name} or code=#{code})
     </select>
 
 

@@ -4,6 +4,10 @@ import com.lego.survey.settlement.model.entity.BasePoint;
 import com.lego.survey.lib.mybatis.mapper.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author yanglf
  * @description
@@ -21,4 +25,5 @@ public interface BasePointMapper extends Mapper<BasePoint> {
     Integer   queryLastVersionBySectionCode(@Param(value = "sectionCode") String sectionCode);
 
 
+    List<BasePoint> queryByCodeOrName(Map<String, Object> map);
 }

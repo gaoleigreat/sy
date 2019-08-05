@@ -35,5 +35,4 @@ public interface SurveyPointTypeMapper extends Mapper<SurveyPointType> {
     int updateStatus(@Param(value = "id") Long id);
 
 
-
 }
