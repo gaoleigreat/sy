@@ -144,10 +144,11 @@ public class ProjectController {
     })
     @Operation(value = "queryByUserId", desc = "根据用户id查询项目工程")
     @RequestMapping(value = "/queryByUserId", method = RequestMethod.GET)
-    public RespVO<RespDataVO<ProjectVo>> queryByUserId(HttpServletRequest request) {
+    public RespVO<ProjectVo> queryByUserId(HttpServletRequest request,
+                                           @RequestParam String sectionCode) {
         HeaderVo headerVo = HeaderUtils.parseHeader(request);
         CurrentVo authVo = authClient.getAuthVo(headerVo);
-        return iProjectService.queryByUserId(authVo);
+        return iProjectService.queryByUserId(authVo, sectionCode);
     }
 
 

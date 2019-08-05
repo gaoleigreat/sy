@@ -39,7 +39,7 @@ public interface IProjectService {
      * @param currentVo
      * @return
      */
-    RespVO<RespDataVO<ProjectVo>> queryByUserId(CurrentVo currentVo);
+    RespVO<ProjectVo> queryByUserId(CurrentVo currentVo,String sectionCode);
 
 
     /**

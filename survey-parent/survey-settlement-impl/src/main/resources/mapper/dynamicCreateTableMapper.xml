@@ -9,7 +9,7 @@
             id             BIGINT       NOT NULL PRIMARY KEY UNIQUE COMMENT 'recoderId',
             code           VARCHAR(50)  NOT NULL unique COMMENT 'surveyPointCode',
             name           VARCHAR(50)  NOT NULL COMMENT 'pointName',
-            type           VARCHAR(10)  NOT NULL COMMENT 'pointType',
+            type           BIGINT  NOT NULL COMMENT 'pointType',
             grid_x         DOUBLE(255, 5) COMMENT 'initialPlaneX',
             grid_y         DOUBLE(255, 5) COMMENT 'initialPlaneY',
             elevation      DOUBLE(255, 5) COMMENT 'initialElevation',

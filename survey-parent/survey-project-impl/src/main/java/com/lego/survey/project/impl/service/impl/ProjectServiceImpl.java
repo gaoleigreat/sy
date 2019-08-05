@@ -63,75 +63,65 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public RespVO<RespDataVO<ProjectVo>> queryByUserId(CurrentVo currentVo) {
-        List<ProjectVo> projectVos = new ArrayList<>();
-        List<SectionVo> sectionVos = new ArrayList<>();
+    public RespVO<ProjectVo> queryByUserId(CurrentVo currentVo, String sectionCode) {
         // 根据用户id查询 workSpace 信息  (关联 master/surveyer id)
-        List<Section> sectionList = null;
-        String role = currentVo.getRole();
-        if (role.equals(DictConstant.Role.ADMIN)) {
-            // 所有
-            sectionList = sectionRepository.findSectionsByValid(0);
-        } else if (role.equals(DictConstant.Role.MASTER)) {
-            sectionRepository.findSectionsByOwnerGroupIdAndValidOrderByCreateTimeDesc(currentVo.getGroupId(), 0);
-        } else if (role.equals(DictConstant.Role.SECTION)) {
-            sectionList = sectionRepository.findSectionsByMasterIdAndValidOrderByCreateTimeDesc(currentVo.getUserId(), 0);
-        } else {
-            return RespVOBuilder.success();
+        List<SectionVo> sectionVos = new ArrayList<>();
+        Section section = sectionRepository.findSectionByCodeAndValid(sectionCode, 0);
+        ProjectVo projectVo = ProjectVo.builder().build();
+        if (section == null) {
+            return RespVOBuilder.success(projectVo);
         }
-        for (Section section : sectionList) {
-            ProjectVo projectVo = ProjectVo.builder().build();
-            SectionVo sectionVo = SectionVo.builder().
-                    code(section.getCode()).id(section.getId())
-                    .address(section.getAddress())
-                    .desc(section.getDesc())
-                    .name(section.getName())
-                    .build();
-            OwnerProject ownerProject = section.getOwnerProject();
-            if (ownerProject != null) {
-                // 根据标段id 在 project 表查询 工程信息
-                String id = ownerProject.getId();
+        SectionVo sectionVo = SectionVo.builder().
+                code(section.getCode()).id(section.getId())
+                .address(section.getAddress())
+                .desc(section.getDesc())
+                .name(section.getName())
+                .build();
+        OwnerProject ownerProject = section.getOwnerProject();
+        if (ownerProject != null) {
+            // 根据标段id 在 project 表查询 工程信息
+            String id = ownerProject.getId();
 
-                Project project = projectRepository.findProjectByIdAndValid(id, 0);
-                String projectGroup = project.getGroup();
-                projectVo.setCode(project.getCode());
-                projectVo.setDesc(project.getDesc());
-                projectVo.setName(project.getName());
-                projectVo.setAddress(project.getAddress());
-                projectVo.setId(project.getId());
-                projectVo.setGroup(projectGroup);
+            Project project = projectRepository.findProjectByIdAndValid(id, 0);
+            String projectGroup = project.getGroup();
+            projectVo.setCode(project.getCode());
+            projectVo.setDesc(project.getDesc());
+            projectVo.setName(project.getName());
+            projectVo.setAddress(project.getAddress());
+            projectVo.setId(project.getId());
+            projectVo.setGroup(projectGroup);
 
-                UpperGroup ownerGroup = section.getOwnerGroup();
-                Group group = groupRepository.findGroupByIdAndValid(ownerGroup.getId(), 0);
-                if (group != null) {
-                    sectionVo.setGroup(GroupVo.builder().id(group.getId()).name(group.getName()).desc(group.getDesc()).upperGroup(group.getUpperGroup()).build());
-                }
-                List<OwnWorkspace> ownWorkspaces = section.getWorkSpace();
-                List<Double> property = section.getProperty();
-                if (property.size() >= 2) {
-                    sectionVo.setStartingMileage(section.getProperty().get(0));
-                    sectionVo.setEndMileage(section.getProperty().get(1));
-                }
-                List<WorkspaceVo> workAreaVos = new ArrayList<>();
-                sectionVo.setWorkspace(workAreaVos);
-                if (!CollectionUtils.isEmpty(ownWorkspaces)) {
-                    for (OwnWorkspace ownWorkspace : ownWorkspaces) {
-                        WorkspaceVo workspaceVo = WorkspaceVo.builder().id(ownWorkspace.getId()).name(ownWorkspace.getName()).type(ownWorkspace.getType()).code(ownWorkspace.getCode()).build();
-                        workAreaVos.add(workspaceVo);
-                        List<Surveyer> surveyers = ownWorkspace.getSurveyer();
-                        List<ColleaguesVo> colleagues = new ArrayList<>();
-                        sectionVo.setColleagues(colleagues);
+            UpperGroup ownerGroup = section.getOwnerGroup();
+            Group group = groupRepository.findGroupByIdAndValid(ownerGroup.getId(), 0);
+            if (group != null) {
+                sectionVo.setGroup(GroupVo.builder().id(group.getId()).name(group.getName()).desc(group.getDesc()).upperGroup(group.getUpperGroup()).build());
+            }
+            List<OwnWorkspace> ownWorkspaces = section.getWorkSpace();
+            List<Double> property = section.getProperty();
+            if (property.size() >= 2) {
+                sectionVo.setStartingMileage(section.getProperty().get(0));
+                sectionVo.setEndMileage(section.getProperty().get(1));
+            }
+            List<WorkspaceVo> workAreaVos = new ArrayList<>();
+            sectionVo.setWorkspace(workAreaVos);
+            if (!CollectionUtils.isEmpty(ownWorkspaces)) {
+                for (OwnWorkspace ownWorkspace : ownWorkspaces) {
+                    WorkspaceVo workspaceVo = WorkspaceVo.builder().id(ownWorkspace.getId()).name(ownWorkspace.getName()).type(ownWorkspace.getType()).code(ownWorkspace.getCode()).build();
+                    workAreaVos.add(workspaceVo);
+                    List<Surveyer> surveyers = ownWorkspace.getSurveyer();
+                    List<ColleaguesVo> colleagues = new ArrayList<>();
+                    sectionVo.setColleagues(colleagues);
+                    if (!CollectionUtils.isEmpty(surveyers)) {
                         for (Surveyer surveyer : surveyers) {
                             colleagues.add(ColleaguesVo.builder().id(surveyer.getId()).name(surveyer.getName()).build());
                         }
                     }
                 }
             }
-            sectionVos.add(sectionVo);
-            projectVo.setSections(sectionVos);
-            projectVos.add(projectVo);
         }
-        return RespVOBuilder.success(projectVos);
+        sectionVos.add(sectionVo);
+        projectVo.setSections(sectionVos);
+        return RespVOBuilder.success(projectVo);
     }
 
     @Override
